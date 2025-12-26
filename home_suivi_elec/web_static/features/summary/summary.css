@@ -1,0 +1,518 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   SUMMARY MODULE - STYLES COMPLETS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   LOADER & PROGRESSION
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: 200px;
+  animation: hse-fade-in 0.3s ease;
+}
+
+@keyframes hse-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hse-loader-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--hse-border, #e5e5e5);
+  border-top-color: var(--hse-primary, #0078d4);
+  border-radius: 50%;
+  animation: hse-spin 0.8s linear infinite;
+}
+
+@keyframes hse-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hse-loader-text {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--hse-text, #222);
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   BARRE DE PROGRESSION
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-progress-container {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+.hse-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--hse-bg-secondary, #f0f0f0);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.hse-progress-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--hse-primary, #0078d4),
+    var(--hse-primary-dark, #005fa3)
+  );
+  transition: width 0.3s ease, background 0.5s ease;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animation de brillance sur la barre */
+.hse-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: hse-shine 2s infinite;
+}
+
+@keyframes hse-shine {
+  to {
+    left: 100%;
+  }
+}
+
+.hse-progress-label {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--hse-text-muted, #666);
+  font-weight: 600;
+}
+
+.hse-loader-details {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--hse-text-muted, #888);
+  text-align: center;
+  font-style: italic;
+}
+
+.hse-loader-fade-out {
+  animation: hse-fade-out 0.3s ease forwards;
+}
+
+@keyframes hse-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   CACHE BADGE
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-cache-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+  animation: hse-pulse 2s infinite;
+  cursor: help;
+}
+
+@keyframes hse-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+.hse-cache-badge:hover {
+  animation: none;
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(102, 126, 234, 0.5);
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   ERROR STATE
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  animation: hse-fade-in 0.3s ease;
+}
+
+.hse-error-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  animation: hse-shake 0.5s ease;
+}
+
+@keyframes hse-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+.hse-error-message {
+  color: var(--hse-error, #dc3545);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.hse-error-retry {
+  margin-top: 16px;
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   CACHE STATS PANEL
+   ──────────────────────────────────────────────────────────────────────────── */
+
+#cacheStatsPanel {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  border-left: 4px solid var(--hse-info, #2196f3);
+  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.1);
+  animation: hse-slide-down 0.3s ease;
+}
+
+@keyframes hse-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+  }
+}
+
+#cacheStatsPanel strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--hse-text, #222);
+  font-size: 1rem;
+}
+
+#cacheStatsContent {
+  color: var(--hse-text, #333);
+}
+
+#cacheStatsContent > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+#cacheStatsContent strong {
+  color: var(--hse-text-muted, #666);
+  font-weight: 600;
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   SUMMARY TABLES
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.summary-row {
+  transition: background-color 0.2s ease;
+}
+
+.summary-row:hover {
+  background-color: var(--hse-hover, rgba(0, 120, 212, 0.05));
+}
+
+.summary-row-internal {
+  border-left: 3px solid var(--hse-primary, #0078d4);
+}
+
+.summary-row-external {
+  border-left: 3px solid var(--hse-warning, #ff9800);
+}
+
+.summary-row-delta {
+  border-left: 3px solid var(--hse-success, #28a745);
+}
+
+.summary-period {
+  font-weight: 600;
+  color: var(--hse-text, #222);
+}
+
+.summary-energy {
+  color: var(--hse-primary, #0078d4);
+  font-weight: 500;
+}
+
+.summary-total-highlight {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  font-weight: 700;
+  color: var(--hse-success, #1b5e20);
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   BOUTONS ACTIONS
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.btn-cache-clear {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.btn-cache-clear:hover {
+  background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-cache-stats {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.btn-cache-stats:hover {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+  transform: translateY(-1px);
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   TOP CONSOMMATEURS (LIVE)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.hse-top-consumers {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--hse-surface, #ffffff);
+  border: 1px solid var(--hse-border, #e5e7eb);
+}
+
+.hse-top-consumers-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+}
+
+.hse-top-consumers-header p {
+  margin: 0 0 12px 0;
+  font-size: 0.85rem;
+  color: var(--hse-text-muted, #6b7280);
+}
+
+.hse-top-consumers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.hse-top-consumers-col-header {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* lignes du top conso */
+.hse-top-consumers-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--hse-border, #e5e7eb);
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  transition: background 0.15s ease;
+}
+
+.hse-top-consumers-row.level-medium {
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.hse-top-consumers-row.level-high {
+  background: rgba(220, 38, 38, 0.04);
+}
+
+/* conteneur texte gauche : une seule ligne avec ellipsis */
+.hse-top-consumers-left {
+  flex: 1;
+  min-width: 0; /* nécessaire pour que text-overflow fonctionne en flexbox */
+}
+
+.hse-top-consumers-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* coupe proprement le texte trop long */
+}
+
+/* valeur de puissance à droite */
+.hse-top-consumers-power {
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* scroll interne des colonnes à partir de ~3 éléments */
+.hse-top-consumers-column.hse-top-consumers-scrollable {
+  max-height: 210px;
+  overflow-y: auto; /* scroll vertical uniquement si nécessaire [web:45] */
+}
+
+/* anciens badges (si tu les réutilises ailleurs) */
+.hse-top-consumers-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.75rem;
+}
+
+.hse-top-consumers-badge {
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--hse-border, #e5e7eb);
+}
+
+.hse-top-consumers-badge.integration {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.hse-top-consumers-badge.category {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .hse-loader-container {
+    padding: 30px 15px;
+  }
+
+  .hse-progress-container {
+    max-width: 300px;
+  }
+
+  .hse-loader-text {
+    font-size: 1rem;
+  }
+
+  .hse-cache-badge {
+    font-size: 0.65rem;
+    padding: 1px 4px;
+  }
+
+  #cacheStatsContent > div {
+    grid-template-columns: 1fr;
+  }
+
+  /* top conso en 1 colonne sur mobile */
+  .hse-top-consumers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ────────────────────────────────────────────────────────────────────────────
+   MODE SOMBRE
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  .hse-loader-container {
+    color: #e0e0e0;
+  }
+
+  .hse-loader-spinner {
+    border-color: #444;
+    border-top-color: #64b5f6;
+  }
+
+  .hse-progress-bar {
+    background: #2a2a2a;
+  }
+
+  #cacheStatsPanel {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    border-left-color: #64b5f6;
+    color: #e0e0e0;
+  }
+
+  .hse-error-message {
+    color: #ff6b6b;
+  }
+}
