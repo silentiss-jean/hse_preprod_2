@@ -28,6 +28,8 @@ from .const import (
     STORAGE_VERSION,
     STORE_USER_CONFIG,
     STORE_CAPTEURS_SELECTION,
+    CAPTEURS_POWER_STORAGE_VERSION,  # ← À AJOUTER
+    STORE_CAPTEURS_POWER,             # ← À AJOUTER
     STORE_IGNORED_ENTITIES,
     STORE_SENSOR_GROUPS,
     KEY_ALIASES_TO_CANONICAL,
@@ -68,11 +70,11 @@ STORE_COST_HA = "home_suivi_elec_cost_ha_v1"
 LEGACY_DATA_DIR = Path(__file__).parent / "data"
 LEGACY_USER_CONFIG = LEGACY_DATA_DIR / "userconfig.json"
 LEGACY_CAPTEURS_SELECTION = LEGACY_DATA_DIR / "capteursselection.json"
-LEGACY_CAPTEURS_POWER = LEGACYDATADIR / "capteurs_power.json"
+LEGACY_CAPTEURS_POWER = LEGACY_DATA_DIR / "capteurs_power.json"
 
 
 # backward compat (migration_storage.py importe LEGACYDATADIR) :
-LEGACYDATADIR = LEGACY_DATA_DIR  # noqa: N816
+# LEGACYDATADIR = LEGACY_DATA_DIR  # noqa: N816
 
 
 # ---------------------------------------------------------------------------
@@ -637,6 +639,19 @@ class StorageManager:
                 _LOGGER.exception("MIGRATION Erreur migration capteursselection.json: %s", e)
                 return False
 
+        if LEGACY_CAPTEURS_POWER.exists():
+            try:
+                _LOGGER.info("MIGRATION Migration capteurs_power.json...")
+                legacy_data = await self.hass.async_add_executor_job(load_json_file, LEGACY_CAPTEURS_POWER)
+                await self.save_capteurs_power(legacy_data)
+                backup_path = LEGACY_CAPTEURS_POWER.with_suffix(".json.migrated")
+                await self.hass.async_add_executor_job(rename_file, LEGACY_CAPTEURS_POWER, backup_path)
+                _LOGGER.info("MIGRATION capteurs_power.json migré -> backup %s", backup_path.name)
+                migrated_any = True
+            except Exception as e:
+                _LOGGER.exception("MIGRATION Erreur migration capteurs_power.json: %s", e)
+                return False
+
         _LOGGER.info("MIGRATION %s", "Migration terminée" if migrated_any else "Aucun fichier legacy à migrer")
         return True
 
@@ -697,63 +712,3 @@ class StorageManager:
             "ignored_entities": {"count": len(ignored)},
             "cache_size": len(self.cache),
         }
-
-    # -------------------------------------------------------------------
-    # Backward compatible aliases (anciennes API / vieux appels)
-    # -------------------------------------------------------------------
-
-    async def getuserconfig(self, forcereload: bool = False):
-        return await self.get_user_config(forcereload=forcereload)
-
-    async def saveuserconfig(self, cfg, strict: bool = False):
-        return await self.save_user_config(cfg, strict=strict)
-
-    async def getcapteursselection(self, forcereload: bool = False):
-        return await self.get_capteurs_selection(forcereload=forcereload)
-
-    async def savecapteursselection(self, selection):
-        return await self.save_capteurs_selection(selection)
-
-    async def getignoredentities(self, forcereload: bool = False):
-        return await self.get_ignored_entities(forcereload=forcereload)
-
-    async def saveignoredentities(self, entities):
-        return await self.save_ignored_entities(entities)
-
-    async def addignoredentity(self, entityid: str):
-        return await self.add_ignored_entity(entityid)
-
-    async def removeignoredentity(self, entityid: str):
-        return await self.remove_ignored_entity(entityid)
-
-    async def getsensorgroups(self, forcereload: bool = False):
-        return await self.get_sensor_groups(forcereload=forcereload)
-
-    async def savesensorgroups(self, groups):
-        return await self.save_sensor_groups(groups)
-
-    async def migratefromlegacyfiles(self):
-        return await self.migrate_from_legacy_files()
-
-    async def exporttojson(self, outputdir):
-        return await self.export_to_json(outputdir)
-
-    async def getstoragestats(self):
-        return {
-            "version": STORAGE_VERSION,
-            "user_config": {
-                "has_reference": userconfig.get(CONF_EXTERNAL_CAPTEUR) is not None,
-                "options_count": len(userconfig) if isinstance(userconfig, dict) else 0,
-            },
-            "capteurs_selection": {
-                "zones": len(selection),
-                "total_sensors": total_sensors,
-                "enabled_sensors": enabled_sensors,
-                "disabled_sensors": total_sensors - enabled_sensors,
-            },
-            "ignored_entities": {"count": len(ignored)},
-            "cache_size": len(self.cache),
-        }
-
-    def clearcache(self):
-        return self.clear_cache()

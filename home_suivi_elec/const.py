@@ -66,10 +66,6 @@ CONFHCEND = CONF_HC_END
 
 CONFAUTOGENERATE = CONF_AUTO_GENERATE
 
-# Backward-compat temporaire (à supprimer plus tard)
-CAPTEURSPOWERSTORAGEVERSION = CAPTEURS_POWER_STORAGE_VERSION
-STORECAPTEURSPOWER = STORE_CAPTEURS_POWER
-
 
 # -----------------------------------------------------------------------------
 # Mapping des alias de clés (legacy/camelCase/anciens formats) -> CANON snake_case

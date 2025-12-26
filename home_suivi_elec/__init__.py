@@ -1731,6 +1731,10 @@ async def load_capteurs_selection(hass: HomeAssistant) -> list[dict]:
 
     power_data = await storage_manager.get_capteurs_power()
 
+    _LOGGER.info("[LOAD-SELECTION] selection zones=%s", len(selection_data or {}))
+    _LOGGER.info("[LOAD-SELECTION] catalogue power=%s", len(power_data or []))
+
+
     def _get_entity_id(d: dict) -> str | None:
 
         # Supporte plusieurs variantes (selon les générations de JSON / détection)
