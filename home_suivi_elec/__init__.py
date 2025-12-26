@@ -68,10 +68,6 @@ from .migration_storage import async_migrate_storage, async_export_storage_backu
 
 _LOGGER = logging.getLogger(__name__)
 
-# ⚠️ DEPRECATED - Utiliser StorageManager à la place
-
-USER_STORE_KEY = f"{DOMAIN}_user_config_v1"
-
 PLATFORMS = ["sensor"]
 
 # ============================================================================
@@ -781,8 +777,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await manage_selection.async_setup_selection_api(hass)
 
     # API REST: doublons/ignored + best-per-device
-
-    store = Store(hass, 1, USER_STORE_KEY)  # Garde pour rétrocompatibilité temporaire
 
     # ✅ NOUVELLE API UNIFIÉE (remplace progressivement les 18 endpoints)
 

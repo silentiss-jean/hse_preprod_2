@@ -30,7 +30,6 @@ QUALITY_MAP_PATH = os.path.join(DATA_DIR, "integration_quality.yaml")
 
 # ⚠️ DEPRECATED - Utiliser StorageManager à la place
 CAPTEURS_SELECTION_PATH = os.path.join(DATA_DIR, "capteurs_selection.json")
-USER_CONFIG_PATH = os.path.join(DATA_DIR, "user_config.json")
 
 __all__ = [
     "CAPTEURS_POWER_PATH", "CAPTEURS_SELECTION_PATH", "USER_CONFIG_PATH", "QUALITY_MAP_PATH",

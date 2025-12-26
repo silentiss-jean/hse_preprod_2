@@ -10,7 +10,6 @@ PHASE 2.7: Adapté pour Storage API avec fallback fichier JSON legacy.
 ✅ CORRIGÉ : Support natif des sensors HSE energy (sensor.hse_*_today_energy_{cycle})
 """
 
-
 import os
 import json
 import logging
@@ -22,11 +21,14 @@ from homeassistant.components.http import HomeAssistantView
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.storage import Store
 
+# ✅ DEC-005: Définir les chemins directement pour éviter import circulaire
+BASE_DIR = os.path.dirname(__file__)
+DATA_DIR = os.path.join(BASE_DIR, "data")
+CAPTEURS_POWER_PATH = os.path.join(DATA_DIR, "capteurs_power.json")
+CAPTEURS_SELECTION_PATH = os.path.join(DATA_DIR, "capteurs_selection.json")
+USER_CONFIG_PATH = os.path.join(DATA_DIR, "user_config.json")
 
 from .manage_selection import (
-    CAPTEURS_POWER_PATH,
-    CAPTEURS_SELECTION_PATH,
-    USER_CONFIG_PATH,
     _enrich_base,
     _enrich_device_info,
     _load_quality_map_sync,
@@ -44,9 +46,6 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "home_suivi_elec"
-
-USER_STORE_KEY = f"{DOMAIN}_user_config_v1"
-
 
 def _normalize(v: Optional[str]) -> str:
     return (v or "").strip().lower()
@@ -794,16 +793,12 @@ class GetUserOptionsView(HomeAssistantView):
         """✅ PHASE 2.7: Charge ignored depuis StorageManager."""
         try:
             storage_manager = self.hass.data.get("home_suivi_elec", {}).get("storage_manager")
-            if storage_manager:
-                return await storage_manager.get_ignored_entities()
-            else:
-                # Fallback Store legacy
-                if self._store is None:
-                    self._store = Store(self.hass, 1, USER_STORE_KEY)
-                cfg = await self._store.async_load() or {}
-                return [str(x) for x in (cfg.get("ignored_entities") or []) if x]
+            if not storage_manager:
+                _LOGGER.error("GetUserOptionsView: StorageManager non disponible")
+                return []
+            return await storage_manager.get_ignored_entities()
         except Exception as e:
-            _LOGGER.debug("GetUserOptionsView: ignored_entities load failed: %s", e)
+            _LOGGER.exception("GetUserOptionsView: ignored_entities load failed: %s", e)
             return []
 
     async def get(self, request):
