@@ -1,230 +1,88 @@
 'use strict';
 
-// panels/capteursPanel.js
 /**
- * Panel d'affichage des capteurs groupés - Version finale v2
- * CHANGEMENTS CRITIQUES :
- * - SUPPRESSION TOTALE du bouton "Garder le meilleur" et sa fonction
- * - Groupes REPLIÉS par défaut → scroll efficace
- * - Wrapper .hse-diagnostics-sensors-list pour le scroll
- * - Mini-résumé (sélectionnés/total) dans header
+ * Panel des capteurs enrichi avec diagnostics
  */
 
-import { getSensorsData } from '../diagnostics.api.js';
-import { setCachedData, getCachedData } from '../diagnostics.state.js';
-import { groupSensorsByDuplicateGroup, filterGroups } from '../logic/sensorGrouping.js';
+import { getSensorsEnrichedData } from '../diagnostics.api.js';
 import { showToast } from '../../../shared/uiToast.js';
 import { createElement } from '../../../shared/utils/dom.js';
 import { Badge } from '../../../shared/components/Badge.js';
 import { Button } from '../../../shared/components/Button.js';
 import { Card } from '../../../shared/components/Card.js';
-import { getUserOptions } from '../../configuration/configuration.api.js';
 
-console.info('[capteursPanel] Module chargé - Version v2');
+console.info('[capteursPanel] Module chargé');
 
-let currentFilters = {
-  search: '',
-  state: 'all'
-};
-
-// ---- Helpers filtre énergie/puissance ----
-const ENERGY_UNITS = new Set(['W', 'kW', 'Wh', 'kWh']);
-const ENERGY_CLASSES = new Set(['power', 'energy']);
-
-function isEnergySensor(s) {
-  if (!s || typeof s !== 'object') return false;
-  if (!s.entity_id || !String(s.entity_id).startsWith('sensor.')) return false;
-  const unit = s.unit || s.unit_of_measurement;
-  return ENERGY_CLASSES.has(s.device_class) || (unit && ENERGY_UNITS.has(unit));
-}
-
-// ---- Tri capteurs (Référence → Sélectionné → Disponible → score ↓ → entity_id) ----
-function sortSensors(a, b) {
-  const rank = (s) => (s.is_reference ? 0 : s.selected ? 1 : 2);
-  const r = rank(a) - rank(b);
-  if (r !== 0) return r;
-  const sa = Number.isFinite(a.reliability_score) ? a.reliability_score : -1;
-  const sb = Number.isFinite(b.reliability_score) ? b.reliability_score : -1;
-  if (sb !== sa) return sb - sa;
-  return String(a.entity_id).localeCompare(String(b.entity_id));
-}
+// État du filtre
+let currentFilter = 'all';
 
 /**
  * Point d'entrée principal
  */
 export async function loadCapteursPanel(container) {
   try {
-    console.log('[capteursPanel] Chargement v2...');
+    console.log('[capteursPanel] Chargement...');
 
     // Loader
     container.innerHTML = '';
-    container.appendChild(
-      createElement('div', { class: 'loading-state' }, [
-        createElement('div', { class: 'spinner' }),
-        createElement('p', {}, ['Chargement des capteurs...'])
-      ])
-    );
+    container.appendChild(createElement('div', { class: 'loading-state' }, [
+      createElement('div', { class: 'spinner' }),
+      createElement('p', {}, 'Analyse des capteurs...')
+    ]));
 
-    // Récupérer données API
-    const apiData = await getSensorsData();
-    if (!apiData) throw new Error('Aucune donnée reçue');
-    const userOptions = await getUserOptions();
-
-    // Traiter (filtrer+dédupliquer) et mettre en cache
-    const sensorsMap = processSensorsData(apiData, userOptions);
-    setCachedData('sensors', sensorsMap);
-
-    // Stats consolidées depuis la map filtrée
-    const all = Object.values(sensorsMap);
-    const stats = {
-      total: all.length,
-      reference: all.filter(s => s.is_reference).length,
-      selected: all.filter(s => s.selected && !s.is_reference).length,
-      available: all.filter(s => !s.selected && !s.is_reference).length
-    };
-
-    if (stats.total === 0) {
-      container.innerHTML = '';
-      container.appendChild(
-        Card.create(
-          'Aucun capteur',
-          createElement('p', {}, ['Vérifiez votre configuration'])
-        )
-      );
-      return;
-    }
-
-    // Grouper (logique dans sensorGrouping.js)
-    const { groups } = groupSensorsByDuplicateGroup(sensorsMap);
-
-    // Tri optionnel des groupes (nom → taille desc)
-    const groupsSorted = [...groups].sort((a, b) => {
-      const n = String(a.name).localeCompare(String(b.name));
-      if (n !== 0) return n;
-      return (b.sensors?.length || 0) - (a.sensors?.length || 0);
-    });
+    // Charger les données enrichies
+    const data = await getSensorsEnrichedData();
 
     // Render
-    renderCapteursInterface(container, groupsSorted, stats);
-    showToast(`${stats.total} capteurs en ${groupsSorted.length} groupes`, 'success');
+    renderCapteursInterface(container, data);
+
+    showToast('Capteurs analysés avec succès', 'success');
 
   } catch (error) {
     console.error('[capteursPanel] Erreur:', error);
-    container.innerHTML = '';
-    container.appendChild(
-      Card.create(
-        'Erreur',
-        createElement('div', {}, [
-          createElement('p', {}, [error.message]),
-          createElement('p', {}, ['Endpoint: /api/home_suivi_elec/get_sensors'])
-        ])
-      )
-    );
-    showToast(`Erreur: ${error.message}`, 'error');
+    renderCapteursFallback(container, error);
   }
 }
 
 /**
- * Traite les données brutes de l'API → map filtrée/dédupliquée
+ * Rendu de l'interface
  */
-function processSensorsData(apiData, userOptions = {}) {
-  const sensorsMap = {};
-  const useExternal = !!userOptions.use_external;
-  const mode = userOptions.mode || 'sensor';
-  let rejectedNotObject = 0, rejectedNoSensorPrefix = 0, rejectedNotEnergy = 0;
-
-  const upsert = (sensor, { selected = false, is_reference = false } = {}) => {
-    if (!sensor || typeof sensor !== 'object') { rejectedNotObject++; return; }
-    if (!sensor.entity_id || !String(sensor.entity_id).startsWith('sensor.')) { rejectedNoSensorPrefix++; return; }
-    const unit = sensor.unit || sensor.unit_of_measurement;
-    const ok = ENERGY_CLASSES.has(sensor.device_class) || (unit && ENERGY_UNITS.has(unit));
-    if (!ok) { rejectedNotEnergy++; return; }
-
-    const id = sensor.entity_id;
-    const prev = sensorsMap[id] || {};
-    sensorsMap[id] = {
-      ...prev,
-      ...sensor,
-      selected: is_reference ? true : (prev.selected || selected),
-      is_reference: prev.is_reference || is_reference
-    };
-  };
-
-  // selected: { integration: [sensors] }
-  Object.values(apiData.selected || {}).forEach(arr => (arr || []).forEach(
-    s => upsert(s, { selected: true })
-  ));
-
-  // alternatives: { integration: [sensors] }
-  Object.values(apiData.alternatives || {}).forEach(arr => (arr || []).forEach(
-    s => upsert(s)
-  ));
-
-  // reference_sensor: supporter plusieurs formats courants
-  if (useExternal && mode === 'sensor') {
-    const ref = apiData.reference_sensor;
-    if (Array.isArray(ref)) {
-      ref.forEach(s => upsert(s, { is_reference: true }));
-    } else if (ref && typeof ref === 'object') {
-      if (ref.entity_id) upsert(ref, { is_reference: true });
-      Object.entries(ref).forEach(([k, v]) => {
-        if (k && String(k).startsWith('sensor.') && v && typeof v === 'object') {
-          upsert({ ...v, entity_id: k }, { is_reference: true });
-        }
-      });
-    }
-  }
-
-  console.debug('[capteursPanel] Rejets filtre:', {
-    nonObjet: rejectedNotObject,
-    nonSensorPrefix: rejectedNoSensorPrefix,
-    nonEnergyClassOrUnit: rejectedNotEnergy
-  });
-
-  return sensorsMap;
-}
-
-/**
- * Rendu de l'interface - AVEC WRAPPER SCROLLABLE
- */
-function renderCapteursInterface(container, groups, stats) {
+function renderCapteursInterface(container, data) {
   container.innerHTML = '';
 
-  // Stats
+  // Calculer les stats
+  const stats = calculateStats(data);
+
+  // Header avec stats
   const statsDiv = createElement('div', { class: 'capteurs-stats' }, [
-    Badge.create(`TOTAL: ${stats.total}`, 'info'),
-    Badge.create(`RÉFÉRENCE: ${stats.reference}`, 'warning'),
-    Badge.create(`SÉLECTIONNÉS: ${stats.selected}`, 'success'),
-    Badge.create(`DISPONIBLES: ${stats.available}`, 'info')
+    Badge.create(`Total: ${stats.total}`, 'info'),
+    Badge.create(`✅ Disponibles: ${stats.available}`, 'success'),
+    Badge.create(`❌ Unavailable: ${stats.unavailable}`, 'error'),
+    Badge.create(`⚠️ Unknown: ${stats.unknown}`, 'warning'),
+    Badge.create(`👁️ Disabled: ${stats.disabled}`, 'secondary'),
+    Badge.create(`🔄 Restored: ${stats.restored}`, 'warning')
   ]);
 
-  // Recherche
-  const searchInput = createElement('input', {
-    type: 'text',
-    placeholder: 'Rechercher...',
-    id: 'sensor-search'
-  });
-  searchInput.addEventListener('input', (e) => {
-    currentFilters.search = e.target.value.toLowerCase();
-    applyFilters();
-  });
+  // Barre de filtres
+  const filtersDiv = createElement('div', { class: 'capteurs-filters' }, [
+    createFilterButton('all', 'Tous', stats.total),
+    createFilterButton('available', 'Disponibles', stats.available),
+    createFilterButton('unavailable', 'Unavailable', stats.unavailable),
+    createFilterButton('problematic', 'Problématiques', stats.unavailable + stats.unknown + stats.disabled + stats.restored)
+  ]);
 
-  const filtersDiv = createElement('div', { class: 'filters' }, [searchInput]);
+  // Liste des capteurs
+  const capteursList = createElement('div', { class: 'capteurs-list', id: 'capteurs-list' });
+  renderFilteredCapteurs(capteursList, data, currentFilter);
 
-  // Groupes dans un conteneur
-  const groupsDiv = createElement('div', {
-    class: 'sensors-groups',
-    id: 'sensors-groups-container'
-  }, groups.map(g => renderGroup(g)));
+  // Contenu principal
+  const content = createElement('div', { class: 'capteurs-content' }, [
+    statsDiv,
+    filtersDiv,
+    capteursList
+  ]);
 
-  // ⭐ WRAPPER SCROLLABLE - classe .hse-diagnostics-sensors-list
-  const scrollableWrapper = createElement('div', {
-    class: 'hse-diagnostics-sensors-list'
-  }, [groupsDiv]);
-
-  // Assemblage
-  const content = createElement('div', {}, [statsDiv, filtersDiv, scrollableWrapper]);
-  const mainCard = Card.create('Capteurs groupés', content);
+  const mainCard = Card.create('🔌 Capteurs Groupés', content);
   container.appendChild(mainCard);
 
   // Bouton refresh
@@ -237,119 +95,341 @@ function renderCapteursInterface(container, groups, stats) {
 }
 
 /**
- * Rendu d'un groupe - SANS bouton "Garder le meilleur", REPLIÉ par défaut
+ * Crée un bouton de filtre
  */
-function renderGroup(group) {
-  const groupDiv = createElement('div', {
-    class: 'sensor-group',
-    'data-group': group.key
-  });
-
-  // Calcul mini-résumé : nombre de capteurs sélectionnés / total
-  const selectedCount = (group.sensors || []).filter(s => s.selected || s.is_reference).length;
-  const totalCount = (group.sensors || []).length;
-
-  const summarySpan = createElement('span', { class: 'group-summary' }, [
-    createElement('span', { class: 'selected-highlight' }, [String(selectedCount)]),
-    '/',
-    String(totalCount)
-  ]);
-
-  // ✅ Header SANS le bouton "Garder le meilleur"
-  const header = createElement('div', { class: 'group-header' }, [
-    createElement('span', { class: 'expand-icon' }, ['▶']),
-    createElement('span', { class: 'group-icon' }, ['📦']),
-    createElement('span', { class: 'group-name' }, [group.name]),
-    summarySpan,
-    createElement('span', { class: 'group-count' }, [String(group.sensors.length)])
-  ]);
-
-  header.addEventListener('click', (ev) => {
-    toggleGroup(group.key);
-  });
-
-  // ✅ REPLIÉ PAR DÉFAUT (display: none)
-  const content = createElement('div', {
-    class: 'group-content',
-    style: 'display: none;'
-  }, [...group.sensors].sort(sortSensors).map(s => renderSensor(s)));
-
-  groupDiv.appendChild(header);
-  groupDiv.appendChild(content);
-
-  return groupDiv;
+function createFilterButton(filter, label, count) {
+  const btn = Button.create(
+    `${label} (${count})`,
+    () => {
+      currentFilter = filter;
+      
+      // Mettre à jour l'état actif des boutons
+      document.querySelectorAll('.capteurs-filters button').forEach(b => {
+        b.classList.remove('active');
+      });
+      
+      // Marquer le bouton comme actif
+      document.querySelectorAll('.capteurs-filters button').forEach(b => {
+        if (b.textContent.includes(label)) {
+          b.classList.add('active');
+        }
+      });
+      
+      // Re-render la liste filtrée
+      const listContainer = document.getElementById('capteurs-list');
+      if (listContainer) {
+        const dataCache = listContainer._sensorsDataCache; // Données stockées sur le container
+        if (dataCache) {
+          renderFilteredCapteurs(listContainer, dataCache, filter);
+        }
+      }
+    },
+    filter === currentFilter ? 'primary' : 'secondary'
+  );
+  
+  if (filter === currentFilter) {
+    btn.classList.add('active');
+  }
+  
+  return btn;
 }
 
+
 /**
- * Rendu d'un capteur
+ * Rendu de la liste filtrée
  */
-function renderSensor(sensor) {
-  // Badge état principal
-  let stateVariant, stateLabel;
-  if (sensor.is_reference) { stateVariant = 'warning'; stateLabel = 'Référence'; }
-  else if (sensor.selected) { stateVariant = 'success'; stateLabel = 'Sélectionné'; }
-  else { stateVariant = 'info'; stateLabel = 'Disponible'; }
-
-  const badges = [Badge.create(stateLabel, stateVariant)];
-
-  // Badge doublon
-  if (sensor.is_duplicate) {
-    badges.push(Badge.create('Dup', 'warning'));
+function renderFilteredCapteurs(container, data, filter) {
+  container.innerHTML = '';
+  
+  // Stocker les données en cache sur le container lui-même
+  container._sensorsDataCache = data;
+  
+  // Collecter tous les capteurs
+  const allSensors = [];
+  if (data.alternatives) {
+    Object.values(data.alternatives).forEach(sensors => {
+      allSensors.push(...sensors);
+    });
   }
+  
+  // Filtrer selon le filtre actif
+  let filteredSensors = allSensors;
+  
+  switch (filter) {
+    case 'available':
+      filteredSensors = allSensors.filter(s => s.state_type === 'available');
+      break;
+    case 'unavailable':
+      filteredSensors = allSensors.filter(s => s.state_type === 'unavailable');
+      break;
+    case 'problematic':
+      filteredSensors = allSensors.filter(s => 
+        ['unavailable', 'unknown', 'disabled', 'restored'].includes(s.state_type)
+      );
+      break;
+  }
+  
+  if (filteredSensors.length === 0) {
+    container.appendChild(createElement('p', { class: 'no-results' }, [
+      `Aucun capteur ${filter !== 'all' ? `de type "${filter}"` : ''}`
+    ]));
+    return;
+  }
+  
+  // Afficher les capteurs
+  filteredSensors.forEach(sensor => {
+    container.appendChild(renderSensorCard(sensor, data));
+  });
+}
 
-  const value = (sensor.value !== null && sensor.value !== undefined)
-    ? `${sensor.value} ${sensor.unit || sensor.unit_of_measurement || ''}`.trim()
-    : 'N/A';
 
-  const meta = [
-    sensor.friendly_name || 'Sans nom',
-    sensor.integration ? `Intégration: ${sensor.integration}` : null,
-    sensor.duplicate_group && sensor.is_duplicate ? `Groupe dup: ${sensor.duplicate_group}` : null,
-    Number.isFinite(sensor.reliability_score) ? `Score: ${sensor.reliability_score}` : null
-  ].filter(Boolean).join(' • ');
+/**
+ * Rendu d'une carte capteur enrichie
+ */
+function renderSensorCard(sensor, allData) {
+  const card = createElement('div', { class: `sensor-card sensor-${sensor.state_type}` });
 
-  return createElement('div', { class: 'sensor-row' }, [
-    createElement('div', { class: 'sensor-info' }, [
-      createElement('strong', {}, [sensor.entity_id]),
-      createElement('br'),
-      createElement('small', {}, [`${meta} • Valeur: ${value}`])
+  // Header avec nom et badges
+  const header = createElement('div', { class: 'sensor-header' }, [
+    createElement('strong', {}, [sensor.friendly_name || sensor.entity_id]),
+    getStateBadge(sensor),
+    sensor.is_hse_live ? Badge.create('HSE Live', 'info') : null,
+    sensor.is_duplicate ? Badge.create('Doublon', 'warning') : null
+  ].filter(Boolean));
+
+  // Entity ID
+  const entityIdDiv = createElement('div', { class: 'sensor-entity-id' }, [
+    createElement('code', {}, [sensor.entity_id])
+  ]);
+
+  // Détails (état, intégration, dernière MAJ)
+  const detailsDiv = createElement('div', { class: 'sensor-details' }, [
+    createElement('div', { class: 'detail-row' }, [
+      createElement('span', { class: 'detail-label' }, ['État:']),
+      createElement('span', { class: 'detail-value' }, [sensor.state || 'N/A'])
     ]),
-    createElement('div', { class: 'sensor-badges' }, badges)
+    createElement('div', { class: 'detail-row' }, [
+      createElement('span', { class: 'detail-label' }, ['Intégration:']),
+      createElement('span', { class: 'detail-value' }, [sensor.integration || 'Inconnue'])
+    ]),
+    createElement('div', { class: 'detail-row' }, [
+      createElement('span', { class: 'detail-label' }, ['Dernière MAJ:']),
+      createElement('span', { class: 'detail-value' }, [sensor.last_update_relative])
+    ])
   ]);
+
+  // Si HSE Live, afficher info sur la source
+  let sourceInfo = null;
+  if (sensor.is_hse_live && sensor.source_entity_id) {
+    const sourceExists = checkIfSourceExists(sensor.source_entity_id, allData);
+    sourceInfo = createElement('div', { class: `source-info ${sourceExists ? 'source-ok' : 'source-missing'}` }, [
+      createElement('span', {}, [`📡 Source: `]),
+      createElement('code', {}, [sensor.source_entity_id]),
+      sourceExists 
+        ? createElement('span', { class: 'source-status' }, [' ✅'])
+        : createElement('span', { class: 'source-status' }, [' ❌ Manquante'])
+    ]);
+  }
+
+  // Bouton diagnostiquer si problématique
+  let actionBtn = null;
+  if (['unavailable', 'unknown', 'disabled', 'restored'].includes(sensor.state_type)) {
+    actionBtn = Button.create(
+      '🔍 Diagnostiquer',
+      () => diagnoseSensor(sensor, allData),
+      'primary'
+    );
+  }
+
+  card.appendChild(header);
+  card.appendChild(entityIdDiv);
+  card.appendChild(detailsDiv);
+  if (sourceInfo) card.appendChild(sourceInfo);
+  if (actionBtn) card.appendChild(actionBtn);
+
+  return card;
 }
 
 /**
- * Toggle groupe
+ * Retourne le badge d'état approprié
  */
-function toggleGroup(groupKey) {
-  const group = document.querySelector(`[data-group="${groupKey}"]`);
-  if (!group) return;
-
-  const content = group.querySelector('.group-content');
-  const icon = group.querySelector('.expand-icon');
-
-  if (content.style.display === 'none') {
-    content.style.display = 'block';
-    icon.textContent = '▼';
-  } else {
-    content.style.display = 'none';
-    icon.textContent = '▶';
-  }
+function getStateBadge(sensor) {
+  const badges = {
+    available: Badge.create('✅ Disponible', 'success'),
+    unavailable: Badge.create('❌ Unavailable', 'error'),
+    unknown: Badge.create('⚠️ Unknown', 'warning'),
+    disabled: Badge.create('👁️ Disabled', 'secondary'),
+    restored: Badge.create('🔄 Restored', 'warning')
+  };
+  
+  return badges[sensor.state_type] || Badge.create('❓ Inconnu', 'secondary');
 }
 
 /**
- * Applique les filtres
+ * Vérifie si la source d'un capteur HSE Live existe
  */
-function applyFilters() {
-  const sensorsMap = getCachedData('sensors');
-  if (!sensorsMap) return;
+function checkIfSourceExists(sourceEntityId, allData) {
+  if (!allData.alternatives) return false;
+  
+  const allSensors = [];
+  Object.values(allData.alternatives).forEach(sensors => {
+    allSensors.push(...sensors);
+  });
+  
+  return allSensors.some(s => s.entity_id === sourceEntityId);
+}
 
-  const { groups } = groupSensorsByDuplicateGroup(sensorsMap);
-  const filtered = filterGroups(groups, currentFilters);
+/**
+ * Diagnostique un capteur problématique
+ */
+function diagnoseSensor(sensor, allData) {
+  let diagnosis = '';
+  let solution = '';
+  
+  // CAS 1 : État UNKNOWN (N/A)
+  if (sensor.state_type === 'unknown' || sensor.state === 'N/A') {
+    diagnosis = `⚠️ Le capteur "${sensor.friendly_name}" est en état UNKNOWN (N/A).`;
+    
+    if (sensor.integration === 'template') {
+      solution = `Ce capteur Template n'a pas encore reçu de valeur. Vérifiez que :
+      
+1. ✅ Le template est correctement configuré dans configuration.yaml
+2. ✅ Les capteurs sources existent et ont des valeurs
+3. ✅ La syntaxe du template est correcte ({{ states(...) }})
+4. ✅ Home Assistant a été redémarré après la configuration
 
-  const groupsContainer = document.getElementById('sensors-groups-container');
-  if (groupsContainer) {
-    groupsContainer.innerHTML = '';
-    filtered.forEach(g => groupsContainer.appendChild(renderGroup(g)));
+💡 Astuce : Allez dans Outils Dev → États pour voir si le capteur existe et a une valeur.`;
+    } else {
+      solution = `Le capteur n'a pas encore reçu de valeur depuis son intégration "${sensor.integration}".
+
+Vérifications possibles :
+1. L'appareil est-il alimenté et connecté ?
+2. L'intégration fonctionne-t-elle correctement ?
+3. Le capteur existe-t-il réellement sur l'appareil ?
+
+💡 Astuce : Allez dans Paramètres → Appareils et Services → "${sensor.integration}" pour vérifier.`;
+    }
   }
+  
+  // CAS 2 : État UNAVAILABLE
+  else if (sensor.state_type === 'unavailable') {
+    if (sensor.is_hse_live) {
+      const sourceExists = checkIfSourceExists(sensor.source_entity_id, allData);
+      if (!sourceExists) {
+        diagnosis = `❌ Le capteur HSE Live "${sensor.friendly_name}" est unavailable car le capteur source "${sensor.source_entity_id}" n'existe pas.`;
+        solution = `Créez le capteur source dans l'intégration Template ou via l'onglet Détection.
+        
+Étapes :
+1. Allez dans Configuration → Entités
+2. Cherchez "${sensor.source_entity_id}"
+3. Si absent, créez-le dans l'intégration Template
+4. Ou utilisez l'onglet Détection pour le détecter automatiquement`;
+      } else {
+        diagnosis = `⚠️ Le capteur HSE Live "${sensor.friendly_name}" est unavailable, mais le capteur source existe.`;
+        solution = `Vérifiez les logs Home Assistant pour voir les erreurs de création du capteur :
+
+1. Allez dans Paramètres → Système → Logs
+2. Cherchez "home_suivi_elec" dans les logs
+3. Vérifiez s'il y a des erreurs de création de capteur
+
+💡 Il peut y avoir un problème de configuration ou de permissions.`;
+      }
+    } else {
+      diagnosis = `❌ Le capteur "${sensor.friendly_name}" est unavailable.`;
+      solution = `Vérifiez que l'intégration d'origine "${sensor.integration}" fonctionne correctement :
+
+1. Allez dans Paramètres → Appareils et Services
+2. Cherchez l'intégration "${sensor.integration}"
+3. Vérifiez que l'appareil est en ligne
+4. Si nécessaire, supprimez et réajoutez l'intégration`;
+    }
+  }
+  
+  // CAS 3 : État DISABLED
+  else if (sensor.state_type === 'disabled') {
+    diagnosis = `👁️ Le capteur "${sensor.friendly_name}" est désactivé.`;
+    solution = `Pour le réactiver :
+
+1. Allez dans Configuration → Entités
+2. Cherchez "${sensor.entity_id}"
+3. Cliquez sur l'entité
+4. Cliquez sur "Activer"
+5. Redémarrez Home Assistant si nécessaire`;
+  }
+  
+  // CAS 4 : État RESTORED
+  else if (sensor.state_type === 'restored') {
+    diagnosis = `🔄 Le capteur "${sensor.friendly_name}" a été restauré depuis un ancien état.`;
+    solution = `Ce capteur a été restauré depuis la base de données, mais n'a pas encore reçu de nouvelle valeur.
+
+Solutions :
+1. Redémarrez Home Assistant pour réinitialiser son état
+2. Vérifiez que l'intégration "${sensor.integration}" fonctionne correctement
+3. Si le problème persiste, supprimez et recréez le capteur`;
+  }
+  
+  // CAS 5 : État inconnu (fallback)
+  else {
+    diagnosis = `❓ État du capteur "${sensor.friendly_name}" : ${sensor.state}`;
+    solution = `Cause inconnue. Consultez :
+    
+1. Les logs Home Assistant (Paramètres → Système → Logs)
+2. La documentation de l'intégration "${sensor.integration}"
+3. Le forum communautaire Home Assistant
+
+💡 Essayez de redémarrer Home Assistant et l'appareil source.`;
+  }
+  
+  // Afficher dans une alerte stylisée
+  const message = `🔍 Diagnostic de ${sensor.entity_id}\n\n${diagnosis}\n\n💡 Solution:\n${solution}`;
+  
+  alert(message);
+  
+  console.log('[capteursPanel] Diagnostic:', { sensor, diagnosis, solution });
+}
+
+
+/**
+ * Calcule les statistiques des capteurs
+ */
+function calculateStats(data) {
+  const stats = {
+    total: 0,
+    available: 0,
+    unavailable: 0,
+    unknown: 0,
+    disabled: 0,
+    restored: 0
+  };
+  
+  if (data.alternatives) {
+    Object.values(data.alternatives).forEach(sensors => {
+      sensors.forEach(sensor => {
+        stats.total++;
+        stats[sensor.state_type]++;
+      });
+    });
+  }
+  
+  return stats;
+}
+
+/**
+ * Fallback en cas d'erreur
+ */
+function renderCapteursFallback(container, error) {
+  console.warn('[capteursPanel] Fallback:', error);
+
+  const fallbackCard = Card.create('Capteurs', createElement('div', {}, [
+    createElement('p', {}, '❌ Impossible de charger les capteurs'),
+    createElement('p', {}, `Erreur: ${error.message}`)
+  ]));
+
+  container.innerHTML = '';
+  container.appendChild(fallbackCard);
+
+  const retryBtn = Button.create('Réessayer', () => loadCapteursPanel(container), 'primary');
+  container.appendChild(retryBtn);
+
+  showToast('Erreur de chargement des capteurs', 'error');
 }

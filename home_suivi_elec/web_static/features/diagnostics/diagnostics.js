@@ -11,6 +11,9 @@ import { loadCapteursPanel } from './panels/capteursPanel.js';
 import { loadIntegrationsPanel } from './panels/integrationsPanel.js';
 import { loadHealthPanel, cleanupHealthPanel } from './panels/healthPanel.js';
 import { showToast } from '../../shared/uiToast.js';
+import { loadGroupsPanel } from './panels/groupsPanel.js';
+import { loadAlertsPanel } from './panels/alertsPanel.js';
+import { loadOverviewPanel } from './panels/overviewPanel.js';
 
 console.info('[diagnostics] Module diagnostics Phase 3 chargé');
 
@@ -35,7 +38,7 @@ export async function loadDiagnostics() {
     initSubTabHandlers();
 
     // 3. Charger le premier sous-onglet (capteurs par défaut)
-    await switchSubTab('capteurs');
+    await switchSubTab('overview');
 
     console.log('✅ [diagnostics] Diagnostics initialisé');
 
@@ -80,13 +83,22 @@ async function switchSubTab(tabName) {
     return;
   }
 
+  // ✅ AJOUT : Nettoyer l'auto-refresh du healthPanel avant de changer d'onglet
+  cleanupHealthPanel();
+
   setActiveSubTab(tabName);
 
-  // ✅ Utiliser renderLoader au lieu de innerHTML
-  renderLoader(contentContainer, `Chargement ${tabName}...`);
+    // ✅ Utiliser renderLoader au lieu de innerHTML
+    renderLoader(contentContainer, `Chargement ${tabName}...`);
+
+  // AVANT tous les autres onglets, ajoutez :
 
   try {
     switch (tabName) {
+      case 'overview':
+        await loadOverviewPanel(contentContainer);
+        break;
+
       case 'capteurs':
         await loadCapteursPanel(contentContainer);
         break;
@@ -97,6 +109,15 @@ async function switchSubTab(tabName) {
 
       case 'health':
         await loadHealthPanel(contentContainer);
+        break;
+        
+      // ✅ NOUVEAUX CAS
+      case 'groups':
+        await loadGroupsPanel(contentContainer);
+        break;
+
+      case 'alerts':
+        await loadAlertsPanel(contentContainer);
         break;
 
       default:

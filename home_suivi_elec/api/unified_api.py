@@ -8,6 +8,7 @@ from homeassistant.core import HomeAssistant
 from ..export import ExportService
 from ..cache_manager import get_cache_manager
 from ..calculation_engine import CalculationEngine, PricingProfile
+from ..diagnostics_engine import DiagnosticsEngine
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,10 +62,12 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
                 return await self._handle_cache_stats()
             elif resource == "summary_metrics":
                 return await self._handle_summary_metrics(request)
+            elif resource == "deep_diagnostics":
+                return await self._handle_deep_diagnostics()
             else:
                 return self._success({
                     "message": f"API Unifiée opérationnelle - resource: {resource}",
-                    "available_endpoints": ["sensors", "data", "diagnostics", "config", "ui", "get_sensors_health", "get_integrations_status", "get_logs","sensor_mapping","get_backend_health","get_groups","migration","cache_stats","summary_metrics"],
+                    "available_endpoints": ["sensors", "data", "diagnostics", "config", "ui", "get_sensors_health", "get_integrations_status", "get_logs","sensor_mapping","get_backend_health","get_groups","migration","cache_stats","summary_metrics", "deep_diagnostics"],
                     "version": "unified-v1.0.42-final",
                     "status": "connected_to_backend"
                 })
@@ -760,7 +763,6 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
             _LOGGER.exception(f"Erreur _handle_migration: {e}")
             return self._error(500, f"Erreur migration: {e}")
 
-
     async def _handle_cache_stats(self):
         """Endpoint /cache/stats - Statistiques du cache"""
         try:
@@ -777,7 +779,6 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception(f"Erreur _handle_cache_stats: {e}")
             return self._error(500, f"Erreur stats cache: {e}")
-
 
     async def _handle_groups(self):
         try:
@@ -811,7 +812,6 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur _handle_groups: %s", e)
             return self._error(500, f"Erreur chargement groupes: {e}")
-
 
     async def _handle_summary_metrics(self, request):
         """Endpoint /summary_metrics - métriques internal/external/delta avec cache."""
@@ -872,3 +872,27 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("[SUMMARY-METRICS] Erreur: %s", e)
             return self._error(500, f"Erreur summary metrics: {e}")
+
+    async def _handle_deep_diagnostics(self):
+        """
+        Diagnostic approfondi du système
+        Analyse complète : capteurs, relations, backend, config
+        
+        Returns:
+            Response JSON avec diagnostic complet
+        """
+        try:            
+            # Instancier le moteur
+            engine = DiagnosticsEngine(self.hass)
+            
+            # Lancer le diagnostic
+            results = await engine.run_full_diagnostics()
+            
+            return self._success({
+                **results,
+                "resource": "deep_diagnostics"
+            })
+            
+        except Exception as e:
+            _LOGGER.error(f"❌ Erreur deep_diagnostics: {e}", exc_info=True)
+            return self._error(500, str(e))

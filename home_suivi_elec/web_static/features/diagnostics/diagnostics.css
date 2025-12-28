@@ -1,16 +1,51 @@
 /* ════════════════════════════════════════════════════════════════════════════
 🔧 DIAGNOSTICS - STYLES DÉDIÉS
-Compatible avec style.css et style.hse.themes.css
-Version finale - 2025-12-12
+Compatible avec style.css et style.hse.themes.css (NE PAS MODIFIER)
+Refactor/cleanup + Score Hero isolé
 ════════════════════════════════════════════════════════════════════════════ */
 
-/* === LAYOUT GÉNÉRAL === */
+/* ==========================================================================
+   BASE / LAYOUT
+   ========================================================================== */
+
 .diagnostics-content {
   padding: 0;
   width: 100%;
 }
 
-/* === STATS BADGES === */
+/* États */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 16px;
+}
+
+.loading-state .spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--hse-border);
+  border-top-color: var(--hse-accent);
+  border-radius: 50%;
+  animation: hseSpin 0.8s linear infinite;
+}
+
+@keyframes hseSpin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: var(--hse-text-muted);
+  font-size: 0.9em;
+}
+
+/* ==========================================================================
+   CAPTEURS (liste/groupes)
+   ========================================================================== */
+
+/* Stats badges */
 .capteurs-stats {
   display: flex;
   gap: 12px;
@@ -18,7 +53,7 @@ Version finale - 2025-12-12
   flex-wrap: wrap;
 }
 
-/* === FILTRES === */
+/* Filtres */
 .filters {
   margin-bottom: 20px;
 }
@@ -40,7 +75,7 @@ Version finale - 2025-12-12
   box-shadow: 0 0 0 3px var(--hse-accent-soft);
 }
 
-/* === CONTENEUR DE LISTE SCROLLABLE - CRITIQUE === */
+/* Conteneur scrollable (critique) */
 .hse-diagnostics-sensors-list {
   max-height: 60vh !important;
   overflow-y: auto !important;
@@ -49,14 +84,14 @@ Version finale - 2025-12-12
   margin-top: 16px;
 }
 
-/* === LISTE DE GROUPES === */
+/* Liste des groupes */
 .sensors-groups {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* === GROUPES === */
+/* Groupe */
 .sensor-group {
   background: var(--hse-surface);
   border: 1px solid var(--hse-border);
@@ -65,7 +100,7 @@ Version finale - 2025-12-12
   transition: box-shadow 0.2s ease;
 }
 
-/* Fond alterné pour meilleure lisibilité */
+/* Fond alterné */
 .sensor-group:nth-child(even) {
   background: var(--hse-surface-muted);
 }
@@ -74,7 +109,7 @@ Version finale - 2025-12-12
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* === HEADER GROUPE === */
+/* Header groupe */
 .group-header {
   display: flex;
   align-items: center;
@@ -119,7 +154,6 @@ Version finale - 2025-12-12
   text-align: center;
 }
 
-/* Mini-résumé dans le header */
 .group-summary {
   font-size: 0.85em;
   color: var(--hse-text-muted);
@@ -135,7 +169,7 @@ Version finale - 2025-12-12
   font-weight: 700;
 }
 
-/* === CONTENU GROUPE === */
+/* Contenu groupe */
 .group-content {
   padding: 8px 16px 16px 16px;
   display: flex;
@@ -143,7 +177,7 @@ Version finale - 2025-12-12
   gap: 8px;
 }
 
-/* === LIGNES CAPTEUR === */
+/* Ligne capteur */
 .sensor-row {
   display: flex;
   justify-content: space-between;
@@ -190,7 +224,7 @@ Version finale - 2025-12-12
   flex-shrink: 0;
 }
 
-/* === RESPONSIVE === */
+/* Responsive capteurs (liste/groupes) */
 @media (max-width: 768px) {
   .hse-diagnostics-sensors-list {
     max-height: 50vh !important;
@@ -218,30 +252,912 @@ Version finale - 2025-12-12
   }
 }
 
-/* === ÉTATS === */
-.loading-state {
+/* ==========================================================================
+   GROUPS PANEL - Groupes & Relations
+   ========================================================================== */
+
+.groups-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.groups-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.relations-section h3 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.no-parents {
+  padding: 2rem;
+  text-align: center;
+  background: var(--warning-bg, #fff3cd);
+  border-radius: 8px;
+  color: var(--warning-text, #856404);
+}
+
+/* Parent cards */
+.parent-group {
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: var(--card-bg, #ffffff);
+}
+
+.parent-group[open] {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.parent-header {
+  padding: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--surface-bg, #f8f9fa);
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.parent-header:hover {
+  background: var(--surface-hover, #e9ecef);
+}
+
+.parent-icon {
+  font-size: 1.5rem;
+}
+
+.entity-id-small {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #6c757d);
+  background: var(--code-bg, #f1f3f5);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.no-children {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Children list */
+.children-list {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--children-bg, #f8f9fa);
+}
+
+.child-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--card-bg, #ffffff);
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.child-icon {
+  font-size: 1.2rem;
+}
+
+.child-info {
+  flex: 1;
+}
+
+.child-info strong {
+  color: var(--text-primary);
+}
+
+.child-info code {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Orphans section */
+.orphans-section {
+  padding: 1.5rem;
+  background: var(--warning-bg, #fff3cd);
+  border: 2px solid var(--warning-border, #ffc107);
+  border-radius: 8px;
+}
+
+.orphans-section h3 {
+  margin-bottom: 0.5rem;
+  color: var(--warning-text, #856404);
+}
+
+.orphans-section p {
+  margin-bottom: 1rem;
+  color: var(--warning-text);
+}
+
+.orphans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.orphan-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--card-bg, #ffffff);
+  border-radius: 6px;
+  border: 1px solid var(--warning-border, #ffc107);
+}
+
+.orphan-icon {
+  font-size: 1.2rem;
+}
+
+.orphan-info {
+  flex: 1;
+}
+
+.orphan-info code {
+  font-weight: 600;
+  color: var(--danger-text, #dc3545);
+}
+
+.orphan-info small {
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   ALERTS PANEL - Alertes & Recommandations
+   ========================================================================== */
+
+.no-alerts {
+  padding: 3rem;
+  text-align: center;
+}
+
+.success-state {
+  background: var(--success-bg, #d4edda);
+  border-radius: 8px;
+}
+
+.success-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.no-alerts h3 {
+  color: var(--success-text, #155724);
+  margin-bottom: 0.5rem;
+}
+
+.no-alerts p {
+  color: var(--success-text);
+}
+
+.alerts-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.alerts-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Alert cards */
+.alert-card {
+  padding: 1.25rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: var(--card-bg, #ffffff);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.alert-critical {
+  border-left-color: var(--danger, #dc3545);
+  background: var(--danger-bg, #f8d7da);
+}
+
+.alert-error {
+  border-left-color: var(--danger, #dc3545);
+  background: var(--danger-bg, #f8d7da);
+}
+
+.alert-warning {
+  border-left-color: var(--warning, #ffc107);
+  background: var(--warning-bg, #fff3cd);
+}
+
+.alert-info {
+  border-left-color: var(--info, #17a2b8);
+  background: var(--info-bg, #d1ecf1);
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.alert-icon {
+  font-size: 1.5rem;
+}
+
+.alert-header strong {
+  flex: 1;
+  font-size: 1.1rem;
+}
+
+.alert-description {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.alert-details {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.alert-details small {
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.alert-card button {
+  margin-top: 0.75rem;
+}
+
+/* Responsive (groups + alerts) */
+@media (max-width: 768px) {
+  .parent-header,
+  .child-row,
+  .orphan-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .groups-stats,
+  .alerts-stats {
+    flex-direction: column;
+  }
+
+  .entity-id-small {
+    display: block;
+    margin-top: 0.5rem;
+  }
+}
+
+/* ==========================================================================
+   CAPTEURS PANEL ENRICHI (cartes)
+   ========================================================================== */
+
+.capteurs-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.capteurs-filters button.active {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.capteurs-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.capteurs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.no-results {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Carte capteur */
+.sensor-card {
+  padding: 1.25rem;
+  border-radius: 8px;
+  background: var(--card-bg, #ffffff);
+  border: 2px solid;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.sensor-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sensor-available { border-color: var(--success, #28a745); }
+
+.sensor-unavailable {
+  border-color: var(--danger, #dc3545);
+  background: var(--danger-bg, #f8d7da);
+}
+
+.sensor-unknown {
+  border-color: var(--warning, #ffc107);
+  background: var(--warning-bg, #fff3cd);
+}
+
+.sensor-disabled {
+  border-color: var(--secondary, #6c757d);
+  background: var(--secondary-bg, #f8f9fa);
+  opacity: 0.7;
+}
+
+.sensor-restored {
+  border-color: var(--warning, #ffc107);
+  background: var(--warning-bg, #fff3cd);
+}
+
+.sensor-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sensor-header strong {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.sensor-entity-id { margin-bottom: 1rem; }
+
+.sensor-entity-id code {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background: var(--code-bg, #f1f3f5);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.sensor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.detail-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 120px;
+}
+
+.detail-value {
+  color: var(--text-primary);
+}
+
+.source-info {
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.source-ok {
+  background: var(--success-bg, #d4edda);
+  border: 1px solid var(--success, #28a745);
+}
+
+.source-missing {
+  background: var(--danger-bg, #f8d7da);
+  border: 1px solid var(--danger, #dc3545);
+}
+
+.source-status { font-weight: 600; }
+
+.sensor-card button { margin-top: 0.5rem; }
+
+@media (max-width: 768px) {
+  .sensor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .capteurs-stats,
+  .capteurs-filters {
+    flex-direction: column;
+  }
+
+  .detail-label { min-width: auto; }
+
+  .detail-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+/* ==========================================================================
+   VUE D'ENSEMBLE PANEL
+   ========================================================================== */
+
+/* Grille principale */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==========================================================================
+   VUE D'ENSEMBLE - SCORE HERO
+   Dépend du wrapper interne : .hse-score-hero
+   ========================================================================== */
+
+/* Reset local (pas global) */
+.hse-score-hero .score-number {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+/* Fallback si :has n'est pas supporté : on laisse le padding standard */
+@supports selector(:has(*)) {
+  .card .card-body:has(.hse-score-hero) {
+    padding: 0 !important;
+  }
+}
+
+/* HERO */
+.hse-score-hero {
+  position: relative;
+  border-radius: 18px;
+  padding: 2.2rem;
+  overflow: hidden;
+  color: #ffffff;
+
+  background: linear-gradient(135deg, #5b7cfa 0%, #7c3aed 55%, #a855f7 100%) !important;
+  box-shadow:
+    0 18px 55px rgba(91, 124, 250, 0.30),
+    0 8px 18px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Glow/texture */
+.hse-score-hero::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.20), transparent 45%),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.12), transparent 50%),
+    radial-gradient(circle at 40% 90%, rgba(0,0,0,0.15), transparent 55%);
+  pointer-events: none;
+  transform: rotate(8deg);
+}
+
+.hse-score-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.00));
+  pointer-events: none;
+}
+
+/* Assurer que le contenu reste au-dessus du glow */
+.hse-score-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hse-score-hero .score-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.8rem;
+}
+
+/* Layout cercle + grade */
+.hse-score-hero .score-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.6rem;
+  margin-top: 0.4rem;
+}
+
+/* Cercle */
+.hse-score-hero .score-value {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.98);
+  border: 6px solid rgba(255,255,255,0.95);
+  box-shadow:
+    0 20px 60px rgba(15, 23, 42, 0.25),
+    inset 0 1px 0 rgba(255,255,255,0.65);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
-  gap: 16px;
 }
 
-.loading-state .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--hse-border);
-  border-top-color: var(--hse-accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.hse-score-hero .score-number {
+  font-size: 5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  transform: translateY(-2px);
+  color: #1e293b !important;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.hse-score-hero .score-total {
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+  color: #64748b !important;
 }
 
-.loading-state p {
+/* Grade */
+.hse-score-hero .score-grade {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.hse-score-hero .grade-emoji {
+  font-size: 3.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 10px 18px rgba(15,23,42,0.25));
+  transform: translateY(-4px);
+}
+
+.hse-score-hero .grade-letter {
+  font-size: 1.15rem;
+  font-weight: 600;
+  opacity: 0.95;
+  color: #ffffff !important;
+}
+
+/* Description */
+.hse-score-hero .score-description {
+  margin: 1.8rem 0 0 0;
+  padding-top: 1rem;
+  width: min(720px, 100%);
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  color: #ffffff !important;
+  border-top: 1px solid rgba(255,255,255,0.18);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hse-score-hero {
+    padding: 1.6rem;
+  }
+
+  .hse-score-hero .score-display {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .hse-score-hero .score-grade {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hse-score-hero .score-value {
+    width: 160px;
+    height: 160px;
+  }
+
+  .hse-score-hero .score-number {
+    font-size: 4.6rem;
+  }
+
+  .hse-score-hero .grade-emoji {
+    font-size: 3rem;
+  }
+}
+/* Score card: full width dans la grille */
+.hse-score-card {
+  grid-column: 1 / -1;
+}
+
+/* Score hero: supprimer le padding de la card-body pour un rendu full-bleed */
+.hse-score-card .card-body {
+  padding: 0 !important;
+}
+
+/* (Optionnel) si un header existe encore, on le masque */
+.hse-score-card .card-header {
+  display: none !important;
+}
+/* ==========================================================================
+   VUE D’ENSEMBLE - HARMONISATION THEME (sans modifier style.hse.themes.css)
+   ========================================================================== */
+
+/* Les cards de la vue d’ensemble : un style plus “HSE” */
+.overview-grid .card {
+  border-radius: var(--hse-radius-lg);
+  border: 1px solid var(--hse-border);
+  box-shadow: var(--hse-shadow-md);
+  background: var(--hse-surface);
+}
+
+/* Titres de cards plus propres */
+.overview-grid .card h3,
+.overview-grid .card h4 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   Composants (liste) : refaire le layout “chip/badge” propre
+   -------------------------------------------------------------------------- */
+
+.components-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.component-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 14px;
+  border-radius: 12px;
+
+  background: var(--hse-surface-elevated);
+  border: 1px solid var(--hse-border-soft);
+  box-shadow: var(--hse-shadow-sm);
+
+  transition: transform var(--hse-transition-fast),
+              box-shadow var(--hse-transition-fast),
+              border-color var(--hse-transition-fast);
+}
+
+.component-item:hover {
+  transform: translateY(-1px);
+  border-color: var(--hse-border);
+  box-shadow: var(--hse-shadow-md);
+}
+
+.component-info strong {
+  color: var(--hse-text-main);
+  font-weight: 700;
+}
+
+.component-details {
   color: var(--hse-text-muted);
   font-size: 0.9em;
+}
+
+/* Badge OK/ERREUR/ATTENTION : si vous avez déjà .badge, on le réutilise */
+.component-item .badge,
+.component-item .status-badge {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 0.75em;
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   Alertes : plus modernes, cohérentes avec les variables HSE
+   -------------------------------------------------------------------------- */
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.alert-item,
+.alert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 12px 14px;
+  border-radius: 12px;
+
+  background: var(--hse-surface-elevated);
+  border: 1px solid var(--hse-border-soft);
+  box-shadow: var(--hse-shadow-sm);
+}
+
+/* On garde vos classes existantes mais en basant sur var HSE */
+.alert-critical {
+  background: var(--hse-error-soft);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: var(--hse-text-main);
+}
+
+.alert-error {
+  background: var(--hse-error-soft);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--hse-text-main);
+}
+
+.alert-warning {
+  background: var(--hse-warning-soft);
+  border-color: rgba(245, 158, 11, 0.30);
+  color: var(--hse-text-main);
+}
+
+.alert-info {
+  background: var(--hse-accent-soft);
+  border-color: rgba(59, 130, 246, 0.28);
+  color: var(--hse-text-main);
+}
+
+.alert-icon {
+  font-size: 1.1rem;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Recommandations : mêmes cartes que alertes
+   -------------------------------------------------------------------------- */
+
+.recommendations-list .alert-card,
+.recommendations-list .alert-item {
+  border-radius: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive : Composants en colonne
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .component-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+/* ==========================================================================
+   HSE FINAL POLISH (à mettre en TOUT fin de fichier)
+   ========================================================================== */
+
+/* 1) Fallbacks sûrs (si un thème ne définit pas certaines vars) */
+.overview-grid .card {
+  border-radius: var(--hse-radius-lg, 14px);
+  border: 1px solid var(--hse-border, rgba(148,163,184,0.35));
+  box-shadow: var(--hse-shadow-md, 0 10px 25px rgba(15,23,42,0.08));
+  background: var(--hse-surface, #ffffff);
+  color: var(--hse-text-main, #0f172a);
+}
+
+/* 2) Groupes & Relations : bascule sur --hse-* (au lieu de --text-primary/--card-bg/...) */
+.relations-section h3 {
+  color: var(--hse-text-main, #0f172a);
+}
+
+.parent-group,
+.child-row,
+.orphan-row {
+  background: var(--hse-surface, #ffffff);
+  border: 1px solid var(--hse-border, rgba(148,163,184,0.35));
+  border-radius: 12px;
+  box-shadow: var(--hse-shadow-sm, 0 6px 16px rgba(15,23,42,0.06));
+}
+
+.parent-header {
+  background: var(--hse-surface-elevated, rgba(148,163,184,0.10));
+  border-radius: 12px;
+}
+
+.parent-header:hover {
+  background: var(--hse-accent-soft, rgba(59,130,246,0.12));
+}
+
+.entity-id-small {
+  color: var(--hse-text-muted, #64748b);
+  background: var(--hse-surface-elevated, rgba(148,163,184,0.10));
+  border: 1px solid var(--hse-border-soft, rgba(148,163,184,0.25));
+}
+
+.children-list {
+  background: var(--hse-surface-muted, rgba(148,163,184,0.08));
+  border-radius: 12px;
+  border: 1px dashed var(--hse-border-soft, rgba(148,163,184,0.25));
+}
+
+/* Zones warning (orphans / no-parents) harmonisées */
+.no-parents,
+.orphans-section {
+  background: var(--hse-warning-soft, rgba(245,158,11,0.12));
+  border: 1px solid rgba(245,158,11,0.35);
+  color: var(--hse-text-main, #0f172a);
+  border-radius: 12px;
+}
+
+/* 3) Alertes/Recommandations : cohérence + fallbacks */
+.alert-card,
+.alert-item {
+  background: var(--hse-surface-elevated, rgba(148,163,184,0.10));
+  border: 1px solid var(--hse-border-soft, rgba(148,163,184,0.25));
+  box-shadow: var(--hse-shadow-sm, 0 6px 16px rgba(15,23,42,0.06));
+  border-radius: 12px;
+}
+
+/* On garde l’idée de “barre à gauche” même si c’est une .alert-item */
+.alert-card,
+.alert-item {
+  border-left: 4px solid rgba(148,163,184,0.35);
+}
+
+.alert-critical,
+.alert-error {
+  background: var(--hse-error-soft, rgba(239,68,68,0.12));
+  border-left-color: rgba(239,68,68,0.65);
+}
+
+.alert-warning {
+  background: var(--hse-warning-soft, rgba(245,158,11,0.12));
+  border-left-color: rgba(245,158,11,0.65);
+}
+
+.alert-info {
+  background: var(--hse-accent-soft, rgba(59,130,246,0.12));
+  border-left-color: rgba(59,130,246,0.65);
+}
+
+.alert-description,
+.alert-details small {
+  color: var(--hse-text-main, #0f172a);
+}
+
+/* 4) Sécuriser le “full-bleed” du hero SANS :has() */
+.hse-score-card .card-body {
+  padding: 0 !important;
 }
