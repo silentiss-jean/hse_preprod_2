@@ -14,6 +14,32 @@ import { showToast } from '../../../shared/uiToast.js';
 console.info('[hiddenSensorsPanel] Module chargé');
 
 /**
+ * Active un capteur désactivé via l'API HSE
+ */
+async function enableSensorAction(entity_id) {
+  try {
+    const response = await fetch('/api/home_suivi_elec/config/enable_sensor', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({entity_id})
+    });
+    
+    const result = await response.json();
+    
+    if (result.error === false) {
+      showToast(`✅ ${entity_id} activé ! Rechargement dans 2s...`, 'success');
+      setTimeout(() => location.reload(), 2000);
+    } else {
+      showToast(`❌ ${result.error || 'Erreur inconnue'}`, 'error');
+    }
+  } catch (error) {
+    console.error('[enableSensorAction] Erreur:', error);
+    showToast(`❌ Erreur réseau: ${error.message}`, 'error');
+  }
+}
+
+
+/**
  * Point d'entrée principal
  */
 export async function loadHiddenSensorsPanel(container) {
@@ -244,8 +270,9 @@ function renderSensorItem(sensor, showEnableButton) {
 
   const actions = [];
   if (showEnableButton) {
+    // ✅ CHANGEMENT : Utiliser enableSensorAction
     actions.push(
-      Button.create('Activer', () => openHAEntityRegistry(sensor.entity_id), 'primary')
+      Button.create('Activer', () => enableSensorAction(sensor.entity_id), 'primary')
     );
   }
   actions.push(
@@ -268,6 +295,7 @@ function renderSensorItem(sensor, showEnableButton) {
 
   return item;
 }
+
 
 /**
  * Ouvrir l'entité dans HA

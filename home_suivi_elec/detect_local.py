@@ -723,14 +723,12 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         "missing_unit": [],
         "missing_device_class": [],
         "unavailable": [],
-        "suspicious_names": [],  # ← NOUVEAU
+        "suspicious_names": [],
         "inactive_integrations": [],
     }
     
-    # Compteur par intégration (actifs vs total)
     integration_stats = {}
     
-    # Mots-clés suspects dans le nom (indiquent capteur power/energy)
     suspicious_keywords = [
         "power", "energy", "puissance", "consommation", "watt", 
         "kwh", "current", "courant", "voltage", "tension",
@@ -741,19 +739,29 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         if entry.domain != "sensor":
             continue
         
+        # ✅ CHANGEMENT 1 : Gérer les entités désactivées
         state = hass.states.get(entry.entity_id)
-        if not state:
+        
+        # Si désactivé, utiliser entry.original_*
+        if entry.disabled:
+            device_class = str(entry.original_device_class or "").lower().strip()
+            unit = str(entry.unit_of_measurement or "").lower().strip()
+            friendly_name = entry.original_name or entry.name or entry.entity_id
+        elif state:
+            attrs = state.attributes
+            device_class = str(attrs.get("device_class", "")).lower().strip()
+            unit = str(attrs.get("unit_of_measurement", "")).lower().strip()
+            friendly_name = str(attrs.get("friendly_name", entry.entity_id))
+        else:
+            # Ni désactivé ni avec state (cas rare)
             continue
         
-        attrs = state.attributes
-        device_class = str(attrs.get("device_class", "")).lower().strip()
-        unit = str(attrs.get("unit_of_measurement", "")).lower().strip()
-        friendly_name = str(attrs.get("friendly_name", entry.entity_id)).lower()
         entity_id_lower = entry.entity_id.lower()
+        friendly_name_lower = friendly_name.lower()
         
         # Vérifier si le nom suggère power/energy
         has_suspicious_name = any(
-            keyword in friendly_name or keyword in entity_id_lower
+            keyword in friendly_name_lower or keyword in entity_id_lower
             for keyword in suspicious_keywords
         )
         
@@ -761,7 +769,7 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         is_energy_related = (
             device_class in ("power", "energy", "current", "voltage") or
             any(u in unit for u in ["w", "wh", "kwh", "kw", "a", "v"]) or
-            has_suspicious_name  # ← AJOUT
+            has_suspicious_name
         )
         
         if not is_energy_related:
@@ -775,15 +783,15 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         
         integration_stats[integration]["total"] += 1
         
-        # Capteur désactivé ?
+        # ✅ CHANGEMENT 2 : Traiter les capteurs désactivés
         if entry.disabled:
             sensor_info = {
                 "entity_id": entry.entity_id,
-                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "friendly_name": friendly_name,
                 "integration": integration,
                 "device_class": device_class or "missing",
                 "unit": unit or "missing",
-                "disabled_by": entry.disabled_by,
+                "disabled_by": str(entry.disabled_by),
                 "reason": f"Désactivé par {entry.disabled_by}",
             }
             
@@ -795,14 +803,17 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
             integration_stats[integration]["hidden"] += 1
             continue
         
-        # Capteur actif mais problématique
+        # ✅ Pour les capteurs actifs, vérifier problèmes
+        if not state:
+            continue
+            
         integration_stats[integration]["active"] += 1
         
-        # ✅ NOUVEAU : Nom suspect mais attributs manquants
+        # Nom suspect mais attributs manquants
         if has_suspicious_name and not device_class and not unit:
             hidden_sensors["suspicious_names"].append({
                 "entity_id": entry.entity_id,
-                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "friendly_name": friendly_name,
                 "integration": integration,
                 "state": state.state,
                 "reason": "Nom suggère power/energy mais device_class et unit_of_measurement manquants",
@@ -813,7 +824,7 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         elif device_class in ("power", "energy") and not unit:
             hidden_sensors["missing_unit"].append({
                 "entity_id": entry.entity_id,
-                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "friendly_name": friendly_name,
                 "integration": integration,
                 "device_class": device_class,
                 "state": state.state,
@@ -824,7 +835,7 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         elif unit in ("w", "kw", "kwh", "wh") and not device_class:
             hidden_sensors["missing_device_class"].append({
                 "entity_id": entry.entity_id,
-                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "friendly_name": friendly_name,
                 "integration": integration,
                 "unit": unit,
                 "state": state.state,
@@ -835,7 +846,7 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         elif state.state == "unavailable":
             hidden_sensors["unavailable"].append({
                 "entity_id": entry.entity_id,
-                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "friendly_name": friendly_name,
                 "integration": integration,
                 "device_class": device_class or "unknown",
                 "unit": unit or "unknown",
@@ -858,7 +869,7 @@ async def detect_hidden_sensors(hass) -> Dict[str, Any]:
         "total_hidden": sum(len(v) for k, v in hidden_sensors.items() if k != "inactive_integrations"),
         "disabled_by_user_count": len(hidden_sensors["disabled_by_user"]),
         "disabled_by_integration_count": len(hidden_sensors["disabled_by_integration"]),
-        "suspicious_names_count": len(hidden_sensors["suspicious_names"]),  # ← NOUVEAU
+        "suspicious_names_count": len(hidden_sensors["suspicious_names"]),
         "missing_attributes_count": len(hidden_sensors["missing_unit"]) + len(hidden_sensors["missing_device_class"]),
         "unavailable_count": len(hidden_sensors["unavailable"]),
         "inactive_integrations_count": len(hidden_sensors["inactive_integrations"]),

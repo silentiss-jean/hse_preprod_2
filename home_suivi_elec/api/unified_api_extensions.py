@@ -65,6 +65,41 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
         "setcostha": "set_cost_ha",
     }
 
+    # ✅ AJOUT : Méthode pour activer un capteur
+    async def _enable_sensor(self, data):
+        """Active un capteur désactivé dans l'entity_registry."""
+        try:
+            entity_id = (data or {}).get("entity_id")
+            
+            if not entity_id:
+                return self._error(400, "entity_id required")
+            
+            from homeassistant.helpers import entity_registry as er
+            
+            entity_reg = er.async_get(self.hass)
+            entry = entity_reg.async_get(entity_id)
+            
+            if not entry:
+                return self._error(404, f"Entity {entity_id} not found in registry")
+            
+            if not entry.disabled:
+                return self._error(400, f"Entity {entity_id} is already enabled")
+            
+            # Activer l'entité
+            entity_reg.async_update_entity(entity_id, disabled_by=None)
+            
+            _LOGGER.info(f"✅ Entity {entity_id} enabled by user via HSE")
+            
+            return self._success({
+                "message": f"Entity {entity_id} enabled successfully. A restart or reload may be required.",
+                "entity_id": entity_id,
+                "was_disabled_by": str(entry.disabled_by),
+            })
+            
+        except Exception as e:
+            _LOGGER.exception("Erreur _enable_sensor: %s", e)
+            return self._error(500, f"Erreur activation capteur: {e}")
+
     def __init__(self, hass: HomeAssistant):
         self.hass = hass
         self.export_service = ExportService(hass)
@@ -131,6 +166,9 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
 
             if action == "calculate_summary":
                 return await self._calculate_summary_metrics(data)
+
+            if action == "enable_sensor":
+                return await self._enable_sensor(data)
 
             return self._error(404, f"Action POST inconnue: {action}")
 
@@ -945,3 +983,44 @@ class CacheInvalidateEntityView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("[cache_invalidate] Erreur: %s", e)
             return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+class EnableSensorView(HomeAssistantView):
+    """
+    POST /api/home_suivi_elec/enable_sensor
+    Active un capteur désactivé depuis le frontend.
+    """
+    
+    url = "/api/home_suivi_elec/enable_sensor"
+    name = "api:home_suivi_elec:enable_sensor"
+    requires_auth = False
+    cors_allowed = True
+    
+    def __init__(self, hass: HomeAssistant):
+        self.hass = hass
+    
+    async def post(self, request):
+        """Active un capteur désactivé."""
+        try:
+            data = await request.json()
+            entity_id = (data or {}).get("entity_id")
+            
+            if not entity_id:
+                return web.json_response(
+                    {"success": False, "error": "entity_id required"},
+                    status=400
+                )
+            
+            result = await enable_sensor_entity(self.hass, entity_id)
+            
+            if result["success"]:
+                return web.json_response({"error": False, "data": result})
+            else:
+                return web.json_response(result, status=400)
+                
+        except Exception as e:
+            _LOGGER.exception("[enable_sensor] Erreur: %s", e)
+            return web.json_response(
+                {"success": False, "error": str(e)},
+                status=500
+            )
