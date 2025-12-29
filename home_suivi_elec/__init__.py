@@ -1243,6 +1243,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.http.register_view(CacheClearView(hass))
 
     hass.http.register_view(CacheInvalidateEntityView(hass))
+    
+    hass.http.register_view(HiddenSensorsView(hass))
 
     _LOGGER.info("✅ [API] Toutes les vues REST enregistrées")
 
