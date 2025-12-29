@@ -45,8 +45,12 @@ export function renderDiagnosticsLayout() {
       <button class="subtab-btn" data-tab="alerts">
         🔔 Alertes
       </button>
-    </nav>
 
+      <button class="subtab-btn" data-tab="hidden_sensors">
+        👁️ Capteurs Cachés
+      </button>
+    </nav>
+    
     <div id="diagnostics-tab-content" class="diagnostics-content">
       <!-- Le contenu sera chargé dynamiquement -->
     </div>

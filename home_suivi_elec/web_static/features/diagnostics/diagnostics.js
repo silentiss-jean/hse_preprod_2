@@ -121,7 +121,7 @@ async function switchSubTab(tabName) {
         await loadAlertsPanel(contentContainer);
         break;
 
-      case 'Capteurs Cachés':
+      case 'hidden_sensors':
         await loadHiddenSensorsPanel(contentContainer);
         break;
 
