@@ -64,6 +64,7 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
                 return await self._handle_summary_metrics(request)
             elif resource == "deep_diagnostics":
                 return await self._handle_deep_diagnostics()
+
             else:
                 return self._success({
                     "message": f"API Unifiée opérationnelle - resource: {resource}",

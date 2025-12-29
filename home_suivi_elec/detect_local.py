@@ -698,6 +698,155 @@ async def run_detect_local(*args, **kwargs) -> List[Dict[str, Any]]:
         __write_json_sync(_CAPTEURS_FILE, capteurs_final)
         return capteurs_final
 
+async def detect_hidden_sensors(hass) -> Dict[str, Any]:
+    """
+    Détecte les capteurs power/energy désactivés ou sans unit_of_measurement.
+    Retourne une analyse complète pour aider l'utilisateur à débugger.
+    """
+    try:
+        from homeassistant.helpers import (
+            entity_registry as er,
+            device_registry as dr,
+        )
+    except ImportError:
+        return {"error": "Registry unavailable"}
+
+    entity_reg = er.async_get(hass)
+    device_reg = dr.async_get(hass)
+
+    # Récupérer toutes les intégrations power/energy connues
+    energy_platforms = __get_energy_platforms_from_registry(entity_reg, hass)
+    
+    hidden_sensors = {
+        "disabled_by_user": [],      # Désactivé manuellement par user
+        "disabled_by_integration": [], # Désactivé par l'intégration
+        "missing_unit": [],            # device_class ok mais unit manquant
+        "missing_device_class": [],    # unit ok mais device_class manquant
+        "unavailable": [],             # État "unavailable" depuis > 24h
+        "inactive_integrations": [],   # Intégrations installées sans capteurs actifs
+    }
+    
+    # Compteur par intégration (actifs vs total)
+    integration_stats = {}
+    
+    for entry in entity_reg.entities.values():
+        if entry.domain != "sensor":
+            continue
+        
+        state = hass.states.get(entry.entity_id)
+        if not state:
+            continue
+        
+        attrs = state.attributes
+        device_class = str(attrs.get("device_class", "")).lower().strip()
+        unit = str(attrs.get("unit_of_measurement", "")).lower().strip()
+        
+        # Ignorer si pas power/energy related
+        is_energy_related = (
+            device_class in ("power", "energy", "current", "voltage") or
+            any(u in unit for u in ["w", "wh", "kwh", "kw", "a", "v"])
+        )
+        
+        if not is_energy_related:
+            continue
+        
+        integration = entry.platform
+        
+        # Stats par intégration
+        if integration not in integration_stats:
+            integration_stats[integration] = {"total": 0, "active": 0, "hidden": 0}
+        
+        integration_stats[integration]["total"] += 1
+        
+        # Capteur désactivé ?
+        if entry.disabled:
+            sensor_info = {
+                "entity_id": entry.entity_id,
+                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "integration": integration,
+                "device_class": device_class or "missing",
+                "unit": unit or "missing",
+                "disabled_by": entry.disabled_by,
+                "reason": f"Désactivé par {entry.disabled_by}",
+            }
+            
+            if entry.disabled_by == "user":
+                hidden_sensors["disabled_by_user"].append(sensor_info)
+            else:
+                hidden_sensors["disabled_by_integration"].append(sensor_info)
+            
+            integration_stats[integration]["hidden"] += 1
+            continue
+        
+        # Capteur actif mais problématique
+        integration_stats[integration]["active"] += 1
+        
+        # device_class ok mais unit manquant ?
+        if device_class in ("power", "energy") and not unit:
+            hidden_sensors["missing_unit"].append({
+                "entity_id": entry.entity_id,
+                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "integration": integration,
+                "device_class": device_class,
+                "state": state.state,
+                "reason": f"device_class={device_class} mais unit_of_measurement manquant",
+            })
+        
+        # unit ok mais device_class manquant ?
+        elif unit in ("w", "kw", "kwh", "wh") and not device_class:
+            hidden_sensors["missing_device_class"].append({
+                "entity_id": entry.entity_id,
+                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "integration": integration,
+                "unit": unit,
+                "state": state.state,
+                "reason": f"unit={unit} mais device_class manquant",
+            })
+        
+        # Unavailable depuis longtemps ?
+        if state.state == "unavailable":
+            hidden_sensors["unavailable"].append({
+                "entity_id": entry.entity_id,
+                "friendly_name": attrs.get("friendly_name", entry.entity_id),
+                "integration": integration,
+                "device_class": device_class or "unknown",
+                "unit": unit or "unknown",
+                "reason": "État 'unavailable' (device peut-être déconnecté)",
+            })
+    
+    # Intégrations installées mais sans capteurs actifs
+    for platform in energy_platforms:
+        stats = integration_stats.get(platform, {"total": 0, "active": 0, "hidden": 0})
+        if stats["active"] == 0 and stats["total"] > 0:
+            hidden_sensors["inactive_integrations"].append({
+                "integration": platform,
+                "total_sensors": stats["total"],
+                "hidden_sensors": stats["hidden"],
+                "reason": f"Intégration installée avec {stats['total']} capteur(s) mais tous désactivés",
+            })
+    
+    # Résumé global
+    summary = {
+        "total_hidden": sum(len(v) for k, v in hidden_sensors.items() if k != "inactive_integrations"),
+        "disabled_by_user_count": len(hidden_sensors["disabled_by_user"]),
+        "disabled_by_integration_count": len(hidden_sensors["disabled_by_integration"]),
+        "missing_attributes_count": len(hidden_sensors["missing_unit"]) + len(hidden_sensors["missing_device_class"]),
+        "unavailable_count": len(hidden_sensors["unavailable"]),
+        "inactive_integrations_count": len(hidden_sensors["inactive_integrations"]),
+        "integrations_with_issues": [
+            {"name": k, **v} 
+            for k, v in integration_stats.items() 
+            if v["hidden"] > 0 or v["active"] == 0
+        ],
+    }
+    
+    return {
+        "success": True,
+        "summary": summary,
+        "hidden_sensors": hidden_sensors,
+        "integration_stats": integration_stats,
+    }
+
 if __name__ == "__main__":
     import asyncio
     asyncio.run(run_detect_local())

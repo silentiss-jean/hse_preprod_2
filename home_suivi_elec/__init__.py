@@ -58,6 +58,8 @@ from .sensor_name_fixer import async_setup_sensor_name_fixer, async_fix_all_long
 
 from .manage_selection_views import HSESensorsPublicView, SensorMappingView
 
+from .hidden_sensors_view import HiddenSensorsView
+
 from .api.unified_api_extensions import ValidationActionView, HomeElecUnifiedConfigAPIView, HomeElecMigrationHelpersView, CacheClearView, CacheInvalidateEntityView
 
 # ✅ PHASE 2.7: Import StorageManager et migration
@@ -1202,140 +1204,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
                 return self.json({"success": False, "error": str(e)}, status_code=500)
 
-    class DiagnosticGroupsView(HomeAssistantView):
-
-        """GET /api/home_suivi_elec/diagnostic_groups - Regroupement parent→enfants + orphelins"""
-
-        url = "/api/home_suivi_elec/diagnostic_groups"
-
-        name = "api:home_suivi_elec:diagnostic_groups"
-
-        requires_auth = False
-
-        cors_allowed = True
-
-        def __init__(self, hass: HomeAssistant) -> None:
-
-            self.hass = hass
-
-        async def get(self, request):
-
-            try:
-
-                states = self.hass.states.async_all("sensor")
-
-                parents: List[Dict[str, Any]] = []
-
-                children_by_parent: Dict[str, List[Dict[str, Any]]] = {}
-
-                orphans: List[Dict[str, Any]] = []
-
-                def is_parent(eid: str) -> bool:
-
-                    if not eid.startswith("sensor.hse_live_"):
-
-                        return False
-
-                    return not (eid.endswith("_h") or eid.endswith("_d") or eid.endswith("_w") or eid.endswith("_m") or eid.endswith("_y"))
-
-                def parent_key_from_child(eid: str) -> str | None:
-
-                    if not eid.startswith("sensor.hse"):
-
-                        return None
-
-                    if not (eid.endswith("_h") or eid.endswith("_d") or eid.endswith("_w") or eid.endswith("_m") or eid.endswith("_y")):
-
-                        return None
-
-                    parent_expected = eid[:-2]
-
-                    if parent_expected in children_by_parent:
-
-                        return parent_expected
-
-                    return None
-
-                for s in states:
-
-                    eid = s.entity_id
-
-                    if is_parent(eid):
-
-                        parents.append({
-
-                            "entity_id": eid,
-
-                            "state": s.state,
-
-                            "friendly_name": s.attributes.get("friendly_name", eid),
-
-                        })
-
-                        children_by_parent[eid] = []
-
-                for s in states:
-
-                    eid = s.entity_id
-
-                    if eid.startswith("sensor.hse_") and (eid.endswith("_h") or eid.endswith("_d") or eid.endswith("_w") or eid.endswith("_m") or eid.endswith("_y")):
-
-                        p = parent_key_from_child(eid)
-
-                        if p and p in children_by_parent:
-
-                            children_by_parent[p].append({
-
-                                "entity_id": eid,
-
-                                "state": s.state,
-
-                                "friendly_name": s.attributes.get("friendly_name", eid),
-
-                            })
-
-                        else:
-
-                            orphans.append({
-
-                                "entity_id": eid,
-
-                                "state": s.state,
-
-                                "friendly_name": s.attributes.get("friendly_name", eid),
-
-                            })
-
-                stats = {
-
-                    "parents": len(parents),
-
-                    "children": sum(len(v) for v in children_by_parent.values()),
-
-                    "orphans": len(orphans),
-
-                }
-
-                return self.json({
-
-                    "success": True,
-
-                    "parents": parents,
-
-                    "children_by_parent": children_by_parent,
-
-                    "orphans": orphans,
-
-                    "stats": stats,
-
-                })
-
-            except Exception as e:
-
-                _LOGGER.exception("diagnostic_groups error: %s", e)
-
-                return self.json({"success": False, "error": str(e)}, status_code=500)
-
     # Import des vues de manage_selection_views
 
     from .manage_selection_views import (
@@ -1367,8 +1235,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.http.register_view(PingView())
 
     hass.http.register_view(EntityNameRegistryView(hass))
-
-    hass.http.register_view(DiagnosticGroupsView(hass))
 
     hass.http.register_view(HomeElecMigrationHelpersView(hass))
 
@@ -1554,6 +1420,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
                     "[INIT] ⚠️ POOLS VIDES - Vérifiez la configuration !"
 
+                )
+
+            # 6.5 Activer détection continue (NOUVEAU)
+
+            _LOGGER.info("[INIT] 🔍 Activation détection continue...")
+            
+            await setup_continuous_detection(hass)
+
+            if energy_count == 0 and power_count == 0:
+            
+                _LOGGER.warning(
+            
+                    "[INIT] ⚠️ POOLS VIDES - Vérifiez la configuration !"
+            
                 )
 
         except Exception as e:
@@ -1924,3 +1804,98 @@ async def async_setup_energy_tracking(hass: HomeAssistant, entry: ConfigEntry):
         _LOGGER.exception(f"❌ Erreur calcul stats: {e}")
 
     _LOGGER.info("🔋 [PHASE 2] Energy Tracking configuré avec succès")
+
+async def setup_continuous_detection(hass: HomeAssistant):
+    """
+    Détection continue des nouvelles entités sensor.
+    Surveille les nouveaux capteurs ajoutés en temps réel (nouvelles intégrations).
+    """
+    _LOGGER.info("[DETECTION] 🔍 Activation détection continue...")
+    
+    # Set pour tracker les entity_id déjà vus
+    seen_entities = set(hass.states.async_entity_ids("sensor"))
+    
+    @callback
+    def on_state_changed(event):
+        """Callback déclenché à chaque changement d'état."""
+        try:
+            entity_id = event.data.get("entity_id")
+            
+            # Ignorer si pas un sensor
+            if not entity_id or not entity_id.startswith("sensor."):
+                return
+            
+            # Ignorer si déjà vu
+            if entity_id in seen_entities:
+                return
+            
+            seen_entities.add(entity_id)
+            
+            # Ignorer si capteur HSE (créé par l'intégration)
+            if entity_id.startswith("sensor.hse_"):
+                return
+            
+            new_state = event.data.get("new_state")
+            if not new_state:
+                return
+            
+            # Vérifier si c'est un capteur power/energy intéressant
+            attributes = new_state.attributes
+            device_class = attributes.get("device_class")
+            unit = attributes.get("unit_of_measurement")
+            
+            # Filtres basiques (éviter spam logs)
+            is_interesting = (
+                device_class in ["power", "energy", "current", "voltage"] or
+                unit in ["W", "kW", "kWh", "Wh", "A", "V"]
+            )
+            
+            if not is_interesting:
+                return
+            
+            integration = attributes.get("source", "").split(".")[-1] or "unknown"
+            friendly_name = attributes.get("friendly_name", entity_id)
+            
+            _LOGGER.info(
+                "[DETECTION] 🆕 Nouveau capteur détecté: %s (%s) - intégration: %s",
+                friendly_name,
+                entity_id,
+                integration
+            )
+            
+            # Déclencher une redétection asynchrone (après 5s pour grouper)
+            async def trigger_redetection():
+                await asyncio.sleep(5)  # Attendre autres capteurs du même device
+                _LOGGER.info("[DETECTION] 🔄 Redétection automatique lancée...")
+                try:
+                    storage_manager = hass.data.get(DOMAIN, {}).get("storage_manager")
+                    if not storage_manager:
+                        _LOGGER.error("[DETECTION] StorageManager non disponible")
+                        return
+                    
+                    # Relancer détection (met à jour le catalogue)
+                    capteurs_power = await run_detect_local(hass=hass, entry=None)
+                    if capteurs_power:
+                        await storage_manager.save_capteurs_power(capteurs_power)
+                        _LOGGER.info(
+                            "[DETECTION] ✅ Catalogue mis à jour: %s capteurs",
+                            len(capteurs_power)
+                        )
+                        
+                        # Émettre event pour notifier le frontend
+                        hass.bus.async_fire("hse_sensors_catalog_updated", {
+                            "count": len(capteurs_power),
+                            "timestamp": datetime.now().isoformat()
+                        })
+                except Exception as e:
+                    _LOGGER.exception("[DETECTION] Erreur redétection: %s", e)
+            
+            # Lancer la tâche async (ne bloque pas le callback)
+            asyncio.create_task(trigger_redetection())
+            
+        except Exception as e:
+            _LOGGER.exception("[DETECTION] Erreur callback state_changed: %s", e)
+    
+    # Enregistrer le listener
+    hass.bus.async_listen("state_changed", on_state_changed)
+    _LOGGER.info("[DETECTION] ✅ Listener state_changed enregistré")

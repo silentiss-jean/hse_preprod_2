@@ -160,27 +160,22 @@ class LivePowerSensor(RestoreEntity, SensorEntity):
         # Noms
         basename = source_entity.replace("sensor.", "")
         self._attr_name = f"HSE Live {basename}"
-        self._entity_id = f"sensor.hse_live_{basename}"
+        self._attr_entity_id = f"sensor.hse_live_{basename}"
 
         # Unique ID
         import hashlib
         hash_source = hashlib.md5(source_entity.encode()).hexdigest()[:8]
-        self._attr_unique_id = f"hse_live_power_{hash_source}"
+        self._attr_unique_id = f"hse_live_power_{source_entity}"
 
         # Attributs sensor
         self._attr_device_class = SensorDeviceClass.POWER
         self._attr_state_class = SensorStateClass.MEASUREMENT
-        self._attr_unit_of_measurement = UnitOfPower.WATT
+        self._attr_native_unit_of_measurement = UnitOfPower.WATT
         self._attr_icon = "mdi:flash"
 
         # État
         self._attr_native_value = None
         self._attr_available = True
-
-    @property
-    def entity_id(self):
-        """Entity ID."""
-        return self._entity_id
 
     @property
     def extra_state_attributes(self):
@@ -208,7 +203,7 @@ class LivePowerSensor(RestoreEntity, SensorEntity):
             self.hass, [self._source_entity], self._on_source_changed
         )
 
-        _LOGGER.debug(f"[LIVE-POWER] {self._entity_id} tracking {self._source_entity}")
+        _LOGGER.debug(f"[LIVE-POWER] {self.entity_id} tracking {self._source_entity}")
 
     @callback
     def _on_source_changed(self, event):
@@ -227,7 +222,7 @@ class LivePowerSensor(RestoreEntity, SensorEntity):
                 self._attr_available = True
             except (ValueError, TypeError):
                 _LOGGER.warning(
-                    f"[LIVE-POWER] {self._entity_id}: Valeur invalide {new_state.state}"
+                    f"[LIVE-POWER] {self.entity_id}: Valeur invalide {new_state.state}"
                 )
                 self._attr_available = False
 

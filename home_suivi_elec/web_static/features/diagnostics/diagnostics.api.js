@@ -194,3 +194,34 @@ export async function getDeepDiagnostics() {
   }
 }
 
+/**
+ * Crée automatiquement les parents manquants pour les cycles orphelins
+ * @param {Array} orphans - Liste des entity_id orphelins
+ * @returns {Promise<Object>} Résultat de la création
+ */
+export async function createMissingParents(orphans) {
+  try {
+    const response = await fetch(`${API_BASE}/create_missing_parents`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ orphans })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || 'Échec création parents');
+    }
+
+    return result;
+  } catch (error) {
+    console.error('[diagnostics.api] Erreur createMissingParents:', error);
+    throw error;
+  }
+}

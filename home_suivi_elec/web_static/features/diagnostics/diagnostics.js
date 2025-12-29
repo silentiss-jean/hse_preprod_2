@@ -14,6 +14,7 @@ import { showToast } from '../../shared/uiToast.js';
 import { loadGroupsPanel } from './panels/groupsPanel.js';
 import { loadAlertsPanel } from './panels/alertsPanel.js';
 import { loadOverviewPanel } from './panels/overviewPanel.js';
+import { loadHiddenSensorsPanel } from './panels/hiddenSensorsPanel.js';
 
 console.info('[diagnostics] Module diagnostics Phase 3 chargé');
 
@@ -118,6 +119,10 @@ async function switchSubTab(tabName) {
 
       case 'alerts':
         await loadAlertsPanel(contentContainer);
+        break;
+
+      case 'Capteurs Cachés':
+        await loadHiddenSensorsPanel(contentContainer);
         break;
 
       default:

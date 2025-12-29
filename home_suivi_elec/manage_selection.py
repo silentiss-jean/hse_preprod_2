@@ -15,6 +15,7 @@ import asyncio
 import yaml
 from functools import partial
 from typing import Any, Dict, List, Optional
+from .manage_selection_views_diagnostic_groups import DiagnosticGroupsView
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er, device_registry as dr, area_registry as ar
@@ -262,6 +263,7 @@ async def async_setup_selection_api(hass: HomeAssistant, sync_manager=None):
     hass.http.register_view(SaveUserOptionsView(hass))
     hass.http.register_view(GetUserOptionsView(hass))
     hass.http.register_view(GetSummaryView(hass))
+    hass.http.register_view(DiagnosticGroupsView(hass))
     
     # ✅ PHASE 2.6: APIs de synchronisation
     if sync_manager:

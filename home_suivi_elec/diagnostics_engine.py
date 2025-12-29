@@ -42,7 +42,7 @@ class DiagnosticsEngine:
             recommendations = self._generate_recommendations(
                 sensors_analysis,
                 relations_analysis,
-                backend_health,
+                integration_health,
                 config_analysis
             )
 
@@ -50,7 +50,7 @@ class DiagnosticsEngine:
             health_score = self._calculate_health_score(
                 sensors_analysis,
                 relations_analysis,
-                backend_health
+                integration_health
             )
 
             result = {
@@ -386,7 +386,7 @@ class DiagnosticsEngine:
         self,
         sensors: Dict,
         relations: Dict,
-        backend: Dict,
+        integration: Dict,
         config: Dict
     ) -> List[Dict[str, Any]]:
         """
@@ -397,13 +397,13 @@ class DiagnosticsEngine:
         """
         recommendations = []
 
-        # Backend down
-        if not backend["running"]:
+        # integration down
+        if not integration["running"]:
             recommendations.append({
                 "priority": 1,
-                "category": "backend",
-                "title": "⚠️ Backend non opérationnel",
-                "description": "Le backend Python n'est pas actif",
+                "category": "integration",
+                "title": "⚠️ integration non opérationnel",
+                "description": "Le integration Python n'est pas actif",
                 "action": "Redémarrez Home Assistant",
                 "auto_fixable": False
             })
@@ -438,7 +438,7 @@ class DiagnosticsEngine:
         self,
         sensors: Dict,
         relations: Dict,
-        backend: Dict
+        integration: Dict
     ) -> Dict[str, Any]:
         """
         Calcule le score de santé global
@@ -448,8 +448,8 @@ class DiagnosticsEngine:
         """
         score = 100
 
-        # Backend (30 points)
-        if not backend["running"]:
+        # integration (30 points)
+        if not integration["running"]:
             score -= 30
 
         # Capteurs (40 points)
