@@ -184,15 +184,17 @@ function renderFilteredCapteurs(container, data, filter) {
 
 
 /**
- * Rendu d'une carte capteur enrichie
+ * Rendu d'une carte capteur enrichie (repliable)
  */
 function renderSensorCard(sensor, allData) {
-  const card = createElement('div', { class: `sensor-card sensor-${sensor.state_type}` });
+  // <details> replié par défaut (pas d'attribut open)
+  const card = createElement('details', { class: `sensor-card sensor-${sensor.state_type}` });
 
-  // Header avec nom et badges
-  const header = createElement('div', { class: 'sensor-header' }, [
+  // Header compact (plié) : nom + badges + mini valeur
+  const summary = createElement('summary', { class: 'sensor-summary' }, [
     createElement('strong', {}, [sensor.friendly_name || sensor.entity_id]),
     getStateBadge(sensor),
+    createElement('span', { class: 'sensor-mini-value' }, [String(sensor.state ?? 'N/A')]),
     sensor.is_hse_live ? Badge.create('HSE Live', 'info') : null,
     sensor.is_duplicate ? Badge.create('Doublon', 'warning') : null
   ].filter(Boolean));
@@ -223,9 +225,9 @@ function renderSensorCard(sensor, allData) {
   if (sensor.is_hse_live && sensor.source_entity_id) {
     const sourceExists = checkIfSourceExists(sensor.source_entity_id, allData);
     sourceInfo = createElement('div', { class: `source-info ${sourceExists ? 'source-ok' : 'source-missing'}` }, [
-      createElement('span', {}, [`📡 Source: `]),
+      createElement('span', {}, ['📡 Source: ']),
       createElement('code', {}, [sensor.source_entity_id]),
-      sourceExists 
+      sourceExists
         ? createElement('span', { class: 'source-status' }, [' ✅'])
         : createElement('span', { class: 'source-status' }, [' ❌ Manquante'])
     ]);
@@ -241,11 +243,16 @@ function renderSensorCard(sensor, allData) {
     );
   }
 
-  card.appendChild(header);
-  card.appendChild(entityIdDiv);
-  card.appendChild(detailsDiv);
-  if (sourceInfo) card.appendChild(sourceInfo);
-  if (actionBtn) card.appendChild(actionBtn);
+  // Contenu déplié
+  const body = createElement('div', { class: 'sensor-body' }, [
+    entityIdDiv,
+    detailsDiv,
+    sourceInfo,
+    actionBtn
+  ].filter(Boolean));
+
+  card.appendChild(summary);
+  card.appendChild(body);
 
   return card;
 }

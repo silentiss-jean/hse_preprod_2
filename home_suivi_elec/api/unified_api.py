@@ -110,8 +110,10 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
                     
                     # Fusion avec état Home Assistant
                     sensor_info.update({
+                        "state": state_obj.state if state_obj else "unavailable",
                         "current_state": state_obj.state if state_obj else "unavailable",
                         "last_changed": state_obj.last_changed.isoformat() if state_obj else None,
+                        "last_updated": state_obj.last_updated.isoformat() if state_obj else None,
                         "attributes": dict(state_obj.attributes) if state_obj else {}
                     })
                     enriched_sensors.append(sensor_info)

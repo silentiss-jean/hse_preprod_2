@@ -93,14 +93,17 @@ function renderHiddenSensorsInterface(container, data) {
   const disabledByUserCard = renderDisabledSensors(data.hidden_sensors.disabled_by_user, 'Désactivés par vous');
   const missingAttributesCard = renderMissingAttributes(data.hidden_sensors);
   const unavailableCard = renderUnavailableSensors(data.hidden_sensors.unavailable);
-
+  const disabledByIntegrationCard = renderDisabledSensors(data.hidden_sensors.disabled_by_integration, 'Désactivés par intégration');
   const grid = createElement('div', { class: 'hidden-sensors-grid' }, [
     summaryCard,
     inactiveIntegrationsCard,
     disabledByUserCard,
+    disabledByIntegrationCard,
     missingAttributesCard,
     unavailableCard,
   ]);
+
+
 
   container.appendChild(grid);
 }

@@ -113,27 +113,19 @@ export async function getSensorsEnrichedData() {
  * Détermine le type d'état d'un capteur
  */
 function determineStateType(sensor) {
-  if (sensor.attributes?.restored === true) {
-    return 'restored';
-  }
-  
-  if (sensor.state === 'unavailable') {
-    return 'unavailable';
-  }
-  
-  if (sensor.state === 'unknown') {
-    return 'unknown';
-  }
-  
+  // 1) Unavailable / Unknown doivent gagner
+  if (sensor.state === 'unavailable') return 'unavailable';
+  if (sensor.state === 'unknown') return 'unknown';
+
+  // 2) Restored ensuite (info)
+  if (sensor.attributes?.restored === true) return 'restored';
+
+  // 3) Disabled (à revoir, ton test actuel est fragile)
   if (sensor.attributes?.entity_id && sensor.attributes.entity_id.includes('disabled')) {
     return 'disabled';
   }
-  
-  // Si le capteur a une valeur numérique ou un état valide
-  if (sensor.state && sensor.state !== 'unavailable' && sensor.state !== 'unknown') {
-    return 'available';
-  }
-  
+
+  if (sensor.state) return 'available';
   return 'unknown';
 }
 
