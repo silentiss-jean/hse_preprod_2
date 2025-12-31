@@ -9,11 +9,11 @@ function ensureContainer() {
   el = document.createElement("div");
   el.id = TOAST_CONTAINER_ID;
   el.style.position = "fixed";
-  el.style.zIndex = "9999";
+  el.style.zIndex = "2147483647";
   el.style.right = "16px";
-  el.style.bottom = "16px";
-  el.style.display = "flex";
-  el.style.flexDirection = "column-reverse";
+  el.style.top = "16px";
+  el.style.bottom = "";
+  el.style.flexDirection = "column";
   el.style.gap = "8px";
   document.body.appendChild(el);
   return el;
@@ -99,3 +99,6 @@ export const toast = {
   warning: (msg, opts={}) => showToast(msg, { ...opts, type: "warning" }),
   error: (msg, opts={}) => showToast(msg, { ...opts, type: "error" }),
 };
+
+// Optionnel (si tu veux aussi l'avoir en console et sans import)
+window.toast = toast;

@@ -193,7 +193,7 @@ export async function saveSelectionFromState(
       return;
     }
 
-    emit('selection:saved', selections);
+    emit("selection:saved", { selections, need_restart: json?.need_restart === true });
 
     if (typeof reloadCallback === 'function') {
       await reloadCallback();
@@ -292,7 +292,7 @@ export async function saveSelectionToBackend(contentEl, allCapteurs, reloadCallb
       return;
     }
 
-    emit('selection:saved', selections);
+    emit("selection:saved", { selections, need_restart: json?.need_restart === true });
 
     if (typeof reloadCallback === 'function') {
       await reloadCallback();

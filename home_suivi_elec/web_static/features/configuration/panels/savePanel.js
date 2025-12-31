@@ -153,6 +153,12 @@ export function initSavePanel(root = document) {
         toast.warning("Conflits détectés, vérifie la sélection");
         return;
       }
+      // NEW: respecter need_restart
+      if (selJson?.need_restart === true) {
+        toast.warning("Sélection enregistrée (redémarrage requis)");
+      } else {
+        toast.success("Sélection enregistrée (appliquée immédiatement)");
+      }
 
       // 2) Merge côté front pour ne pas effacer la référence
       const current = await fetch("/api/home_suivi_elec/get_user_options").then((r) =>
@@ -190,8 +196,8 @@ export function initSavePanel(root = document) {
       // Important: on ne touche pas aux clés de référence existantes (use_external, external_capteur, etc.)
       await saveUserOptions(merged);
 
-      emit("selection:saved", selections);
-      toast.success("Configuration enregistrée");
+      emit("selection:saved", { selections, need_restart: selJson?.need_restart === true });
+      toast.success("Options tarif enregistrées");
     } catch (err) {
       alert("Erreur sauvegarde configuration");
       console.error(err);

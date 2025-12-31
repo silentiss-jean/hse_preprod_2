@@ -50,23 +50,19 @@ DOMAIN = "home_suivi_elec"
 def _normalize(v: Optional[str]) -> str:
     return (v or "").strip().lower()
 
-
 def _compute_signature(c: Dict[str, Any]) -> str:
     name = _normalize(c.get("friendly_name") or c.get("nom"))
     area = _normalize(c.get("area") or c.get("zone"))
     return f"{name}|{area}"
 
-
 def _load_json(path: str) -> Any:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
-
 
 def _save_json(path: str, data: Any) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
-
 
 def _build_hse_energy_sensor_id(source_entity_id: str, cycle: str) -> str:
     """
@@ -93,7 +89,6 @@ def _build_hse_energy_sensor_id(source_entity_id: str, cycle: str) -> str:
         return f"sensor.hse_{base_name}_{cycle}"
     else:
         return f"sensor.hse_{base_name}_energy_{cycle}"
-
 
 def _normalize_selection_entry(
     row: Dict[str, Any],
@@ -145,7 +140,6 @@ def _normalize_selection_entry(
 
     return row
 
-
 def _normalize_selection_payload(
     raw: Dict[str, Any],
     by_id: Dict[str, Dict[str, Any]],
@@ -174,6 +168,42 @@ async def _get_cost_ha_map(hass: HomeAssistant) -> dict:
     _LOGGER.info("[COST-HA] map=%s", store)
     return store or {}
 
+def _flatten_selection(normalized: dict) -> dict:
+    """Retourne un dict {entity_id: entry} à partir du payload normalisé."""
+    out = {}
+    for _, lst in (normalized or {}).items():
+        if not isinstance(lst, list):
+            continue
+        for entry in lst:
+            eid = (entry or {}).get("entity_id")
+            if eid:
+                out[eid] = entry
+    return out
+
+def _compute_need_restart(old_norm: dict, new_norm: dict) -> bool:
+    """
+    Restart uniquement si changement 'hard' (sources / type),
+    pas si c'est juste enabled/include_in_summary.
+    """
+    old_map = _flatten_selection(old_norm)
+    new_map = _flatten_selection(new_norm)
+
+    # Ajout/suppression d'entités
+    if set(old_map.keys()) != set(new_map.keys()):
+        return True
+
+    soft_keys = {"enabled", "include_in_summary"}
+    hard_keys = {"usage_power", "usage_energy"}
+
+    for eid, new_entry in new_map.items():
+        old_entry = old_map.get(eid) or {}
+
+        # Si une clé "hard" change => restart
+        for k in hard_keys:
+            if (old_entry.get(k) != new_entry.get(k)):
+                return True
+                
+    return False
 
 class GetSensorsView(HomeAssistantView):
     url = "/api/home_suivi_elec/get_sensors"
@@ -432,6 +462,21 @@ class SaveSelectionView(HomeAssistantView):
                     out_lst.append(_normalize_selection_entry(row, cap))
                 normalized_body[integ] = out_lst
 
+            # Charger l'ancienne sélection + normaliser comme GetSelectionView
+            old_data = {}
+            storage_manager = self.hass.data.get("home_suivi_elec", {}).get("storage_manager")
+            if storage_manager:
+                old_data = await storage_manager.get_capteurs_selection()
+            elif os.path.exists(CAPTEURS_SELECTION_PATH):
+                old_data = await loop.run_in_executor(None, lambda: _load_json(CAPTEURS_SELECTION_PATH))
+
+            old_normalized = _normalize_selection_payload(old_data or {}, by_id)
+
+            # Normaliser aussi la nouvelle sélection (même format que GetSelectionView)
+            new_normalized = _normalize_selection_payload(normalized_body or {}, by_id)
+
+            need_restart = _compute_need_restart(old_normalized, new_normalized)
+
             # ✅ PHASE 2.7: Sauvegarder via StorageManager
             storage_manager = self.hass.data.get("home_suivi_elec", {}).get("storage_manager")
             if storage_manager:
@@ -443,17 +488,27 @@ class SaveSelectionView(HomeAssistantView):
                 _LOGGER.warning("[SAVE_SELECTION] Sauvegardé via fichier JSON (fallback)")
 
             selected_ids: Set[str] = set()
-            for integ, lst in (body or {}).items():
+            for integ, lst in (normalized_body or {}).items():
                 for row in lst or []:
                     if row.get("enabled") and row.get("entity_id"):
                         selected_ids.add(row["entity_id"])
 
-            return self.json({"success": True, "selected": sorted(selected_ids), "need_restart": True})
+            message = (
+                "Sélection enregistrée (appliquée immédiatement)."
+                if not need_restart
+                else "Sélection enregistrée. Recharge/redémarrage nécessaire pour appliquer le changement de source."
+            )
+
+            return self.json({
+                "success": True,
+                "selected": sorted(selected_ids),
+                "need_restart": need_restart,
+                "message": message,
+            })
 
         except Exception as e:
             _LOGGER.exception("Erreur save_selection: %s", e)
             return self.json({"success": False, "need_restart": False, "error": str(e)})
-
 
 class GetSelectionView(HomeAssistantView):
     url = "/api/home_suivi_elec/get_selection"
@@ -522,7 +577,6 @@ class GetSelectionView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur get_selection: %s", e)
             return self.json({})
-
 
 class GetConsumptionsView(HomeAssistantView):
     """✅ CORRIGÉ : Utilise les sensors HSE energy natifs."""
@@ -595,7 +649,6 @@ class GetConsumptionsView(HomeAssistantView):
             _LOGGER.exception("Erreur get_consumptions: %s", e)
             return self.json({})
 
-
 class GetInstantPowerView(HomeAssistantView):
     url = "/api/home_suivi_elec/get_instant_puissance"
     name = "api:home_suivi_elec:get_instant_puissance"
@@ -648,7 +701,6 @@ class GetInstantPowerView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur get_instant_puissance: %s", e)
             return self.json({})
-
 
 class SensorMappingView(HomeAssistantView):
     """✅ NOUVEAU : Endpoint pour récupérer le mapping des consommations par période."""
@@ -721,7 +773,6 @@ class SensorMappingView(HomeAssistantView):
                 "total_hse_sensors": 0
             })
 
-
 class GetUserConfigView(HomeAssistantView):
     url = "/api/home_suivi_elec/get_user_config"
     name = "api:home_suivi_elec:get_user_config"
@@ -750,7 +801,6 @@ class GetUserConfigView(HomeAssistantView):
             _LOGGER.exception("Erreur get_user_config: %s", e)
             return self.json({})
 
-
 class SaveUserConfigView(HomeAssistantView):
     url = "/api/home_suivi_elec/save_user_config"
     name = "api:home_suivi_elec:save_user_config"
@@ -778,7 +828,6 @@ class SaveUserConfigView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur save_user_config: %s", e)
             return self.json({"success": False})
-
 
 class GetUserOptionsView(HomeAssistantView):
     url = "/api/home_suivi_elec/get_user_options"
@@ -850,7 +899,6 @@ class GetUserOptionsView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur get_user_options: %s", e)
             return self.json({})
-
 
 class SaveUserOptionsView(HomeAssistantView):
     url = "/api/home_suivi_elec/save_user_options"
@@ -931,7 +979,6 @@ class SaveUserOptionsView(HomeAssistantView):
             _LOGGER.exception("Erreur save_user_options: %s", e)
             return self.json({"success": False})
 
-
 class GetSummaryView(HomeAssistantView):
     url = "/api/home_suivi_elec/get_summary"
     name = "api:home_suivi_elec:get_summary"
@@ -985,7 +1032,6 @@ class GetSummaryView(HomeAssistantView):
             _LOGGER.exception("Erreur get_summary: %s", e)
             return self.json({})
 
-
 class GetSyncStatusView(HomeAssistantView):
     """GET /api/home_suivi_elec/sync/status - Statut de la synchronisation."""
     url = "/api/home_suivi_elec/sync/status"
@@ -1004,7 +1050,6 @@ class GetSyncStatusView(HomeAssistantView):
             _LOGGER.exception("Erreur get_sync_status: %s", e)
             return self.json({"error": str(e)}, status_code=500)
 
-
 class ForceSyncView(HomeAssistantView):
     """POST /api/home_suivi_elec/sync/force - Force une synchronisation."""
     url = "/api/home_suivi_elec/sync/force"
@@ -1022,7 +1067,6 @@ class ForceSyncView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur force_sync: %s", e)
             return self.json({"success": False, "error": str(e)}, status_code=500)
-
 
 class AutoSelectBestSensorsView(HomeAssistantView):
     """API pour sélectionner automatiquement les meilleurs capteurs."""
@@ -1102,7 +1146,6 @@ class AutoSelectBestSensorsView(HomeAssistantView):
             _LOGGER.exception("Erreur auto_select_best_sensors: %s", e)
             return self.json({"success": False, "error": str(e)}, status_code=500)
 
-
 class GetSensorQualityScoresView(HomeAssistantView):
     """API pour obtenir les scores de qualité de tous les capteurs."""
     url = "/api/home_suivi_elec/get_sensor_quality_scores"
@@ -1155,7 +1198,6 @@ class GetSensorQualityScoresView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur get_sensor_quality_scores: %s", e)
             return self.json({"success": False, "error": str(e)}, status_code=500)
-
 
 class HSESensorsPublicView(HomeAssistantView):
     """GET /api/home_suivi_elec/lovelace_sensors - Liste tous les sensors HSE exposés."""
