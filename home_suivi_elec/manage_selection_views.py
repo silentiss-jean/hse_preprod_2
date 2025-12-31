@@ -15,11 +15,13 @@ import json
 import logging
 import asyncio
 from typing import Any, Dict, List, Set, Optional, Tuple
+from datetime import datetime
 
 from homeassistant.core import HomeAssistant
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.storage import Store
+from homeassistant.util import dt as dt_util
 
 # ✅ DEC-005: Définir les chemins directement pour éviter import circulaire
 BASE_DIR = os.path.dirname(__file__)
@@ -1223,3 +1225,236 @@ class HSESensorsPublicView(HomeAssistantView):
         except Exception as e:
             _LOGGER.error(f"Erreur HSESensorsPublicView: {e}")
             return self.json([])
+
+class GetHistoryCostsView(HomeAssistantView):
+    url = "/api/home_suivi_elec/history_costs"
+    name = "api:home_suivi_elec:history_costs"
+    requires_auth = False
+    cors_allowed = True
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        self.hass = hass
+
+    async def post(self, request):
+        try:
+            from .history_analytics import (
+                fetch_statistics_hourly_sum,
+                compute_hourly_deltas_kwh,
+                compute_costs_per_hour,
+                aggregate_period,
+                normalize_comparison,
+                compute_top_entities,
+            )
+            from .calculation_engine import PricingProfile
+
+            body = await request.json()
+            if not isinstance(body, dict):
+                return self.json({"success": False, "error": "Payload must be a JSON object"}, status_code=400)
+
+            selection_scope = body.get("selection_scope", "summary_selected")
+            focus_entity_id = body.get("focus_entity_id")
+            group_by = body.get("group_by", "hour")
+            week_anchor_day = body.get("week_anchor_day", "monday")
+            comparison_periods = body.get("comparison_periods") or {}
+            top_limit = int(body.get("top_limit", 10) or 10)
+            top_sort_by = body.get("top_sort_by", "cost_ttc") or "cost_ttc"
+
+            baseline_cfg = (comparison_periods.get("baseline") or {})
+            event_cfg = (comparison_periods.get("event") or {})
+
+            try:
+                baseline_start = dt_util.parse_datetime(baseline_cfg.get("start"))
+                baseline_end = dt_util.parse_datetime(baseline_cfg.get("end"))
+                event_start = dt_util.parse_datetime(event_cfg.get("start"))
+                event_end = dt_util.parse_datetime(event_cfg.get("end"))
+            except Exception:
+                return self.json({"success": False, "error": "Invalid datetime in comparison_periods"}, status_code=400)
+
+            if not all([baseline_start, baseline_end, event_start, event_end]):
+                return self.json({"success": False, "error": "Missing start/end in comparison_periods"}, status_code=400)
+
+            baseline_duration_s = (baseline_end - baseline_start).total_seconds()
+            event_duration_s = (event_end - event_start).total_seconds()
+
+            normalized_supported = (baseline_duration_s >= 3600 and event_duration_s >= 3600)
+
+            # 1) Déterminer la liste entity_ids
+            entity_ids: List[str] = []
+
+            if selection_scope == "summary_selected":
+                storage_manager = self.hass.data.get(DOMAIN, {}).get("storage_manager")
+                if storage_manager:
+                    selection = await storage_manager.get_capteurs_selection()
+                else:
+                    loop = asyncio.get_running_loop()
+                    selection = await loop.run_in_executor(
+                        None, lambda: _load_json(CAPTEURS_SELECTION_PATH)
+                    ) if os.path.exists(CAPTEURS_SELECTION_PATH) else {}
+
+                for _, lst in (selection or {}).items():
+                    for row in (lst or []):
+                        if not row.get("enabled"):
+                            continue
+                        # si include_in_summary existe, on le respecte
+                        if "include_in_summary" in row and not row.get("include_in_summary"):
+                            continue
+
+                        # priorité à usage_energy si présent (format normalisé)
+                        if row.get("usage_energy"):
+                            entity_ids.append(row["usage_energy"])
+                        elif row.get("entity_id"):
+                            entity_ids.append(row["entity_id"])
+
+            elif isinstance(selection_scope, list):
+                entity_ids = [str(x) for x in selection_scope if x]
+            else:
+                return self.json({"success": False, "error": "Invalid selection_scope"}, status_code=400)
+
+            # dédoublonnage + limite
+            entity_ids = sorted(set(entity_ids))
+            if not entity_ids:
+                return self.json({"success": False, "error": "No entities selected"}, status_code=400)
+            if len(entity_ids) > 50:
+                return self.json({"success": False, "error": "Too many entities (max 50)"}, status_code=400)
+
+            # 2) Construire pricing_profile depuis entry options/data (comme GetUserOptionsView)
+            entries = self.hass.config_entries.async_entries(DOMAIN)
+            if not entries:
+                return self.json({"success": False, "error": "No config entry found"}, status_code=500)
+            entry: ConfigEntry = entries[0]
+            data = dict(entry.data or {})
+            opts = dict(entry.options or {})
+            eff = {**data, **opts}
+
+            type_contrat = str(eff.get("type_contrat") or "prix_unique").strip().lower()
+            if type_contrat in ("hp-hc", "heurescreuses", "heures_creuses"):
+                type_contrat = "heures_creuses"
+            if type_contrat in ("fixe", "prixunique", "prix_unique"):
+                type_contrat = "prix_unique"
+
+            prix_ht = float(eff.get(CONF_PRIX_HT, eff.get("prix_ht", 0)) or 0)
+            prix_ttc = float(eff.get(CONF_PRIX_TTC, eff.get("prix_ttc", 0)) or 0)
+            abonnement_ht = float(eff.get(CONF_ABONNEMENT_MENSUEL_HT, eff.get("abonnement_ht", 0)) or 0)
+            abonnement_ttc = float(eff.get(CONF_ABONNEMENT_MENSUEL_TTC, eff.get("abonnement_ttc", 0)) or 0)
+
+            prix_ht_hp = float(eff.get(CONF_PRIX_HT_HP, eff.get("prix_ht_hp", prix_ht)) or prix_ht)
+            prix_ttc_hp = float(eff.get(CONF_PRIX_TTC_HP, eff.get("prix_ttc_hp", prix_ttc)) or prix_ttc)
+            prix_ht_hc = float(eff.get(CONF_PRIX_HT_HC, eff.get("prix_ht_hc", prix_ht)) or prix_ht)
+            prix_ttc_hc = float(eff.get(CONF_PRIX_TTC_HC, eff.get("prix_ttc_hc", prix_ttc)) or prix_ttc)
+
+            hc_start = str(eff.get(CONF_HC_START, eff.get("hc_start", "22:00")) or "22:00")
+            hc_end = str(eff.get(CONF_HC_END, eff.get("hc_end", "06:00")) or "06:00")
+
+            # PricingProfile utilise hp.debut/hp.fin => HP = (HC_END -> HC_START)
+            pricing_config = {
+                "type_contrat": type_contrat,
+                "prix_ht": prix_ht,
+                "prix_ttc": prix_ttc,
+                "abonnement_ht": abonnement_ht,
+                "abonnement_ttc": abonnement_ttc,
+                "hp": {
+                    "prix_ht": prix_ht_hp,
+                    "prix_ttc": prix_ttc_hp,
+                    "debut": hc_end,
+                    "fin": hc_start,
+                },
+                "hc": {
+                    "prix_ht": prix_ht_hc,
+                    "prix_ttc": prix_ttc_hc,
+                },
+            }
+            pricing_profile = PricingProfile(pricing_config)
+
+            # 3) Charger stats sur la fenêtre globale
+            all_start = min(baseline_start, event_start)
+            all_end = max(baseline_end, event_end)
+
+            stats_by_entity = await fetch_statistics_hourly_sum(self.hass, entity_ids, all_start, all_end)
+            if not stats_by_entity:
+                return self.json({"success": False, "error": "No statistics returned"}, status_code=500)
+
+            entity_comparisons = []
+
+            for entity_id in entity_ids:
+                rows = stats_by_entity.get(entity_id) or []
+                deltas = compute_hourly_deltas_kwh(rows)
+                hourly_costs = compute_costs_per_hour(deltas, pricing_profile)
+
+                baseline_agg = aggregate_period(hourly_costs, baseline_start, baseline_end)
+                event_agg = aggregate_period(hourly_costs, event_start, event_end)
+
+                comp = normalize_comparison(baseline_agg, event_agg, baseline_duration_s, event_duration_s)
+
+                st = self.hass.states.get(entity_id)
+                display_name = st.attributes.get("friendly_name") if st else entity_id
+
+                entity_comparisons.append(
+                    {
+                        "entity_id": entity_id,
+                        "display_name": display_name,
+                        **comp,
+                    }
+                )
+
+            total_baseline = {
+                "energy_kwh": round(sum(x["baseline_energy_kwh"] for x in entity_comparisons), 3),
+                "cost_ht": round(sum(x["baseline_cost_ht"] for x in entity_comparisons), 4),
+                "cost_ttc": round(sum(x["baseline_cost_ttc"] for x in entity_comparisons), 4),
+            }
+            total_event = {
+                "energy_kwh": round(sum(x["event_energy_kwh"] for x in entity_comparisons), 3),
+                "cost_ht": round(sum(x["event_cost_ht"] for x in entity_comparisons), 4),
+                "cost_ttc": round(sum(x["event_cost_ttc"] for x in entity_comparisons), 4),
+            }
+            total_comp = normalize_comparison(total_baseline, total_event, baseline_duration_s, event_duration_s)
+
+            top_entities = compute_top_entities(entity_comparisons, top_sort_by, top_limit)
+
+            focus_data = None
+            if focus_entity_id:
+                for x in entity_comparisons:
+                    if x["entity_id"] == focus_entity_id:
+                        focus_data = x
+                        break
+
+            max_delta_entity = max(entity_comparisons, key=lambda x: abs(float(x.get("delta_cost_ttc") or 0.0)), default=None)
+
+            return self.json(
+                {
+                    "success": True,
+                    "data": {
+                        "meta": {
+                            "group_by": group_by,
+                            "week_anchor_day": week_anchor_day,
+                            "entity_count": len(entity_ids),
+                            "baseline_duration_s": baseline_duration_s,
+                            "event_duration_s": event_duration_s,
+                            "normalized_supported": normalized_supported,
+                        },
+                        "comparison": {
+                            "total": total_comp,
+                            "focus_entity": focus_data,
+                            "extremes": {
+                                "max_delta_entity": (
+                                    {
+                                        "entity_id": max_delta_entity["entity_id"],
+                                        "display_name": max_delta_entity["display_name"],
+                                        "delta_cost_ttc": max_delta_entity["delta_cost_ttc"],
+                                        "delta_cost_ttc_per_hour": max_delta_entity["delta_cost_ttc_per_hour"],
+                                        "delta_cost_ttc_per_day": max_delta_entity["delta_cost_ttc_per_day"],
+                                    }
+                                    if max_delta_entity
+                                    else None
+                                )
+                            },
+                        },
+                        "top_entities": {
+                            "by_cost_ttc": top_entities,
+                        },
+                    },
+                }
+            )
+
+        except Exception as e:
+            _LOGGER.exception("Erreur history_costs: %s", e)
+            return self.json({"success": False, "error": str(e)}, status_code=500)

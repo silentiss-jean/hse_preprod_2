@@ -1024,3 +1024,217 @@ class EnableSensorView(HomeAssistantView):
                 {"success": False, "error": str(e)},
                 status=500
             )
+
+class HistoryAnalysisView(HomeAssistantView):
+    """
+    GET+POST /api/home_suivi_elec/history/{action}
+    Endpoints pour analyse de coûts historiques
+    """
+    
+    url = "/api/home_suivi_elec/history/{action}"
+    name = "api:home_suivi_elec:history"
+    requires_auth = False
+    cors_allowed = True
+    
+    def __init__(self, hass: HomeAssistant):
+        self.hass = hass
+        _LOGGER.info("🕒 API History Analysis initialisée")
+    
+    # === GET ===
+    
+    async def get(self, request, action=None):
+        """GET /api/home_suivi_elec/history/{action}"""
+        try:
+            if action is None:
+                action = request.match_info.get("action", "unknown")
+            
+            _LOGGER.info(f"[HISTORY-API] GET /{action}")
+            
+            if action == "available_sensors":
+                return await self._get_available_sensors()
+            
+            if action == "test":
+                return self._success({"message": "History API opérationnelle"})
+            
+            return self._error(404, f"Action GET inconnue: {action}")
+            
+        except Exception as e:
+            _LOGGER.exception(f"[HISTORY-API] Erreur GET: {e}")
+            return self._error(500, str(e))
+    
+    # === POST ===
+    
+    async def post(self, request, action=None):
+        """POST /api/home_suivi_elec/history/{action}"""
+        try:
+            if action is None:
+                action = request.match_info.get("action", "unknown")
+            
+            try:
+                data = await request.json()
+            except Exception as e:
+                return self._error(400, f"JSON invalide: {e}")
+            
+            _LOGGER.info(f"[HISTORY-API] POST /{action}")
+            
+            if action == "costs":
+                return await self._fetch_history_costs(data)
+            
+            if action == "analysis":
+                return await self._analyze_comparison(data)
+            
+            return self._error(404, f"Action POST inconnue: {action}")
+            
+        except Exception as e:
+            _LOGGER.exception(f"[HISTORY-API] Erreur POST: {e}")
+            return self._error(500, str(e))
+    
+    # === MÉTHODES INTERNES ===
+    
+    async def _get_available_sensors(self):
+        """Retourne les capteurs HSE energy disponibles pour l'analyse"""
+        try:
+            all_states = self.hass.states.async_all("sensor")
+            cycles = ("_hourly", "_daily", "_weekly", "_monthly", "_yearly")
+            
+            sensors = []
+            for state in all_states:
+                entity_id = state.entity_id
+                if entity_id.startswith("sensor.hse_") and entity_id.endswith(cycles):
+                    attrs = state.attributes or {}
+                    sensors.append({
+                        "entity_id": entity_id,
+                        "friendly_name": attrs.get("friendly_name", entity_id),
+                        "cycle": attrs.get("cycle", "unknown"),
+                        "source_entity": attrs.get("source_entity"),
+                        "unit": attrs.get("unit_of_measurement", "kWh")
+                    })
+            
+            _LOGGER.info(f"[HISTORY] {len(sensors)} capteurs disponibles")
+            
+            return self._success({
+                "sensors": sensors,
+                "count": len(sensors)
+            })
+            
+        except Exception as e:
+            _LOGGER.exception(f"[HISTORY] Erreur available_sensors: {e}")
+            return self._error(500, str(e))
+    
+    async def _fetch_history_costs(self, data):
+        """
+        POST /api/home_suivi_elec/history/costs
+        Récupère les coûts historiques pour deux périodes
+        """
+        try:
+            baseline_start = data.get("baseline_start")
+            baseline_end = data.get("baseline_end")
+            event_start = data.get("event_start")
+            event_end = data.get("event_end")
+            focus_entity_id = data.get("focus_entity_id")
+            group_by = data.get("group_by", "hour")
+            
+            _LOGGER.info(f"[HISTORY-COSTS] baseline: {baseline_start} → {baseline_end}")
+            _LOGGER.info(f"[HISTORY-COSTS] event: {event_start} → {event_end}")
+            
+            # TODO: Implémenter récupération via recorder
+            result = {
+                "baseline": {
+                    "start": baseline_start,
+                    "end": baseline_end,
+                    "total_kwh": 0.0,
+                    "total_cost_ht": 0.0,
+                    "total_cost_ttc": 0.0,
+                    "sensors": []
+                },
+                "event": {
+                    "start": event_start,
+                    "end": event_end,
+                    "total_kwh": 0.0,
+                    "total_cost_ht": 0.0,
+                    "total_cost_ttc": 0.0,
+                    "sensors": []
+                },
+                "comparison": {
+                    "delta_kwh": 0.0,
+                    "delta_cost_ht": 0.0,
+                    "delta_cost_ttc": 0.0,
+                    "delta_percent": 0.0
+                },
+                "focus_entity": focus_entity_id,
+                "group_by": group_by
+            }
+            
+            return self._success(result)
+            
+        except Exception as e:
+            _LOGGER.exception(f"[HISTORY-COSTS] Erreur: {e}")
+            return self._error(500, str(e))
+    
+    async def _analyze_comparison(self, data):
+        """
+        POST /api/home_suivi_elec/history/analysis
+        Analyse comparative détaillée entre deux périodes
+        """
+        try:
+            baseline_start = data.get("baseline_start")
+            baseline_end = data.get("baseline_end")
+            event_start = data.get("event_start")
+            event_end = data.get("event_end")
+            focus_entity_id = data.get("focus_entity_id")
+            group_by = data.get("group_by", "hour")
+            top_limit = data.get("top_limit", 10)
+            top_sort_by = data.get("top_sort_by", "cost_ttc")
+            
+            _LOGGER.info(f"[HISTORY-ANALYSIS] Analyse comparative demandée")
+            _LOGGER.info(f"[HISTORY-ANALYSIS] top {top_limit} by {top_sort_by}")
+            
+            # TODO: Implémenter logique réelle
+            result = {
+                "baseline_period": {
+                    "start": baseline_start,
+                    "end": baseline_end,
+                    "total_kwh": 0.0,
+                    "total_cost_ht": 0.0,
+                    "total_cost_ttc": 0.0,
+                    "sensor_count": 0
+                },
+                "event_period": {
+                    "start": event_start,
+                    "end": event_end,
+                    "total_kwh": 0.0,
+                    "total_cost_ht": 0.0,
+                    "total_cost_ttc": 0.0,
+                    "sensor_count": 0
+                },
+                "comparison": {
+                    "delta_kwh": 0.0,
+                    "delta_cost_ht": 0.0,
+                    "delta_cost_ttc": 0.0,
+                    "delta_percent_kwh": 0.0,
+                    "delta_percent_cost": 0.0,
+                    "trend": "stable"
+                },
+                "by_sensor": [],
+                "timeline": [],
+                "focus_entity": focus_entity_id,
+                "parameters": {
+                    "group_by": group_by,
+                    "top_limit": top_limit,
+                    "top_sort_by": top_sort_by
+                }
+            }
+            
+            return self._success(result)
+            
+        except Exception as e:
+            _LOGGER.exception(f"[HISTORY-ANALYSIS] Erreur: {e}")
+            return self._error(500, str(e))
+    
+    # === HELPERS ===
+    
+    def _success(self, data: Any) -> web.Response:
+        return web.json_response({"error": False, "data": data})
+    
+    def _error(self, status: int, message: str) -> web.Response:
+        return web.json_response({"error": True, "message": message}, status=status)

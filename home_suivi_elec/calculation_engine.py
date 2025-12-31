@@ -69,7 +69,7 @@ class PricingProfile:
         Returns:
             True si HP, False si HC (ou True si tarif fixe)
         """
-        if self.type_contrat != "hp-hc":
+        if self.type_contrat != "heures_creuses":
             return True  # Tarif unique = toujours considéré HP
 
         start = datetime.strptime(self.hp_start, "%H:%M").time()

@@ -11,9 +11,19 @@ console.log("✅ Router Phase 3 - Chargement");
 class ModuleRouter {
   constructor() {
     this.currentTab = null;
-    // ✅ AJOUT : 'diagnostics' dans les modules migrés
-    this.migratedModules = new Set(['detection', 'summary', 'diagnostics', 'configuration', 'generation', 'customisation', 'migration']);
+    // ✅ AJOUT : 'history' dans les modules migrés
+    this.migratedModules = new Set([
+      'detection',
+      'summary',
+      'diagnostics',
+      'configuration',
+      'generation',
+      'customisation',
+      'migration',
+      'history'  // 👈 NOUVEAU
+    ]);
     this.loadedModules = new Set();
+    this.moduleInstances = new Map(); // 👈 NOUVEAU : pour stocker les instances
     console.log("🎯 Router initialisé");
     console.log("📦 Modules migrés:", Array.from(this.migratedModules));
   }
@@ -31,28 +41,48 @@ class ModuleRouter {
   async loadModule(moduleName) {
     // Si déjà chargé, ne rien faire
     if (this.loadedModules.has(moduleName)) {
-      console.log(` ⏭️ ${moduleName} déjà chargé`);
+      console.log(`⏭️ ${moduleName} déjà chargé`);
+      
+      // Si c'est le module history, rappeler init pour re-render
+      if (moduleName === 'history' && this.moduleInstances.has('history')) {
+        const instance = this.moduleInstances.get('history');
+        await instance.init();
+      }
+      
       return;
     }
 
     // Si pas migré, laisser app.js le gérer
     if (!this.isMigrated(moduleName)) {
-      console.log(` ⏭️ ${moduleName} géré par app.js`);
+      console.log(`⏭️ ${moduleName} géré par app.js`);
       return;
     }
 
-    console.log(` 📦 Chargement lazy de ${moduleName}...`);
+    console.log(`📦 Chargement lazy de ${moduleName}...`);
     try {
       const module = await import(`../features/${moduleName}/${moduleName}.js`);
+      
+      // Cas spécial pour history (pattern Class Module)
+      if (moduleName === 'history') {
+          const HistoryModule = module.default;  // ✅ CORRECTION
+          const instance = new HistoryModule();
+          await instance.init();
+          this.moduleInstances.set('history', instance);
+          this.loadedModules.add(moduleName);
+          console.log(`✅ ${moduleName} chargé (Phase 3 - Module Class)`);
+          return;
+      }
+      
+      // Pattern classique (fonction loadXxx)
       const entryPoint = module[`load${this.capitalize(moduleName)}`];
       
       if (entryPoint) {
         await entryPoint();
         this.loadedModules.add(moduleName);
-        console.log(` ✅ ${moduleName} chargé (Phase 3)`);
+        console.log(`✅ ${moduleName} chargé (Phase 3)`);
       }
     } catch (e) {
-      console.error(` ❌ Erreur chargement ${moduleName}:`, e);
+      console.error(`❌ Erreur chargement ${moduleName}:`, e);
     }
   }
 
@@ -78,8 +108,23 @@ class ModuleRouter {
     if (this.isMigrated(moduleName)) {
       await this.loadModule(moduleName);
     } else {
-      console.log(` ⏭️ ${moduleName} géré par app.js (non migré)`);
+      console.log(`⏭️ ${moduleName} géré par app.js (non migré)`);
     }
+  }
+
+  /**
+   * Détruit un module (cleanup)
+   */
+  destroyModule(moduleName) {
+    if (this.moduleInstances.has(moduleName)) {
+      const instance = this.moduleInstances.get(moduleName);
+      if (instance.destroy && typeof instance.destroy === 'function') {
+        instance.destroy();
+        console.log(`🗑️ ${moduleName} détruit`);
+      }
+      this.moduleInstances.delete(moduleName);
+    }
+    this.loadedModules.delete(moduleName);
   }
 }
 

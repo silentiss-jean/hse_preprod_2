@@ -13,6 +13,12 @@ export function createElement(tag, attributes = {}, children = []) {
             if (key === 'className' || key === 'class') {
                 // Supporte className ET class
                 element.className = value;
+            } else if (key === 'textContent') {
+                // ✅ AJOUT : Support de textContent
+                element.textContent = value;
+            } else if (key === 'innerHTML') {
+                // ✅ AJOUT : Support de innerHTML
+                element.innerHTML = value;
             } else if (key === 'dataset' && value && typeof value === 'object') {
                 Object.entries(value).forEach(([dataKey, dataValue]) => {
                     element.dataset[dataKey] = dataValue;
@@ -53,7 +59,6 @@ export function createElement(tag, attributes = {}, children = []) {
 
     return element;
 }
-
 
 /**
  * Vide un élément DOM

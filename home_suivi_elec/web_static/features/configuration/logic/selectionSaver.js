@@ -193,7 +193,22 @@ export async function saveSelectionFromState(
       return;
     }
 
-    emit("selection:saved", { selections, need_restart: json?.need_restart === true });
+    // ✅ Cas "redémarrage requis"
+    if (json?.need_restart === true) {
+      toast.warning('✅ Sélection sauvegardée, redémarrage requis pour l’appliquer.');
+      alert(
+        '✅ Sélection sauvegardée.\n\n' +
+        '⚠️ Un redémarrage est requis pour appliquer la sélection.\n' +
+        'Home Assistant → Paramètres → Système → Redémarrer.'
+      );
+
+      // On informe le reste de l’UI, mais on évite le reload (sinon l’écran peut se vider)
+      emit("selection:saved", { selections, need_restart: true });
+      return;
+    }
+
+    // ✅ Cas normal (appli immédiate)
+    emit("selection:saved", { selections, need_restart: false });
 
     if (typeof reloadCallback === 'function') {
       await reloadCallback();

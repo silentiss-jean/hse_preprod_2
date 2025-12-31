@@ -123,7 +123,7 @@ export function composeConfig(options = {}, data = {}) {
 export function bindUserOptions(onSave) {
     console.info("[config.state] bindUserOptions");
     bindSaveUserConfig(onSave);
-    bindSaveSelection(onSave);
+//    bindSaveSelection(onSave);
     // Le toggle visuel est déjà géré par userConfigPanel.
     // bindTypeContratToggle();
 }

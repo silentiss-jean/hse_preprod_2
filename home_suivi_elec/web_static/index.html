@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="features/summary/summary.css">
 <link rel="stylesheet" href="features/diagnostics/diagnostics.css">
 <link rel="stylesheet" href="features/migration/migration.css">
+<link rel="stylesheet" href="features/history/history.css">
 
 <style>
 body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background-color: #f8f9fa; color: #222; margin: 20px; }
@@ -50,7 +51,8 @@ table thead th { background: #f2f2f2; }
   <button type="button" onclick="showTab('configuration')">⚙️ Configuration</button>
   <button type="button" onclick="showTab('customisation')">🎨 Customisation</button>
   <button type="button" onclick="showTab('generation')">🧩 Génération cartes</button>
-  <button type="button" onclick="showTab('migration')">🧩 Migration capteurs</button>
+  <button type="button" onclick="showTab('migration')">🔄 Migration capteurs</button>
+  <button type="button" onclick="showTab('history')">📊 Analyse de coûts</button>
 </nav>
 
 <!-- ════════════════════════════════════════════════════════════════════════════
@@ -176,7 +178,7 @@ table thead th { background: #f2f2f2; }
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════════════════
-     AUTRES ONGLETS (inchangés)
+     AUTRES ONGLETS
      ════════════════════════════════════════════════════════════════════════════ -->
 <div id="diagnostics" class="tab-content"></div>
 <div id="detection" class="tab-content"></div>
@@ -184,6 +186,13 @@ table thead th { background: #f2f2f2; }
 <div id="customisation" class="tab-content"></div>
 <div id="generation" class="tab-content"></div>
 <div id="migration" class="tab-content"></div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════
+     📊 ANALYSE DE COÛTS (HISTORY)
+     ════════════════════════════════════════════════════════════════════════════ -->
+<div id="history" class="tab-content">
+  <!-- Le contenu sera généré dynamiquement par history.view.js -->
+</div>
 
 <!-- ════════════════════════════════════════════════════════════════════════════
      SCRIPTS

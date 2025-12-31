@@ -56,11 +56,11 @@ from .proxy_api import SuiviElecProxyView
 
 from .sensor_name_fixer import async_setup_sensor_name_fixer, async_fix_all_long_sensors
 
-from .manage_selection_views import HSESensorsPublicView, SensorMappingView
+from .manage_selection_views import HSESensorsPublicView, SensorMappingView, GetHistoryCostsView
 
 from .hidden_sensors_view import HiddenSensorsView
 
-from .api.unified_api_extensions import ValidationActionView, HomeElecUnifiedConfigAPIView, HomeElecMigrationHelpersView, CacheClearView, CacheInvalidateEntityView
+from .api.unified_api_extensions import ValidationActionView, HomeElecUnifiedConfigAPIView, HomeElecMigrationHelpersView, CacheClearView, CacheInvalidateEntityView, HistoryAnalysisView
 
 # ✅ PHASE 2.7: Import StorageManager et migration
 
@@ -1245,6 +1245,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.http.register_view(CacheInvalidateEntityView(hass))
 
     hass.http.register_view(HiddenSensorsView(hass))
+
+    hass.http.register_view(GetHistoryCostsView(hass))
+
+    hass.http.register_view(HistoryAnalysisView(hass))
 
 
     _LOGGER.info("✅ [API] Toutes les vues REST enregistrées")
