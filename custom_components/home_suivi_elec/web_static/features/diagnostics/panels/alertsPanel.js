@@ -84,7 +84,7 @@ function renderAlertsInterface(container, alerts) {
   const statsDiv = createElement('div', { class: 'alerts-stats' }, [
     Badge.create(`Total: ${alerts.length}`, 'info'),
     Badge.create(
-      `Critiques: ${alerts.filter(a => a.severity === 'critical').length}`,
+      `Critiques: ${alerts.filter(a => a.severity === 'critical' || a.severity === 'error').length}`,
       'error'
     ),
     Badge.create(
@@ -96,6 +96,7 @@ function renderAlertsInterface(container, alerts) {
       'info'
     )
   ]);
+
 
   // Liste des alertes
   const alertsList = createElement('div', { class: 'alerts-list' },
@@ -194,6 +195,15 @@ function renderAlertsFallback(container, error) {
  */
 function buildAlerts(groupsData, sensorsData) {
   const alerts = [];
+  
+  // Protection: vérifier que groupsData est valide
+  if (!groupsData || typeof groupsData !== 'object') {
+    console.warn('[buildAlerts] groupsData invalide:', groupsData);
+    return alerts;
+  }
+  
+  // Sécuriser stats
+  const stats = groupsData.stats || {};
 
   // 1. Aucun parent détecté (critique) - VÉRIFIER EN PREMIER
   if (groupsData.stats.parents === 0) {
@@ -234,13 +244,21 @@ function buildAlerts(groupsData, sensorsData) {
 
   // 3. Enfants unavailable
   const unavailableChildren = [];
-  Object.values(groupsData.children_by_parent || {}).forEach(children => {
-    (children || []).forEach(child => {
-      if (child.state === 'unavailable' || child.state === 'unknown') {
-        unavailableChildren.push(child);
+  const childrenByParent = groupsData.children_by_parent || {};
+
+  // Vérifier que c'est bien un objet
+  if (typeof childrenByParent === 'object' && childrenByParent !== null) {
+    Object.values(childrenByParent).forEach(children => {
+      // S'assurer que children est bien un tableau
+      if (Array.isArray(children)) {
+        children.forEach(child => {
+          if (child && (child.state === 'unavailable' || child.state === 'unknown')) {
+            unavailableChildren.push(child);
+          }
+        });
       }
     });
-  });
+  }
 
   if (unavailableChildren.length > 0) {
     alerts.push({
@@ -255,6 +273,7 @@ function buildAlerts(groupsData, sensorsData) {
       }
     });
   }
+
 
   // 4. Orphelins
   if (groupsData.stats.orphans > 0) {
@@ -308,8 +327,9 @@ function buildAlerts(groupsData, sensorsData) {
   }
 
   // Tri par sévérité (critical → error → warning → info)
-  const severityOrder = { critical: 0, error: 1, warning: 2, info: 3 };
+  const severityOrder = { critical: 0, error: 0, warning: 1, info: 2 };  // critical et error au même niveau
   alerts.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+
 
   return alerts;
 }
@@ -341,9 +361,10 @@ function countDuplicates(sensorsData) {
 function getSeverityVariant(severity) {
   const variants = {
     critical: 'error',
-    error: 'error',
+    error: 'error',     // Les deux mappent sur le même variant
     warning: 'warning',
     info: 'info'
   };
   return variants[severity] || 'secondary';
 }
+

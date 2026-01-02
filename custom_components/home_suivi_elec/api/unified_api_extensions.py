@@ -645,6 +645,8 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
                         "integration": attrs.get("integration", "unknown"),
                         "area": attrs.get("area_id") or None,
                         "friendly_name": attrs.get("friendly_name", state.entity_id),
+                        "is_energy": device_class == "energy",
+                        "is_power": device_class == "power",
                     }
                 )
 
