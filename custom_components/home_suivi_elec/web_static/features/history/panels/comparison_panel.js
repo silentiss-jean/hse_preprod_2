@@ -53,10 +53,10 @@ export class ComparisonPanel {
                 <strong>${meta.entity_count}</strong> capteur${meta.entity_count > 1 ? 's' : ''}
             </span>
             <span class="meta-item">
-                <strong>Baseline:</strong> ${formatDurationHuman(meta.baseline_duration_s)}
+                <strong>Période de référence:</strong> ${formatDurationHuman(meta.baseline_duration_s)}
             </span>
             <span class="meta-item">
-                <strong>Event:</strong> ${formatDurationHuman(meta.event_duration_s)}
+                <strong>Période analysée:</strong> ${formatDurationHuman(meta.event_duration_s)}
             </span>
             ${!meta.normalized_supported ? '<span class="meta-warning">⚠️ Périodes trop courtes (&lt;1h) - normalisation limitée</span>' : ''}
         `;
@@ -74,7 +74,7 @@ export class ComparisonPanel {
         content.innerHTML = `
             <div class="comparison-grid">
                 <div class="comparison-column baseline">
-                    <h4>📅 Baseline</h4>
+                    <h4>📅 Période de référence</h4>
                     <div class="value-main">${formatEuro(total.baseline_cost_ttc)}</div>
                     <div class="value-secondary">${formatKwh(total.baseline_energy_kwh)}</div>
                     ${meta.normalized_supported ? `
@@ -85,7 +85,7 @@ export class ComparisonPanel {
                 </div>
 
                 <div class="comparison-column event">
-                    <h4>🎯 Event</h4>
+                    <h4>🎯 Période analysée</h4>
                     <div class="value-main">${formatEuro(total.event_cost_ttc)}</div>
                     <div class="value-secondary">${formatKwh(total.event_energy_kwh)}</div>
                     ${meta.normalized_supported ? `
@@ -96,7 +96,7 @@ export class ComparisonPanel {
                 </div>
 
                 <div class="comparison-column delta ${deltaCost.color}">
-                    <h4>📊 Différence</h4>
+                    <h4>📊 Évolution</h4>
                     <div class="value-main">${deltaCost.text}</div>
                     <div class="value-secondary">${formatDeltaWithSign(total.delta_energy_kwh, formatKwh).text}</div>
                     <div class="badge badge-${pctClass}">${formatPercent(total.pct_cost_ttc)}</div>
@@ -123,19 +123,19 @@ export class ComparisonPanel {
         content.innerHTML = `
             <div class="comparison-grid">
                 <div class="comparison-column baseline">
-                    <h4>📅 Baseline</h4>
+                    <h4>📅 Période de référence</h4>
                     <div class="value-main">${formatEuro(focus.baseline_cost_ttc)}</div>
                     <div class="value-secondary">${formatKwh(focus.baseline_energy_kwh)}</div>
                 </div>
 
                 <div class="comparison-column event">
-                    <h4>🎯 Event</h4>
+                    <h4>🎯 Période analysée</h4>
                     <div class="value-main">${formatEuro(focus.event_cost_ttc)}</div>
                     <div class="value-secondary">${formatKwh(focus.event_energy_kwh)}</div>
                 </div>
 
                 <div class="comparison-column delta ${deltaCost.color}">
-                    <h4>📊 Différence</h4>
+                    <h4>📊 Évolution</h4>
                     <div class="value-main">${deltaCost.text}</div>
                     <div class="value-secondary">${formatDeltaWithSign(focus.delta_energy_kwh, formatKwh).text}</div>
                     <div class="badge badge-${pctClass}">${formatPercent(focus.pct_cost_ttc)}</div>

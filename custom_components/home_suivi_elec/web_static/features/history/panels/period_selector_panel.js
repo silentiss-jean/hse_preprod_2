@@ -2,7 +2,6 @@
  * Panel de sélection des périodes (presets + date pickers custom)
  */
 import { createElement } from '../../../shared/utils/dom.js';
-//import { formatDateShort } from '../logic/formatters.js';
 
 export class PeriodSelectorPanel {
     constructor(state) {
@@ -18,9 +17,9 @@ export class PeriodSelectorPanel {
         
         const presets = [
             { value: 'today_vs_yesterday', label: "Aujourd'hui vs Hier" },
-            { value: 'weekend', label: 'Ce weekend vs Dernier weekend' },
+            { value: 'weekend', label: 'Ce weekend vs Weekend dernier' },
             { value: 'week', label: 'Cette semaine vs Semaine dernière' },
-            { value: 'custom', label: 'Personnalisé' },
+            { value: 'custom', label: 'Périodes personnalisées' },
         ];
 
         presets.forEach(preset => {
@@ -47,11 +46,11 @@ export class PeriodSelectorPanel {
         customContainer.style.display = this.state.get('preset') === 'custom' ? 'grid' : 'none';
 
         // Baseline
-        const baselineGroup = this.createDateGroup('baseline', 'Période de référence (baseline)');
+        const baselineGroup = this.createDateGroup('baseline', '📅 Période de référence (avant)');
         customContainer.appendChild(baselineGroup);
 
         // Event
-        const eventGroup = this.createDateGroup('event', 'Période à comparer (event)');
+        const eventGroup = this.createDateGroup('event', '🎯 Période à analyser (maintenant)');
         customContainer.appendChild(eventGroup);
 
         this.container.appendChild(customContainer);
@@ -59,7 +58,7 @@ export class PeriodSelectorPanel {
         // Bouton Analyser
         const analyzeBtn = createElement('button', {
             class: 'btn-primary btn-analyze',
-            textContent: 'Lancer l\'analyse',
+            textContent: '🔍 Lancer l\'analyse',
         });
         
         analyzeBtn.addEventListener('click', () => this.handleAnalyze());
@@ -152,9 +151,9 @@ export class PeriodSelectorPanel {
     getPresetLabel(value) {
         const map = {
             'today_vs_yesterday': "Aujourd'hui vs Hier",
-            'weekend': 'Ce weekend vs Dernier weekend',
+            'weekend': 'Ce weekend vs Weekend dernier',
             'week': 'Cette semaine vs Semaine dernière',
-            'custom': 'Personnalisé',
+            'custom': 'Périodes personnalisées',
         };
         return map[value] || value;
     }

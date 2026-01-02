@@ -12,8 +12,12 @@ export class FocusSelectorPanel {
     }
 
     render(sensors = []) {
-        this.sensors = sensors;
-        this.filteredSensors = sensors;
+        // ✅ CORRECTION : Normaliser les capteurs (friendly_name → display_name)
+        this.sensors = sensors.map(s => ({
+            ...s,
+            display_name: s.display_name || s.friendly_name || s.entity_id
+        }));
+        this.filteredSensors = this.sensors;
 
         this.container = createElement('div', { class: 'focus-selector-panel' });
 
@@ -44,8 +48,8 @@ export class FocusSelectorPanel {
             id: 'focus_dropdown',
             style: 'display: none;',
         });
-        inputWrapper.appendChild(dropdown);
 
+        inputWrapper.appendChild(dropdown);
         this.container.appendChild(inputWrapper);
 
         // Bouton clear
@@ -79,8 +83,8 @@ export class FocusSelectorPanel {
             this.filteredSensors = this.sensors;
         } else {
             this.filteredSensors = this.sensors.filter(s => 
-                s.display_name.toLowerCase().includes(q) || 
-                s.entity_id.toLowerCase().includes(q)
+                (s.display_name && s.display_name.toLowerCase().includes(q)) || 
+                (s.entity_id && s.entity_id.toLowerCase().includes(q))
             );
         }
 
