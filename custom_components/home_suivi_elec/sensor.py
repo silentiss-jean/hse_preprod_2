@@ -107,6 +107,86 @@ def _dedupe_by_uid(
     
     return out, new_uids, skipped
 
+async def _reconcile_cost_sensors(hass: HomeAssistant) -> list:
+    """
+    Recrée les capteurs coût persistés au démarrage (réconciliation).
+    Appelé au setup pour garantir que les capteurs coût existent toujours.
+    """
+    try:
+        mgr = hass.data.get(DOMAIN, {}).get("storage_manager")
+        if not mgr:
+            LOGGER.warning("[COST-RECONCILE] StorageManager non disponible, skip")
+            return []
+        
+        user_cfg = await mgr.get_user_config()
+        if not user_cfg.get("enable_cost_sensors_runtime"):
+            LOGGER.info("[COST-RECONCILE] Runtime désactivé, skip")
+            return []
+        
+        cost_ha_map = await mgr.get_cost_ha_config()
+        if not cost_ha_map:
+            LOGGER.info("[COST-RECONCILE] Aucun capteur coût persisté")
+            return []
+        
+        # Filtrer uniquement ceux enabled=True
+        enabled_sources = {
+            entity_id: cfg
+            for entity_id, cfg in cost_ha_map.items()
+            if isinstance(cfg, dict) and cfg.get("enabled")
+        }
+        
+        if not enabled_sources:
+            LOGGER.info("[COST-RECONCILE] Aucun capteur coût enabled")
+            return []
+        
+        LOGGER.info("[COST-RECONCILE] %d sources à réconcilier", len(enabled_sources))
+        
+        # Lire pricing actuel (peut avoir changé depuis la génération)
+        from .cost_tracking import get_pricing_config
+        pricing = get_pricing_config(hass)
+        current_type = pricing.get("type_contrat", "fixe")
+        
+        # Détecter changement de contrat
+        needs_migration = False
+        for entity_id, cfg in enabled_sources.items():
+            stored_type = cfg.get("type_contrat", "fixe")
+            if stored_type != current_type:
+                LOGGER.warning(
+                    "[COST-RECONCILE] Type contrat changé (%s → %s) pour %s",
+                    stored_type, current_type, entity_id
+                )
+                needs_migration = True
+                break
+        
+        if needs_migration:
+            LOGGER.warning(
+                "[COST-RECONCILE] Migration nécessaire (changement contrat), "
+                "veuillez régénérer manuellement les capteurs coût"
+            )
+            return []
+        
+        # Régénérer les capteurs coût depuis le store
+        from .cost_tracking import create_cost_sensors
+        
+        cost_sensors = await create_cost_sensors(
+            hass,
+            prix_ht=pricing.get("prix_ht"),
+            prix_ttc=pricing.get("prix_ttc"),
+            allowed_source_entity_ids=set(enabled_sources.keys())
+        )
+        
+        if cost_sensors:
+            LOGGER.info("[COST-RECONCILE] ✅ %d capteurs coût réconciliés", len(cost_sensors))
+        else:
+            LOGGER.info("[COST-RECONCILE] Aucun capteur coût créé (allowlist vide?)")
+        
+        return cost_sensors or []
+    
+    except Exception as e:
+        LOGGER.exception("[COST-RECONCILE] Erreur lors de la réconciliation: %s", e)
+        return []
+
+
 def _take_pool(hass: HomeAssistant, pending_key: str, stable_key: str) -> list:
     """
     Récupère la liste à ajouter.
@@ -221,3 +301,32 @@ async def async_setup_entry(
     LOGGER.info("🔄 [STARTUP] Tentative flush des pools existants...")
     for _ev, (pending_key, stable_key, kind) in EVENT_TO_KEYS.items():
         _process(kind, pending_key, stable_key)
+
+    # ══════════════════════════════════════════════════════════════════
+    # 🔄 RÉCONCILIATION : Capteurs coût persistés
+    # ══════════════════════════════════════════════════════════════════
+    
+    LOGGER.info("🔄 [COST-RECONCILE] Réconciliation des capteurs coût...")
+    
+    try:
+        cost_sensors = await _reconcile_cost_sensors(hass)
+        
+        if cost_sensors:
+            # Appliquer dédup standard
+            cost_sensors, new_uids, skipped = _dedupe_by_uid(hass, cost_sensors, "cost_reconcile")
+            
+            if cost_sensors:
+                async_add_entities(cost_sensors, update_before_add=True)
+                _get_added_uids(hass).update(new_uids)
+                LOGGER.info(
+                    "✅ [COST-RECONCILE] %d capteurs coût ajoutés (%d dédupliqués)",
+                    len(cost_sensors),
+                    skipped
+                )
+            else:
+                LOGGER.info("[COST-RECONCILE] Tous les capteurs coût étaient déjà présents")
+        else:
+            LOGGER.info("[COST-RECONCILE] Aucun capteur coût à réconcilier")
+    
+    except Exception as e:
+        LOGGER.exception("[COST-RECONCILE] Erreur lors de la réconciliation: %s", e)

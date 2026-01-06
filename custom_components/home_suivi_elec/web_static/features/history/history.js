@@ -1,33 +1,28 @@
 /**
- * Module Analyse de coûts (History)
- * Point d'entrée du module pour comparaison baseline vs event
+ * @file history.js
+ * @description Entry point for History Analysis feature
  */
-import HistoryAPI from './history.api.js';
-import HistoryView from './history.view.js';
-import HistoryState from './history.state.js';
 
-class HistoryModule {
-    constructor() {
-        this.api = new HistoryAPI();
-        this.state = new HistoryState();
-        this.view = null;
+import HistoryMainController from './logic/history_main.js';
+
+console.log('[HISTORY] Module loaded');
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('[HISTORY] DOM ready, initializing...');
+
+    // Find the history container
+    const container = document.getElementById('history-app');
+
+    if (!container) {
+        console.error('[HISTORY] Container #history-app not found');
+        return;
     }
 
-    async init() {
-        console.log('[HISTORY] Initializing History module...');
-        
-        this.view = new HistoryView(this.state, this.api);
-        await this.view.init();
-        
-        console.log('[HISTORY] ✅ History module initialized');
-    }
+    // Create and initialize main controller
+    const mainController = new HistoryMainController();
+    await mainController.init(container);
 
-    destroy() {
-        if (this.view) {
-            this.view.destroy();
-        }
-        console.log('[HISTORY] Module destroyed');
-    }
-}
+    console.log('[HISTORY] Initialization complete');
+});
 
-export default HistoryModule;

@@ -53,9 +53,14 @@ def _to_float(value: Any, default: float = 0.0) -> float:
 
 
 def _slug_alnum(text: str) -> str:
-    """Conserve uniquement [a-z0-9] (pour coller au naming HSE sans underscores)."""
+    """Conserve les underscores et convertit en snake_case propre."""
     s = (text or "").strip().lower()
-    return re.sub(r"[^a-z0-9]+", "", s)
+    # Remplacer espaces/accents/traits par underscores
+    s = re.sub(r"[^\w]+", "_", s)
+    # Supprimer underscores multiples
+    s = re.sub(r"_+", "_", s)
+    # Trim underscores début/fin
+    return s.strip("_")
 
 
 def _normalize_contract_type(raw_type: Any) -> str:
@@ -411,17 +416,16 @@ class HSECostSensor(RestoreEntity, SensorEntity):
         self._price_per_kwh = float(price_per_kwh or 0.0)
         self._source_energy_entity = source_energy_entity
 
-        # Naming: aligné "sans underscores" (ex: hse<base>coutdailyttc)
         # suffix = ht | ttc | hthp | ttchp | hthc | ttchc
+        # Naming: avec underscores (ex: hse_ballonbuanderie_cout_daily_ht)
         if self._tarif_type:
-            suffix = f"{self._variant}{self._tarif_type}"
+            suffix = f"{self._variant}_{self._tarif_type}"
             name_suffix = f"{self._variant.upper()} {self._tarif_type.upper()}"
         else:
             suffix = self._variant
             name_suffix = self._variant.upper()
 
-        object_id = f"hse{self._basename}cout{self._cycle}{suffix}"
-
+        object_id = f"hse_{self._basename}_cout_{self._cycle}_{suffix}"
         self._attr_unique_id = object_id
         self._attr_suggested_object_id = object_id
         self._attr_name = f"HSE {self._basename} Cout {self._cycle.title()} {name_suffix}"

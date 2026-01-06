@@ -143,12 +143,18 @@ class SensorSyncManager:
     async def _process_pending_changes(self):
         if not self._pending_changes:
             return
+        
         _LOGGER.info(f"🔄 Traitement de {len(self._pending_changes)} changements...")
+        
         try:
             await self._backup_capteurs_file()
             capteurs = await self._load_capteurs()
             capteurs_dict = {c["entity_id"]: c for c in capteurs if c.get("entity_id")}
-            for action, entity_id in self._pending_changes:
+            
+            # 🔧 FIX: Copier le set avant d'itérer pour éviter "Set changed size during iteration"
+            pending_copy = list(self._pending_changes)
+            
+            for action, entity_id in pending_copy:
                 if action == "add":
                     await self._add_sensor(entity_id, capteurs_dict)
                 elif action == "remove":
@@ -159,14 +165,19 @@ class SensorSyncManager:
                     await self._mark_unavailable(entity_id, capteurs_dict)
                 elif action == "available":
                     await self._mark_available(entity_id, capteurs_dict)
+            
             await self._cleanup_old_sensors(capteurs_dict)
             updated_capteurs = list(capteurs_dict.values())
             await self._save_capteurs(updated_capteurs)
+            
             self._pending_changes.clear()
             self._last_sync = datetime.now()
+            
             _LOGGER.info(f"✅ Synchronisation terminée ({len(updated_capteurs)} capteurs)")
+        
         except Exception as e:
             _LOGGER.exception(f"❌ Erreur synchronisation: {e}")
+
     
     async def _add_sensor(self, entity_id: str, capteurs_dict: Dict[str, Any]):
         if entity_id in capteurs_dict:
