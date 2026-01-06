@@ -423,8 +423,6 @@ class HSECostSensor(RestoreEntity, SensorEntity):
         object_id = f"hse{self._basename}cout{self._cycle}{suffix}"
 
         self._attr_unique_id = object_id
-        # ⚠️ AJOUTER ICI - Forcer l'entity_id immédiatement
-        self._attr_entity_id = f"sensor.{object_id}"
         self._attr_suggested_object_id = object_id
         self._attr_name = f"HSE {self._basename} Cout {self._cycle.title()} {name_suffix}"
 

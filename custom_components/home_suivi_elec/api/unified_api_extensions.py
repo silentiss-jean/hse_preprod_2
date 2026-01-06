@@ -549,58 +549,36 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
                     }
                 )
 
-                # Préparer le mapping initial (sans entity_id)
-                cost_ha_map = cost_ha_map or {}
-                for e in to_add:
-                    src = self._entity_source_energy(e)
-                    if not src:
-                        continue
-                    cost_ha_map[src] = {
-                        "enabled": True,
-                        "cost_entity_id": None,  # Sera rempli après l'ajout
-                        "source_entity": src
-                    }
+            # Mise à jour du store cost_ha pour chaque source réellement ajoutée
+            cost_ha_map = cost_ha_map or {}
+            for e in to_add:
+                src = self._entity_source_energy(e)
+                if not src:
+                    continue
+                entry = cost_ha_map.get(src)
+                if not isinstance(entry, dict):
+                    entry = {}
+                entry["enabled"] = True
+                entry["cost_entity_id"] = e.entity_id
+                cost_ha_map[src] = entry
 
-                # sensor.py écoute hse_cost_sensors_ready et lit cost_sensors_pending
-                domain["cost_sensors_pending"] = to_add
-                domain["cost_sensors"] = to_add  # fallback
+            await mgr.save_cost_ha_config(cost_ha_map)
 
-                payload = {
-                    "type": "cost",
-                    "count": len(to_add),
-                    "timestamp": self._get_timestamp(),
-                }
+            # sensor.py écoute hse_cost_sensors_ready et lit cost_sensors_pending
+            domain["cost_sensors_pending"] = to_add
+            domain["cost_sensors"] = to_add  # fallback
 
-                # 🔥 Fire event AVANT
-                self.hass.bus.async_fire("hse_cost_sensors_ready", payload)
-                self.hass.bus.async_fire("hsecostsensorsready", payload)
+            payload = {
+                "type": "cost",
+                "count": len(to_add),
+                "timestamp": self._get_timestamp(),
+            }
 
-                # ⏳ Attendre que sensor.py ajoute les entités
-                await asyncio.sleep(3)
+            self.hass.bus.async_fire("hse_cost_sensors_ready", payload)
+            self.hass.bus.async_fire("hsecostsensorsready", payload)
 
-                # 📝 MISE À JOUR avec entity_id valides
-                from homeassistant.helpers import entity_registry as er
-                entity_reg = er.async_get(self.hass)
-
-                for e in to_add:
-                    src = self._entity_source_energy(e)
-                    if not src:
-                        continue
-                    
-                    # Récupérer l'entity_id depuis le registry
-                    uid = self._entity_unique_id(e)
-                    if uid:
-                        registry_entry = entity_reg.async_get_entity_id("sensor", DOMAIN, uid)
-                        if registry_entry:
-                            cost_ha_map[src]["cost_entity_id"] = registry_entry
-                        else:
-                            # Fallback sur attr
-                            cost_ha_map[src]["cost_entity_id"] = getattr(e, "entity_id", None) or f"sensor.{uid}"
-
-                # 💾 SAUVEGARDE UNIQUE avec entity_id valides
-                await mgr.save_cost_ha_config(cost_ha_map)
-
-                return self._success({
+            return self._success(
+                {
                     "success": True,
                     "action": "generate_cost_sensors",
                     "runtime_enabled": True,
@@ -608,12 +586,11 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
                     "duplicates_skipped": dup,
                     "dropped_no_uid": dropped_no_uid,
                     "allowed_sources_count": len(allowed_sources),
-                    "cost_ha_saved": len(cost_ha_map),
-                    "message": f"{len(to_add)} capteurs coût créés et {len(cost_ha_map)} sources mappées.",
+                    "message": f"{len(to_add)} capteurs coût envoyés à l’ajout (event cost).",
                     "prix_ht": prix_ht,
                     "prix_ttc": prix_ttc,
-                })
-
+                }
+            )
 
         except Exception as e:
             _LOGGER.exception("[API-CONFIG] Erreur generate_cost_sensors: %s", e)
