@@ -36,25 +36,26 @@ export class ComparisonController {
      */
     async render(comparisonType = 'today_yesterday') {
         this.currentComparison = comparisonType;
-
+        
         this.container.innerHTML = `
             <div class="comparison-panel">
-                <div class="panel-header">
+                <div class="comparison-header">
                     <h2>📊 Analyse comparative</h2>
-                    <div class="comparison-tabs">
-                        <button class="tab ${comparisonType === 'today_yesterday' ? 'active' : ''}" data-type="today_yesterday">
-                            Aujourd'hui vs Hier
-                        </button>
-                        <button class="tab ${comparisonType === 'week_lastweek' ? 'active' : ''}" data-type="week_lastweek">
-                            Cette semaine vs Dernière semaine
-                        </button>
-                        <button class="tab ${comparisonType === 'weekend_lastweekend' ? 'active' : ''}" data-type="weekend_lastweekend">
-                            Ce weekend vs Weekend dernier
-                        </button>
-                        <button class="tab ${comparisonType === 'custom' ? 'active' : ''}" data-type="custom">
-                            Périodes personnalisées
-                        </button>
-                    </div>
+                </div>
+
+                <div class="comparison-tabs">
+                    <button class="tab ${comparisonType === 'today_yesterday' ? 'active' : ''}" data-type="today_yesterday">
+                        Aujourd'hui vs Hier
+                    </button>
+                    <button class="tab ${comparisonType === 'week_lastweek' ? 'active' : ''}" data-type="week_lastweek">
+                        Cette semaine vs Dernière semaine
+                    </button>
+                    <button class="tab ${comparisonType === 'weekend_lastweekend' ? 'active' : ''}" data-type="weekend_lastweekend">
+                        Ce weekend vs Weekend dernier
+                    </button>
+                    <button class="tab ${comparisonType === 'custom' ? 'active' : ''}" data-type="custom">
+                        Périodes personnalisées
+                    </button>
                 </div>
 
                 <div id="period-selector" class="period-selector"></div>
@@ -74,10 +75,19 @@ export class ComparisonController {
                 </div>
 
                 <div id="comparison-results" class="comparison-results" style="display: none;">
+                    <!-- 🆕 PANEL RÉFÉRENCE (en premier) -->
+                    <div id="comparison-reference-sensor"></div>
+                    
+                    <!-- RÉSUMÉ (capteurs internes seulement) -->
                     <div id="comparison-summary"></div>
+                    
+                    <!-- TOP VARIATIONS -->
                     <div id="comparison-top-variations"></div>
-                    <div id="comparison-top-consumers"></div>
+                    
+                    <!-- AUTRES CAPTEURS -->
                     <div id="comparison-other-sensors"></div>
+                    
+                    <!-- FOCUS PANEL -->
                     <div id="comparison-focus"></div>
                 </div>
 
@@ -87,10 +97,11 @@ export class ComparisonController {
 
         // Attach event listeners
         this.attachEventListeners();
-
+        
         // Render period selector based on type
         this.renderPeriodSelector(comparisonType);
     }
+
 
     /**
      * Attach event listeners
@@ -338,12 +349,116 @@ export class ComparisonController {
     }
 
     /**
+     * 🆕 Render reference sensor panel (compteur principal)
+     */
+    renderReferenceSensor() {
+        const refEl = document.getElementById('comparison-reference-sensor');
+        if (!refEl) return;
+        
+        const refSensor = this.data.reference_sensor;
+        
+        if (!refSensor) {
+            // Pas de capteur de référence configuré
+            refEl.innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #888; font-size: 0.9em;">
+                    <p>💡 Aucun capteur de référence configuré</p>
+                    <p style="font-size: 0.85em;">Configurez un capteur externe (ex: Atome) pour suivre la consommation totale au compteur</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const deltaCost = refSensor.delta_cost_ttc;
+        const deltaEnergy = refSensor.delta_energy_kwh;
+        const pctCost = refSensor.pct_cost_ttc;
+        
+        const trendIcon = deltaCost > 0 ? '📈' : deltaCost < 0 ? '📉' : '➡️';
+        const trendClass = deltaCost > 0 ? 'increase' : deltaCost < 0 ? 'decrease' : 'stable';
+        const trendText = deltaCost > 0 ? 'augmenté' : deltaCost < 0 ? 'diminué' : 'stable';
+        
+        refEl.innerHTML = `
+            <div class="reference-sensor-panel">
+                <div class="reference-header">
+                    <span class="reference-badge">🏠 RÉFÉRENCE</span>
+                    <h3>${refSensor.display_name}</h3>
+                    <p class="reference-subtitle">Consommation totale au compteur</p>
+                </div>
+                
+                <div class="reference-comparison">
+                    <div class="reference-period">
+                        <div class="period-label">Période de référence</div>
+                        <div class="period-values">
+                            <div class="value-item">
+                                <span class="value-label">Énergie</span>
+                                <span class="value-number">${refSensor.baseline_energy_kwh.toFixed(3)} kWh</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="value-label">Coût HT</span>
+                                <span class="value-number">${refSensor.baseline_cost_ht.toFixed(2)} €</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="value-label">Coût TTC</span>
+                                <span class="value-number">${refSensor.baseline_cost_ttc.toFixed(2)} €</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="reference-arrow ${trendClass}">
+                        <span class="trend-icon">${trendIcon}</span>
+                        <div class="delta-summary">
+                            <div>${deltaEnergy >= 0 ? '+' : ''}${deltaEnergy.toFixed(3)} kWh</div>
+                            <div>${deltaCost >= 0 ? '+' : ''}${deltaCost.toFixed(2)} €</div>
+                            <div class="delta-percent">(${pctCost >= 0 ? '+' : ''}${pctCost.toFixed(1)}%)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="reference-period">
+                        <div class="period-label">Période à comparer</div>
+                        <div class="period-values">
+                            <div class="value-item">
+                                <span class="value-label">Énergie</span>
+                                <span class="value-number">${refSensor.event_energy_kwh.toFixed(3)} kWh</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="value-label">Coût HT</span>
+                                <span class="value-number">${refSensor.event_cost_ht.toFixed(2)} €</span>
+                            </div>
+                            <div class="value-item">
+                                <span class="value-label">Coût TTC</span>
+                                <span class="value-number">${refSensor.event_cost_ttc.toFixed(2)} €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reference-footer">
+                    <button class="btn-focus-reference" data-entity="${refSensor.entity_id}">
+                        🎯 Analyser en détail
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Attach focus button
+        const focusBtn = refEl.querySelector('.btn-focus-reference');
+        if (focusBtn) {
+            focusBtn.addEventListener('click', (e) => {
+                const entityId = e.target.dataset.entity;
+                this.showFocus(entityId);
+            });
+        }
+    }
+
+    /**
      * Render analysis results
      */
     renderResults() {
         if (!this.data) return;
 
         this.showResults();
+
+        // 🆕 Render reference sensor panel FIRST (if exists)
+        this.renderReferenceSensor();
 
         // Summary
         this.renderSummary();

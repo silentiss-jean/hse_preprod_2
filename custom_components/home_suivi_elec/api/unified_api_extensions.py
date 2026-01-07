@@ -1435,19 +1435,21 @@ class HistoryAnalysisView(HomeAssistantView):
         """
         POST /api/home_suivi_elec/history/cost_analysis
         Analyse comparative entre deux périodes en utilisant les capteurs coût existants.
-        
+
         ✅ NOUVELLE APPROCHE :
         - Lit directement les valeurs des capteurs coût (pas de recalcul)
         - Merge les capteurs HT/TTC pour la même source
         - Récupère les statistiques historiques des capteurs coût
+
+        ✅ NOUVELLE FEATURE :
+        - Gestion d’un capteur de référence (compteur) via config_entries options["external_capteur"]
+        - Le capteur de référence est renvoyé séparément et EXCLU des totaux / tops
         """
         try:
-            from datetime import timedelta
-            from homeassistant.components.recorder import get_instance
             from homeassistant.components.recorder.statistics import statistics_during_period
             from homeassistant.helpers import entity_registry as er
             from ..history_analytics import _to_datetime
-            
+
             # ═══════════════════════════════════════════════════════════
             # 1. Parse et valide les paramètres
             # ═══════════════════════════════════════════════════════════
@@ -1457,10 +1459,13 @@ class HistoryAnalysisView(HomeAssistantView):
             event_end = data.get("event_end")
             top_limit = int(data.get("top_limit", 10))
             sort_by = data.get("sort_by", "cost_ttc")
-            
+
             if not all([baseline_start, baseline_end, event_start, event_end]):
-                return self._error(400, "Paramètres baseline_start, baseline_end, event_start, event_end requis")
-            
+                return self._error(
+                    400,
+                    "Paramètres baseline_start, baseline_end, event_start, event_end requis",
+                )
+
             # Convertir les timestamps en datetime
             try:
                 baseline_start_dt = _to_datetime(baseline_start)
@@ -1469,50 +1474,66 @@ class HistoryAnalysisView(HomeAssistantView):
                 event_end_dt = _to_datetime(event_end)
             except Exception as e:
                 return self._error(400, f"Format de date invalide: {e}")
-            
-            _LOGGER.info(f"[COST-ANALYSIS] baseline: {baseline_start_dt.isoformat()} → {baseline_end_dt.isoformat()}")
-            _LOGGER.info(f"[COST-ANALYSIS] event: {event_start_dt.isoformat()} → {event_end_dt.isoformat()}")
-            
+
+            _LOGGER.info(
+                f"[COST-ANALYSIS] baseline: {baseline_start_dt.isoformat()} → {baseline_end_dt.isoformat()}"
+            )
+            _LOGGER.info(
+                f"[COST-ANALYSIS] event: {event_start_dt.isoformat()} → {event_end_dt.isoformat()}"
+            )
+
+            # ═══════════════════════════════════════════════════════════
+            # 🆕 RÉCUPÉRER LE CAPTEUR DE RÉFÉRENCE depuis config_entries
+            # ═══════════════════════════════════════════════════════════
+            external_capteur = None
+            try:
+                config_entries = self.hass.config_entries.async_entries(DOMAIN)
+                if config_entries:
+                    hse_entry = config_entries[0]  # Normalement une seule entry
+                    external_capteur = hse_entry.options.get("external_capteur")
+                    _LOGGER.info(f"[COST-ANALYSIS] Capteur de référence: {external_capteur}")
+            except Exception as e:
+                _LOGGER.warning(f"[COST-ANALYSIS] Impossible de lire external_capteur: {e}")
+
             # ═══════════════════════════════════════════════════════════
             # 2. Récupérer tous les capteurs de COÛT HSE avec leur source
+            # (conservé tel quel, même si redondant avec sensors_map)
             # ═══════════════════════════════════════════════════════════
             entity_reg = er.async_get(self.hass)
-            
-            # Grouper par source_entity : { source_entity_id: { "ht": sensor_info, "ttc": sensor_info } }
             sensors_by_source = {}
-            
+
             for entity_id, entry in entity_reg.entities.items():
-                if (entry.platform == "home_suivi_elec" and 
-                    entity_id.startswith("sensor.hse_") and 
-                    "_cout_daily" in entity_id):
-                    
+                if (
+                    entry.platform == "home_suivi_elec"
+                    and entity_id.startswith("sensor.hse_")
+                    and "_cout_daily" in entity_id
+                ):
                     state = self.hass.states.get(entity_id)
                     if not state or state.state in ("unavailable", "unknown", "none", None):
                         continue
-                    
+
                     attrs = state.attributes or {}
                     source_entity = attrs.get("source_entity")
-                    
+
                     if not source_entity:
-                        _LOGGER.debug(f"[COST-ANALYSIS] Capteur {entity_id} sans source_entity, ignoré")
+                        _LOGGER.debug(
+                            f"[COST-ANALYSIS] Capteur {entity_id} sans source_entity, ignoré"
+                        )
                         continue
-                    
-                    # Détecter si HT ou TTC
+
                     is_ttc = "_ttc" in entity_id.lower()
                     is_ht = "_ht" in entity_id.lower() and "_ttc" not in entity_id.lower()
-                    
+
                     if not is_ht and not is_ttc:
-                        _LOGGER.warning(f"[COST-ANALYSIS] Capteur {entity_id} sans suffixe HT/TTC, supposé TTC")
+                        _LOGGER.warning(
+                            f"[COST-ANALYSIS] Capteur {entity_id} sans suffixe HT/TTC, supposé TTC"
+                        )
                         is_ttc = True
-                    
+
                     variant = "ttc" if is_ttc else "ht"
-                    
-                    # Récupérer le statistic_id (pour fetcher les stats historiques)
                     statistic_id = attrs.get("statistic_id") or entity_id
-                    
-                    # Récupérer le prix unitaire depuis les attributs du capteur
                     price_per_kwh = float(attrs.get("price_per_kwh", 0.0))
-                    
+
                     sensor_info = {
                         "entity_id": entity_id,
                         "source_entity": source_entity,
@@ -1522,120 +1543,131 @@ class HistoryAnalysisView(HomeAssistantView):
                         "price_per_kwh": price_per_kwh,
                         "cycle": attrs.get("cycle", "daily"),
                     }
-                    
-                    # Grouper par source
+
                     if source_entity not in sensors_by_source:
                         sensors_by_source[source_entity] = {}
-                    
+
                     sensors_by_source[source_entity][variant] = sensor_info
-            
-            _LOGGER.info(f"[COST-ANALYSIS] {len(sensors_by_source)} sources avec capteurs coût trouvées")
-            
+
+            _LOGGER.info(
+                f"[COST-ANALYSIS] {len(sensors_by_source)} sources avec capteurs coût trouvées"
+            )
+
+            # Réponse vide cohérente
+            def _empty_result():
+                return self._success(
+                    {
+                        "baseline_period": {
+                            "start": baseline_start,
+                            "end": baseline_end,
+                            "total_kwh": 0.0,
+                            "total_cost_ht": 0.0,
+                            "total_cost_ttc": 0.0,
+                            "sensor_count": 0,
+                        },
+                        "event_period": {
+                            "start": event_start,
+                            "end": event_end,
+                            "total_kwh": 0.0,
+                            "total_cost_ht": 0.0,
+                            "total_cost_ttc": 0.0,
+                            "sensor_count": 0,
+                        },
+                        "total_comparison": {
+                            "delta_kwh": 0.0,
+                            "delta_cost_ht": 0.0,
+                            "delta_cost_ttc": 0.0,
+                            "delta_pct_kwh": 0.0,
+                            "delta_pct_cost": 0.0,
+                            "trend": "stable",
+                        },
+                        "reference_sensor": None,
+                        "top_variations": [],
+                        "top_consumers": [],
+                        "other_sensors": [],
+                        "timestamp": self._get_timestamp(),
+                    }
+                )
+
             if not sensors_by_source:
-                return self._success({
-                    "baseline_period": {
-                        "start": baseline_start,
-                        "end": baseline_end,
-                        "total_kwh": 0.0,
-                        "total_cost_ttc": 0.0,
-                        "total_cost_ht": 0.0,
-                        "sensor_count": 0
-                    },
-                    "event_period": {
-                        "start": event_start,
-                        "end": event_end,
-                        "total_kwh": 0.0,
-                        "total_cost_ttc": 0.0,
-                        "total_cost_ht": 0.0,
-                        "sensor_count": 0
-                    },
-                    "total_comparison": {
-                        "delta_kwh": 0.0,
-                        "delta_cost_ttc": 0.0,
-                        "delta_pct_kwh": 0.0,
-                        "delta_pct_cost": 0.0,
-                        "trend": "stable"
-                    },
-                    "top_variations": [],
-                    "other_sensors": [],
-                    "timestamp": self._get_timestamp()
-                })
-            
+                return _empty_result()
+
             # ═══════════════════════════════════════════════════════════
-            # 3. Récupérer les capteurs SOURCE d'énergie (pas les coûts)
+            # 3. Récupérer les capteurs avec flag is_reference
             # ═══════════════════════════════════════════════════════════
             entity_reg = er.async_get(self.hass)
-
-            # Grouper par source_entity : { source_entity_id: { pricing_info } }
             sensors_map = {}
 
             for entity_id, entry in entity_reg.entities.items():
-                if (entry.platform == "home_suivi_elec" and 
-                    entity_id.startswith("sensor.hse_") and 
-                    "_cout_daily" in entity_id):
-                    
+                if (
+                    entry.platform == "home_suivi_elec"
+                    and entity_id.startswith("sensor.hse_")
+                    and "_cout_daily" in entity_id
+                ):
                     state = self.hass.states.get(entity_id)
                     if not state or state.state in ("unavailable", "unknown", "none", None):
                         continue
-                    
+
                     attrs = state.attributes or {}
                     source_entity = attrs.get("source_entity")
-                    
+
                     if not source_entity:
                         continue
-                    
+
+                    # 🆕 Détecter si c'est le capteur de référence
+                    is_reference = bool(external_capteur and source_entity == external_capteur)
+
                     # Détecter si HT ou TTC
                     is_ttc = "_ttc" in entity_id.lower()
                     is_ht = "_ht" in entity_id.lower() and "_ttc" not in entity_id.lower()
-                    
+
                     if not is_ht and not is_ttc:
                         is_ttc = True  # Par défaut
-                    
-                    # Récupérer le prix unitaire depuis les attributs
+
                     price_per_kwh = float(attrs.get("price_per_kwh", 0.0))
-                    
-                    # Stocker les infos de pricing
+
                     if source_entity not in sensors_map:
-                        # Récupérer le friendly_name depuis la source
+                        # Friendly name depuis la source d'énergie
                         source_state = self.hass.states.get(source_entity)
                         source_attrs = source_state.attributes or {} if source_state else {}
-                        
+
                         sensors_map[source_entity] = {
                             "source_entity": source_entity,
                             "friendly_name": source_attrs.get("friendly_name", source_entity),
                             "statistic_id": source_attrs.get("statistic_id") or source_entity,
                             "prix_ht": None,
                             "prix_ttc": None,
+                            "is_reference": is_reference,  # 🆕 Flag référence
                         }
-                    
-                    # Stocker le prix selon le variant
+
                     if is_ttc:
                         sensors_map[source_entity]["prix_ttc"] = price_per_kwh
                     else:
                         sensors_map[source_entity]["prix_ht"] = price_per_kwh
 
             # Compléter les prix manquants avec ratio 1.1
-            for source_entity, info in sensors_map.items():
+            for _source_entity, info in sensors_map.items():
                 if info["prix_ttc"] and not info["prix_ht"]:
                     info["prix_ht"] = info["prix_ttc"] / 1.1
                 elif info["prix_ht"] and not info["prix_ttc"]:
                     info["prix_ttc"] = info["prix_ht"] * 1.1
 
-            _LOGGER.info(f"[COST-ANALYSIS] {len(sensors_map)} sources d'énergie avec pricing trouvées")
+            _LOGGER.info(
+                f"[COST-ANALYSIS] {len(sensors_map)} sources d'énergie avec pricing trouvées"
+            )
 
             if not sensors_map:
-                return self._success({
-                    # ... retour vide
-                })
+                return _empty_result()
 
             # ═══════════════════════════════════════════════════════════
             # 4. Récupérer les statistiques ÉNERGIE (pas coût)
             # ═══════════════════════════════════════════════════════════
             statistic_ids = [info["statistic_id"] for info in sensors_map.values()]
 
-            _LOGGER.info(f"[COST-ANALYSIS] Fetching energy statistics pour {len(statistic_ids)} sources")
+            _LOGGER.info(
+                f"[COST-ANALYSIS] Fetching energy statistics pour {len(statistic_ids)} sources"
+            )
 
-            # Fetch baseline statistics
             baseline_stats = await self.hass.async_add_executor_job(
                 statistics_during_period,
                 self.hass,
@@ -1644,10 +1676,9 @@ class HistoryAnalysisView(HomeAssistantView):
                 statistic_ids,
                 "hour",
                 None,
-                {"sum"}
+                {"sum"},
             )
 
-            # Fetch event statistics
             event_stats = await self.hass.async_add_executor_job(
                 statistics_during_period,
                 self.hass,
@@ -1656,7 +1687,7 @@ class HistoryAnalysisView(HomeAssistantView):
                 statistic_ids,
                 "hour",
                 None,
-                {"sum"}
+                {"sum"},
             )
 
             # ═══════════════════════════════════════════════════════════
@@ -1670,75 +1701,73 @@ class HistoryAnalysisView(HomeAssistantView):
                 statistic_id = info["statistic_id"]
                 prix_ht = info["prix_ht"]
                 prix_ttc = info["prix_ttc"]
-                
-                # === BASELINE : Calculer énergie puis coûts ===
+
+                # === BASELINE ===
                 baseline_rows = baseline_stats.get(statistic_id, [])
                 if not baseline_rows:
                     _LOGGER.debug(f"[COST-ANALYSIS] Pas de stats baseline pour {statistic_id}")
                     continue
-                
-                # Calculer l'énergie consommée (delta sum)
+
                 baseline_last = baseline_rows[-1].get("sum", 0.0) if baseline_rows else 0.0
                 baseline_first = baseline_rows[0].get("sum", 0.0) if baseline_rows else 0.0
                 baseline_energy_kwh = float(baseline_last) - float(baseline_first)
-                
-                # Appliquer les prix
+
                 baseline_cost_ht = baseline_energy_kwh * prix_ht if prix_ht else 0.0
                 baseline_cost_ttc = baseline_energy_kwh * prix_ttc if prix_ttc else 0.0
-                
-                # === EVENT : Calculer énergie puis coûts ===
+
+                # === EVENT ===
                 event_rows = event_stats.get(statistic_id, [])
                 if not event_rows:
                     _LOGGER.debug(f"[COST-ANALYSIS] Pas de stats event pour {statistic_id}")
                     continue
-                
+
                 event_last = event_rows[-1].get("sum", 0.0) if event_rows else 0.0
                 event_first = event_rows[0].get("sum", 0.0) if event_rows else 0.0
                 event_energy_kwh = float(event_last) - float(event_first)
-                
+
                 event_cost_ht = event_energy_kwh * prix_ht if prix_ht else 0.0
                 event_cost_ttc = event_energy_kwh * prix_ttc if prix_ttc else 0.0
-                
-                # Si pas de données, skip
+
                 if baseline_energy_kwh == 0.0 and event_energy_kwh == 0.0:
                     continue
-                
-                # === CALCULS NORMALISÉS ===
+
                 baseline_h = baseline_duration_s / 3600.0 if baseline_duration_s > 0 else 0.0
                 event_h = event_duration_s / 3600.0 if event_duration_s > 0 else 0.0
                 baseline_d = baseline_duration_s / 86400.0 if baseline_duration_s > 0 else 0.0
                 event_d = event_duration_s / 86400.0 if event_duration_s > 0 else 0.0
-                
+
                 def safe_div(a, b, ndigits=3):
                     return round(a / b, ndigits) if b > 0 else 0.0
-                
-                # Par heure
+
                 baseline_kwh_h = safe_div(baseline_energy_kwh, baseline_h, 3)
                 event_kwh_h = safe_div(event_energy_kwh, event_h, 3)
                 baseline_cost_ttc_h = safe_div(baseline_cost_ttc, baseline_h, 4)
                 event_cost_ttc_h = safe_div(event_cost_ttc, event_h, 4)
-                
-                # Par jour
+
                 baseline_kwh_d = safe_div(baseline_energy_kwh, baseline_d, 3)
                 event_kwh_d = safe_div(event_energy_kwh, event_d, 3)
                 baseline_cost_ttc_d = safe_div(baseline_cost_ttc, baseline_d, 4)
                 event_cost_ttc_d = safe_div(event_cost_ttc, event_d, 4)
-                
-                # === DELTAS ===
+
                 delta_energy = event_energy_kwh - baseline_energy_kwh
                 delta_cost_ht = event_cost_ht - baseline_cost_ht
                 delta_cost_ttc = event_cost_ttc - baseline_cost_ttc
-                
-                # Pourcentages
-                pct_energy = safe_div(delta_energy, baseline_energy_kwh, 1) * 100 if baseline_energy_kwh > 0 else 0.0
-                pct_cost_ttc = safe_div(delta_cost_ttc, baseline_cost_ttc, 1) * 100 if baseline_cost_ttc > 0 else 0.0
-                
-                # === CONSTRUIRE L'OBJET COMPARAISON ===
+
+                pct_energy = (
+                    safe_div(delta_energy, baseline_energy_kwh, 1) * 100
+                    if baseline_energy_kwh > 0
+                    else 0.0
+                )
+                pct_cost_ttc = (
+                    safe_div(delta_cost_ttc, baseline_cost_ttc, 1) * 100
+                    if baseline_cost_ttc > 0
+                    else 0.0
+                )
+
                 comparison = {
-                    "entity_id": source_entity,  # ✅ Utiliser source_entity directement
-                    "display_name": info["friendly_name"],  # ✅ Depuis sensors_map
+                    "entity_id": source_entity,
+                    "display_name": info["friendly_name"],
                     "source_entity": source_entity,
-                    
                     # Baseline
                     "baseline_energy_kwh": round(baseline_energy_kwh, 3),
                     "baseline_cost_ht": round(baseline_cost_ht, 2),
@@ -1747,7 +1776,6 @@ class HistoryAnalysisView(HomeAssistantView):
                     "baseline_cost_ttc_per_hour": baseline_cost_ttc_h,
                     "baseline_energy_kwh_per_day": baseline_kwh_d,
                     "baseline_cost_ttc_per_day": baseline_cost_ttc_d,
-                    
                     # Event
                     "event_energy_kwh": round(event_energy_kwh, 3),
                     "event_cost_ht": round(event_cost_ht, 2),
@@ -1756,7 +1784,6 @@ class HistoryAnalysisView(HomeAssistantView):
                     "event_cost_ttc_per_hour": event_cost_ttc_h,
                     "event_energy_kwh_per_day": event_kwh_d,
                     "event_cost_ttc_per_day": event_cost_ttc_d,
-                    
                     # Deltas
                     "delta_energy_kwh": round(delta_energy, 3),
                     "delta_cost_ht": round(delta_cost_ht, 2),
@@ -1765,94 +1792,94 @@ class HistoryAnalysisView(HomeAssistantView):
                     "delta_cost_ttc_per_hour": round(event_cost_ttc_h - baseline_cost_ttc_h, 4),
                     "delta_energy_kwh_per_day": round(event_kwh_d - baseline_kwh_d, 3),
                     "delta_cost_ttc_per_day": round(event_cost_ttc_d - baseline_cost_ttc_d, 4),
-                    
                     # Pourcentages
                     "pct_energy_kwh": round(pct_energy, 1),
                     "pct_cost_ttc": round(pct_cost_ttc, 1),
                 }
-                
+
                 entity_comparisons.append(comparison)
 
-            
-            _LOGGER.info(f"[COST-ANALYSIS] {len(entity_comparisons)} capteurs avec données comparées")
-            
+            _LOGGER.info(
+                f"[COST-ANALYSIS] {len(entity_comparisons)} capteurs avec données comparées"
+            )
+
             if not entity_comparisons:
-                return self._success({
-                    "baseline_period": {
-                        "start": baseline_start,
-                        "end": baseline_end,
-                        "total_kwh": 0.0,
-                        "total_cost_ttc": 0.0,
-                        "total_cost_ht": 0.0,
-                        "sensor_count": 0
-                    },
-                    "event_period": {
-                        "start": event_start,
-                        "end": event_end,
-                        "total_kwh": 0.0,
-                        "total_cost_ttc": 0.0,
-                        "total_cost_ht": 0.0,
-                        "sensor_count": 0
-                    },
-                    "total_comparison": {
-                        "delta_kwh": 0.0,
-                        "delta_cost_ttc": 0.0,
-                        "delta_pct_kwh": 0.0,
-                        "delta_pct_cost": 0.0,
-                        "trend": "stable"
-                    },
-                    "top_variations": [],
-                    "other_sensors": [],
-                    "timestamp": self._get_timestamp()
-                })
-            
+                return _empty_result()
+
             # ═══════════════════════════════════════════════════════════
-            # 5. Calculer les totaux globaux
+            # 🆕 Séparer le capteur de référence des autres
             # ═══════════════════════════════════════════════════════════
-            total_baseline_kwh = sum(c["baseline_energy_kwh"] for c in entity_comparisons)
-            total_baseline_cost_ht = sum(c["baseline_cost_ht"] for c in entity_comparisons)
-            total_baseline_cost_ttc = sum(c["baseline_cost_ttc"] for c in entity_comparisons)
-            
-            total_event_kwh = sum(c["event_energy_kwh"] for c in entity_comparisons)
-            total_event_cost_ht = sum(c["event_cost_ht"] for c in entity_comparisons)
-            total_event_cost_ttc = sum(c["event_cost_ttc"] for c in entity_comparisons)
-            
+            reference_comparison = None
+            internal_comparisons = []
+
+            for comparison in entity_comparisons:
+                source_entity = comparison.get("source_entity")
+                info = sensors_map.get(source_entity, {}) if source_entity else {}
+
+                if info.get("is_reference"):
+                    comparison["is_reference"] = True
+                    reference_comparison = comparison
+                    _LOGGER.info(
+                        f"[COST-ANALYSIS] Capteur de référence identifié: {source_entity}"
+                    )
+                else:
+                    comparison["is_reference"] = False
+                    internal_comparisons.append(comparison)
+
+            # ═══════════════════════════════════════════════════════════
+            # Calculer les totaux (SANS le capteur de référence)
+            # ═══════════════════════════════════════════════════════════
+            total_baseline_kwh = sum(c["baseline_energy_kwh"] for c in internal_comparisons)
+            total_baseline_cost_ht = sum(c["baseline_cost_ht"] for c in internal_comparisons)
+            total_baseline_cost_ttc = sum(
+                c["baseline_cost_ttc"] for c in internal_comparisons
+            )
+
+            total_event_kwh = sum(c["event_energy_kwh"] for c in internal_comparisons)
+            total_event_cost_ht = sum(c["event_cost_ht"] for c in internal_comparisons)
+            total_event_cost_ttc = sum(c["event_cost_ttc"] for c in internal_comparisons)
+
             delta_kwh = total_event_kwh - total_baseline_kwh
             delta_cost_ht = total_event_cost_ht - total_baseline_cost_ht
             delta_cost_ttc = total_event_cost_ttc - total_baseline_cost_ttc
-            
-            delta_pct_kwh = (delta_kwh / total_baseline_kwh * 100.0) if total_baseline_kwh > 0 else 0.0
-            delta_pct_cost = (delta_cost_ttc / total_baseline_cost_ttc * 100.0) if total_baseline_cost_ttc > 0 else 0.0
-            
-            # Déterminer la tendance
+
+            delta_pct_kwh = (
+                (delta_kwh / total_baseline_kwh * 100.0) if total_baseline_kwh > 0 else 0.0
+            )
+            delta_pct_cost = (
+                (delta_cost_ttc / total_baseline_cost_ttc * 100.0)
+                if total_baseline_cost_ttc > 0
+                else 0.0
+            )
+
             if abs(delta_pct_cost) < 5.0:
                 trend = "stable"
             elif delta_cost_ttc > 0:
                 trend = "hausse"
             else:
                 trend = "baisse"
-            
+
             # ═══════════════════════════════════════════════════════════
-            # 6. Trier et séparer top variations / autres
+            # Trier et séparer (SANS le capteur de référence)
             # ═══════════════════════════════════════════════════════════
-            # Trier par valeur absolue du delta selon sort_by
             if sort_by == "energy_kwh":
-                entity_comparisons.sort(key=lambda x: abs(x["delta_energy_kwh"]), reverse=True)
-            else:  # cost_ttc par défaut
-                entity_comparisons.sort(key=lambda x: abs(x["delta_cost_ttc"]), reverse=True)
-            
-            top_variations = entity_comparisons[:top_limit]
-            other_sensors = entity_comparisons[top_limit:]
-            
-            # Top consommateurs (par coût TTC event)
+                internal_comparisons.sort(
+                    key=lambda x: abs(x["delta_energy_kwh"]), reverse=True
+                )
+            else:
+                internal_comparisons.sort(
+                    key=lambda x: abs(x["delta_cost_ttc"]), reverse=True
+                )
+
+            top_variations = internal_comparisons[:top_limit]
+            other_sensors = internal_comparisons[top_limit:]
+
             top_consumers = sorted(
-                entity_comparisons, 
-                key=lambda x: x["event_cost_ttc"], 
-                reverse=True
+                internal_comparisons, key=lambda x: x["event_cost_ttc"], reverse=True
             )[:top_limit]
-            
+
             # ═══════════════════════════════════════════════════════════
-            # 7. Construire la réponse finale
+            # 🆕 Construire la réponse avec le capteur de référence séparé
             # ═══════════════════════════════════════════════════════════
             result = {
                 "baseline_period": {
@@ -1861,7 +1888,7 @@ class HistoryAnalysisView(HomeAssistantView):
                     "total_kwh": round(total_baseline_kwh, 3),
                     "total_cost_ht": round(total_baseline_cost_ht, 2),
                     "total_cost_ttc": round(total_baseline_cost_ttc, 2),
-                    "sensor_count": len(entity_comparisons)
+                    "sensor_count": len(internal_comparisons),
                 },
                 "event_period": {
                     "start": event_start,
@@ -1869,7 +1896,7 @@ class HistoryAnalysisView(HomeAssistantView):
                     "total_kwh": round(total_event_kwh, 3),
                     "total_cost_ht": round(total_event_cost_ht, 2),
                     "total_cost_ttc": round(total_event_cost_ttc, 2),
-                    "sensor_count": len(entity_comparisons)
+                    "sensor_count": len(internal_comparisons),
                 },
                 "total_comparison": {
                     "delta_kwh": round(delta_kwh, 3),
@@ -1877,24 +1904,32 @@ class HistoryAnalysisView(HomeAssistantView):
                     "delta_cost_ttc": round(delta_cost_ttc, 2),
                     "delta_pct_kwh": round(delta_pct_kwh, 1),
                     "delta_pct_cost": round(delta_pct_cost, 1),
-                    "trend": trend
+                    "trend": trend,
                 },
+                "reference_sensor": reference_comparison,
                 "top_variations": top_variations,
                 "top_consumers": top_consumers,
                 "other_sensors": other_sensors,
-                "timestamp": self._get_timestamp()
+                "timestamp": self._get_timestamp(),
             }
-            
+
+            log_ref = ""
+            if reference_comparison:
+                try:
+                    log_ref = (
+                        f" | Référence: {reference_comparison.get('display_name')} "
+                        f"({reference_comparison.get('event_cost_ttc', 0.0):.2f}€)"
+                    )
+                except Exception:
+                    log_ref = " | Référence: (log failed)"
+
             _LOGGER.info(
                 f"[COST-ANALYSIS] ✅ Analyse terminée: "
-                f"{len(top_variations)} top variations + {len(other_sensors)} autres | "
-                f"Baseline: {total_baseline_cost_ttc:.2f}€ TTC / {total_baseline_cost_ht:.2f}€ HT | "
-                f"Event: {total_event_cost_ttc:.2f}€ TTC / {total_event_cost_ht:.2f}€ HT | "
-                f"Delta: {delta_cost_ttc:+.2f}€ TTC ({delta_pct_cost:+.1f}%) - {trend}"
+                f"{len(top_variations)} top + {len(other_sensors)} autres{log_ref}"
             )
-            
+
             return self._success(result)
-            
+
         except Exception as e:
             _LOGGER.exception(f"[COST-ANALYSIS] Erreur: {e}")
             return self._error(500, str(e))

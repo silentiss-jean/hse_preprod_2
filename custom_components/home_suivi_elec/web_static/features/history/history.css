@@ -1714,3 +1714,158 @@
     color: var(--secondary-text-color);
     margin-top: 0.25rem;
 }
+
+/* Panel référence (compteur principal) */
+.reference-sensor-panel {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.reference-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.reference-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.reference-header h3 {
+    margin: 8px 0 4px;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.reference-subtitle {
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.reference-comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.reference-period {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.period-label {
+    font-size: 0.85em;
+    opacity: 0.8;
+    margin-bottom: 12px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.period-values {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.value-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.value-label {
+    font-size: 0.85em;
+    opacity: 0.9;
+}
+
+.value-number {
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.reference-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.trend-icon {
+    font-size: 2em;
+}
+
+.delta-summary {
+    text-align: center;
+    font-weight: 600;
+}
+
+.delta-summary > div {
+    margin: 2px 0;
+    font-size: 0.9em;
+}
+
+.delta-percent {
+    font-size: 0.85em !important;
+    opacity: 0.9;
+}
+
+.reference-arrow.increase .delta-summary {
+    color: #ff6b6b;
+}
+
+.reference-arrow.decrease .delta-summary {
+    color: #51cf66;
+}
+
+.reference-arrow.stable .delta-summary {
+    color: #ffd93d;
+}
+
+.reference-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-focus-reference {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-focus-reference:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reference-comparison {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .reference-arrow {
+        transform: rotate(90deg);
+    }
+}
