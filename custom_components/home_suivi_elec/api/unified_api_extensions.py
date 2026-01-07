@@ -1735,8 +1735,8 @@ class HistoryAnalysisView(HomeAssistantView):
                 
                 # === CONSTRUIRE L'OBJET COMPARAISON ===
                 comparison = {
-                    "entity_id": display_sensor["entity_id"],
-                    "display_name": display_sensor["friendly_name"],
+                    "entity_id": source_entity,  # ✅ Utiliser source_entity directement
+                    "display_name": info["friendly_name"],  # ✅ Depuis sensors_map
                     "source_entity": source_entity,
                     
                     # Baseline
@@ -1772,6 +1772,7 @@ class HistoryAnalysisView(HomeAssistantView):
                 }
                 
                 entity_comparisons.append(comparison)
+
             
             _LOGGER.info(f"[COST-ANALYSIS] {len(entity_comparisons)} capteurs avec données comparées")
             
