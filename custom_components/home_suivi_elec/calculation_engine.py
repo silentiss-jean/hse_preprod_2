@@ -253,31 +253,53 @@ class CalculationEngine:
 
     def _get_abonnement_prorate(self, abonnement_mensuel: float, period: str) -> float:
         """
-        Proratise l'abonnement mensuel selon la période
-
+        Proratise l'abonnement mensuel selon la période ÉCOULÉE (pas de projection!)
+        
         Args:
             abonnement_mensuel: Abonnement mensuel en €
             period: Période de proratisation
-
+            
         Returns:
-            Montant proratisé en €
+            Montant proratisé en € pour la période écoulée uniquement
         """
-        diviseurs = {
-            "hourly": 30 * 24,  # ~720 heures/mois
-            "daily": 30,  # 30 jours/mois
-            "weekly": 4.345,  # ~4.345 semaines/mois
-            "monthly": 1,  # 1 mois
-            "yearly": 1 / 12,  # 12 mois/an
-        }
-
-        diviseur = diviseurs.get(period, 1)
-
-        if period == "yearly":
-            # Pour l'année: multiplier par 12
-            return round(abonnement_mensuel * 12, 2)
-
-        # Pour les autres: diviser
-        return round(abonnement_mensuel / diviseur, 2)
+        now = datetime.now()
+        
+        if period == "hourly":
+            # 1 heure sur ~720h/mois
+            return round(abonnement_mensuel / (30 * 24), 2)
+        
+        elif period == "daily":
+            # 1 jour sur 30 jours
+            return round(abonnement_mensuel / 30, 2)
+        
+        elif period == "weekly":
+            # Jours écoulés depuis lundi 00:00
+            jour_semaine = now.weekday()  # 0=lundi, 6=dimanche
+            jours_ecoules = jour_semaine + 1
+            
+            abonnement_journalier = abonnement_mensuel / 30
+            return round(abonnement_journalier * jours_ecoules, 2)
+        
+        elif period == "monthly":
+            # Jours écoulés depuis le 1er à 00:00
+            jour_du_mois = now.day
+            
+            abonnement_journalier = abonnement_mensuel / 30
+            return round(abonnement_journalier * jour_du_mois, 2)
+        
+        elif period == "yearly":
+            # Jours écoulés depuis le 1er janvier
+            jour_annee = now.timetuple().tm_yday
+            
+            abonnement_annuel = abonnement_mensuel * 12
+            annee = now.year
+            est_bissextile = (annee % 4 == 0 and annee % 100 != 0) or (annee % 400 == 0)
+            jours_dans_annee = 366 if est_bissextile else 365
+            
+            return round((abonnement_annuel / jours_dans_annee) * jour_annee, 2)
+        
+        # Fallback
+        return round(abonnement_mensuel, 2)
 
     async def _get_sensor_mapping(self) -> Dict:
         """
