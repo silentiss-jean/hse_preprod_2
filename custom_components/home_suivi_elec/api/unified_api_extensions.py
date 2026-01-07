@@ -1562,133 +1562,142 @@ class HistoryAnalysisView(HomeAssistantView):
                 })
             
             # ═══════════════════════════════════════════════════════════
-            # 3. Récupérer les statistiques historiques pour TOUS les capteurs
+            # 3. Récupérer les capteurs SOURCE d'énergie (pas les coûts)
             # ═══════════════════════════════════════════════════════════
-            all_statistic_ids = []
-            for source_sensors in sensors_by_source.values():
-                for variant_sensor in source_sensors.values():
-                    all_statistic_ids.append(variant_sensor["statistic_id"])
-            
-            _LOGGER.info(f"[COST-ANALYSIS] Fetching statistics pour {len(all_statistic_ids)} capteurs coût")
-            
+            entity_reg = er.async_get(self.hass)
+
+            # Grouper par source_entity : { source_entity_id: { pricing_info } }
+            sensors_map = {}
+
+            for entity_id, entry in entity_reg.entities.items():
+                if (entry.platform == "home_suivi_elec" and 
+                    entity_id.startswith("sensor.hse_") and 
+                    "_cout_daily" in entity_id):
+                    
+                    state = self.hass.states.get(entity_id)
+                    if not state or state.state in ("unavailable", "unknown", "none", None):
+                        continue
+                    
+                    attrs = state.attributes or {}
+                    source_entity = attrs.get("source_entity")
+                    
+                    if not source_entity:
+                        continue
+                    
+                    # Détecter si HT ou TTC
+                    is_ttc = "_ttc" in entity_id.lower()
+                    is_ht = "_ht" in entity_id.lower() and "_ttc" not in entity_id.lower()
+                    
+                    if not is_ht and not is_ttc:
+                        is_ttc = True  # Par défaut
+                    
+                    # Récupérer le prix unitaire depuis les attributs
+                    price_per_kwh = float(attrs.get("price_per_kwh", 0.0))
+                    
+                    # Stocker les infos de pricing
+                    if source_entity not in sensors_map:
+                        # Récupérer le friendly_name depuis la source
+                        source_state = self.hass.states.get(source_entity)
+                        source_attrs = source_state.attributes or {} if source_state else {}
+                        
+                        sensors_map[source_entity] = {
+                            "source_entity": source_entity,
+                            "friendly_name": source_attrs.get("friendly_name", source_entity),
+                            "statistic_id": source_attrs.get("statistic_id") or source_entity,
+                            "prix_ht": None,
+                            "prix_ttc": None,
+                        }
+                    
+                    # Stocker le prix selon le variant
+                    if is_ttc:
+                        sensors_map[source_entity]["prix_ttc"] = price_per_kwh
+                    else:
+                        sensors_map[source_entity]["prix_ht"] = price_per_kwh
+
+            # Compléter les prix manquants avec ratio 1.1
+            for source_entity, info in sensors_map.items():
+                if info["prix_ttc"] and not info["prix_ht"]:
+                    info["prix_ht"] = info["prix_ttc"] / 1.1
+                elif info["prix_ht"] and not info["prix_ttc"]:
+                    info["prix_ttc"] = info["prix_ht"] * 1.1
+
+            _LOGGER.info(f"[COST-ANALYSIS] {len(sensors_map)} sources d'énergie avec pricing trouvées")
+
+            if not sensors_map:
+                return self._success({
+                    # ... retour vide
+                })
+
+            # ═══════════════════════════════════════════════════════════
+            # 4. Récupérer les statistiques ÉNERGIE (pas coût)
+            # ═══════════════════════════════════════════════════════════
+            statistic_ids = [info["statistic_id"] for info in sensors_map.values()]
+
+            _LOGGER.info(f"[COST-ANALYSIS] Fetching energy statistics pour {len(statistic_ids)} sources")
+
             # Fetch baseline statistics
             baseline_stats = await self.hass.async_add_executor_job(
                 statistics_during_period,
                 self.hass,
                 baseline_start_dt,
                 baseline_end_dt,
-                all_statistic_ids,
+                statistic_ids,
                 "hour",
                 None,
                 {"sum"}
             )
-            
+
             # Fetch event statistics
             event_stats = await self.hass.async_add_executor_job(
                 statistics_during_period,
                 self.hass,
                 event_start_dt,
                 event_end_dt,
-                all_statistic_ids,
+                statistic_ids,
                 "hour",
                 None,
                 {"sum"}
             )
-            
+
             # ═══════════════════════════════════════════════════════════
-            # 4. Calculer les comparaisons en mergant HT et TTC
+            # 5. Calculer les coûts depuis l'énergie + prix
             # ═══════════════════════════════════════════════════════════
             entity_comparisons = []
             baseline_duration_s = (baseline_end_dt - baseline_start_dt).total_seconds()
             event_duration_s = (event_end_dt - event_start_dt).total_seconds()
-            
-            for source_entity, variants in sensors_by_source.items():
-                # Prioriser TTC pour l'affichage, mais calculer les deux
-                ttc_sensor = variants.get("ttc")
-                ht_sensor = variants.get("ht")
+
+            for source_entity, info in sensors_map.items():
+                statistic_id = info["statistic_id"]
+                prix_ht = info["prix_ht"]
+                prix_ttc = info["prix_ttc"]
                 
-                # On doit avoir au moins un variant
-                if not ttc_sensor and not ht_sensor:
+                # === BASELINE : Calculer énergie puis coûts ===
+                baseline_rows = baseline_stats.get(statistic_id, [])
+                if not baseline_rows:
+                    _LOGGER.debug(f"[COST-ANALYSIS] Pas de stats baseline pour {statistic_id}")
                     continue
                 
-                # Utiliser TTC comme référence pour l'affichage, sinon HT
-                display_sensor = ttc_sensor or ht_sensor
+                # Calculer l'énergie consommée (delta sum)
+                baseline_last = baseline_rows[-1].get("sum", 0.0) if baseline_rows else 0.0
+                baseline_first = baseline_rows[0].get("sum", 0.0) if baseline_rows else 0.0
+                baseline_energy_kwh = float(baseline_last) - float(baseline_first)
                 
-                # Récupérer les stats pour calculer l'énergie (depuis la source)
-                source_state = self.hass.states.get(source_entity)
-                if not source_state:
+                # Appliquer les prix
+                baseline_cost_ht = baseline_energy_kwh * prix_ht if prix_ht else 0.0
+                baseline_cost_ttc = baseline_energy_kwh * prix_ttc if prix_ttc else 0.0
+                
+                # === EVENT : Calculer énergie puis coûts ===
+                event_rows = event_stats.get(statistic_id, [])
+                if not event_rows:
+                    _LOGGER.debug(f"[COST-ANALYSIS] Pas de stats event pour {statistic_id}")
                     continue
                 
-                # === BASELINE : Calculer les coûts HT et TTC ===
-                baseline_cost_ht = 0.0
-                baseline_cost_ttc = 0.0
-                baseline_energy_kwh = 0.0
+                event_last = event_rows[-1].get("sum", 0.0) if event_rows else 0.0
+                event_first = event_rows[0].get("sum", 0.0) if event_rows else 0.0
+                event_energy_kwh = float(event_last) - float(event_first)
                 
-                if ht_sensor:
-                    ht_stat_id = ht_sensor["statistic_id"]
-                    ht_baseline = baseline_stats.get(ht_stat_id, [])
-                    if ht_baseline:
-                        # Le capteur coût stocke directement la somme des coûts
-                        last_sum = ht_baseline[-1].get("sum", 0.0) if ht_baseline else 0.0
-                        first_sum = ht_baseline[0].get("sum", 0.0) if ht_baseline else 0.0
-                        baseline_cost_ht = float(last_sum) - float(first_sum) if last_sum else 0.0
-                
-                if ttc_sensor:
-                    ttc_stat_id = ttc_sensor["statistic_id"]
-                    ttc_baseline = baseline_stats.get(ttc_stat_id, [])
-                    if ttc_baseline:
-                        last_sum = ttc_baseline[-1].get("sum", 0.0) if ttc_baseline else 0.0
-                        first_sum = ttc_baseline[0].get("sum", 0.0) if ttc_baseline else 0.0
-                        baseline_cost_ttc = float(last_sum) - float(first_sum) if last_sum else 0.0
-                
-                # Si on a qu'un variant, calculer l'autre avec ratio 1.1
-                if baseline_cost_ttc == 0.0 and baseline_cost_ht > 0.0:
-                    baseline_cost_ttc = baseline_cost_ht * 1.1
-                elif baseline_cost_ht == 0.0 and baseline_cost_ttc > 0.0:
-                    baseline_cost_ht = baseline_cost_ttc / 1.1
-                
-                # Calculer l'énergie baseline depuis les stats de la source
-                source_attrs = source_state.attributes or {}
-                source_stat_id = source_attrs.get("statistic_id") or source_entity
-                source_baseline = baseline_stats.get(source_stat_id, [])
-                if source_baseline:
-                    last_energy = source_baseline[-1].get("sum", 0.0) if source_baseline else 0.0
-                    first_energy = source_baseline[0].get("sum", 0.0) if source_baseline else 0.0
-                    baseline_energy_kwh = float(last_energy) - float(first_energy) if last_energy else 0.0
-                
-                # === EVENT : Calculer les coûts HT et TTC ===
-                event_cost_ht = 0.0
-                event_cost_ttc = 0.0
-                event_energy_kwh = 0.0
-                
-                if ht_sensor:
-                    ht_stat_id = ht_sensor["statistic_id"]
-                    ht_event = event_stats.get(ht_stat_id, [])
-                    if ht_event:
-                        last_sum = ht_event[-1].get("sum", 0.0) if ht_event else 0.0
-                        first_sum = ht_event[0].get("sum", 0.0) if ht_event else 0.0
-                        event_cost_ht = float(last_sum) - float(first_sum) if last_sum else 0.0
-                
-                if ttc_sensor:
-                    ttc_stat_id = ttc_sensor["statistic_id"]
-                    ttc_event = event_stats.get(ttc_stat_id, [])
-                    if ttc_event:
-                        last_sum = ttc_event[-1].get("sum", 0.0) if ttc_event else 0.0
-                        first_sum = ttc_event[0].get("sum", 0.0) if ttc_event else 0.0
-                        event_cost_ttc = float(last_sum) - float(first_sum) if last_sum else 0.0
-                
-                # Si on a qu'un variant, calculer l'autre avec ratio 1.1
-                if event_cost_ttc == 0.0 and event_cost_ht > 0.0:
-                    event_cost_ttc = event_cost_ht * 1.1
-                elif event_cost_ht == 0.0 and event_cost_ttc > 0.0:
-                    event_cost_ht = event_cost_ttc / 1.1
-                
-                # Calculer l'énergie event depuis les stats de la source
-                source_event = event_stats.get(source_stat_id, [])
-                if source_event:
-                    last_energy = source_event[-1].get("sum", 0.0) if source_event else 0.0
-                    first_energy = source_event[0].get("sum", 0.0) if source_event else 0.0
-                    event_energy_kwh = float(last_energy) - float(first_energy) if last_energy else 0.0
+                event_cost_ht = event_energy_kwh * prix_ht if prix_ht else 0.0
+                event_cost_ttc = event_energy_kwh * prix_ttc if prix_ttc else 0.0
                 
                 # Si pas de données, skip
                 if baseline_energy_kwh == 0.0 and event_energy_kwh == 0.0:
