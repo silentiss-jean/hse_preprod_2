@@ -1515,17 +1515,16 @@ class HistoryAnalysisView(HomeAssistantView):
             _LOGGER.info(f"[COST-ANALYSIS] Pricing: type={pricing_profile.contract_type}, TTC={pricing_profile.prix_kwh_ttc}€/kWh")
             
             # ═══════════════════════════════════════════════════════════
-            # 3. Récupérer tous les capteurs d'énergie HSE
+            # 3. Récupérer tous les capteurs de COÛT HSE (pas les energy!)
             # ═══════════════════════════════════════════════════════════
             entity_reg = er.async_get(self.hass)
             energy_sensors = []
-            
-            # Trouver tous les capteurs d'énergie quotidiens
+
+            # Trouver tous les capteurs de COÛT quotidiens qui ont une source
             for entity_id, entry in entity_reg.entities.items():
                 if (entry.platform == "home_suivi_elec" and 
                     entity_id.startswith("sensor.hse_") and 
-                    "_daily" in entity_id and
-                    "_cout" not in entity_id):  # Exclure les capteurs de coût
+                    "_cout_daily" in entity_id):  # Chercher les capteurs COÛT
                     
                     state = self.hass.states.get(entity_id)
                     if not state:
@@ -1535,12 +1534,19 @@ class HistoryAnalysisView(HomeAssistantView):
                     source_entity = attrs.get("source_entity")
                     
                     if source_entity:
-                        energy_sensors.append({
-                            "entity_id": entity_id,
-                            "source_entity": source_entity,
-                            "friendly_name": attrs.get("friendly_name", entity_id),
-                            "statistic_id": source_entity  # Le source_entity est le statistic_id
-                        })
+                        # Récupérer le vrai statistic_id depuis le source
+                        source_state = self.hass.states.get(source_entity)
+                        if source_state:
+                            source_attrs = source_state.attributes or {}
+                            # Le statistic_id peut être source_entity lui-même OU un attr
+                            statistic_id = source_attrs.get("statistic_id") or source_entity
+                            
+                            energy_sensors.append({
+                                "entity_id": entity_id,  # Le capteur coût pour l'affichage
+                                "source_entity": source_entity,
+                                "friendly_name": attrs.get("friendly_name", entity_id),
+                                "statistic_id": statistic_id  # Le vrai statistic_id pour recorder
+                            })
             
             if not energy_sensors:
                 _LOGGER.warning("[COST-ANALYSIS] Aucun capteur d'énergie HSE trouvé")

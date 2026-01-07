@@ -14,6 +14,16 @@ export class ComparisonController {
     }
 
     /**
+     * Format number with French locale (comma as decimal separator)
+     */
+    formatNumber(value, decimals = 2) {
+        return value.toLocaleString('fr-FR', {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+        });
+    }
+
+    /**
      * Initialize the comparison view (called by history_main.js)
      */
     async init() {
@@ -501,22 +511,22 @@ export class ComparisonController {
                     <h4 class="sensor-name">${sensor.display_name}</h4>
                     <div class="consumption-highlight">
                         <div class="consumption-value">
-                            <span class="value-large">${eventCost.toFixed(2)} €</span>
-                            <span class="value-subtitle">${eventEnergy.toFixed(3)} kWh</span>
+                            <span class="value-large">${this.formatNumber(eventCost, 2)} €</span>
+                            <span class="value-subtitle">${this.formatNumber(eventEnergy, 2)} kWh</span>
                         </div>
                     </div>
                     <p class="sensor-description">
-                        Ce capteur représente <strong>${((eventCost / this.data.event_period.total_cost_ttc) * 100).toFixed(1)}%</strong> 
+                        Ce capteur représente <strong>${this.formatNumber((eventCost / this.data.event_period.total_cost_ttc) * 100, 1)}%</strong> 
                         de la consommation totale.
                     </p>
                     <div class="metrics-comparison">
                         <div class="metric-row">
                             <span class="label">Coût/heure:</span>
-                            <span class="value">${sensor.event_cost_ttc_per_hour.toFixed(4)} €/h</span>
+                            <span class="value">${this.formatNumber(sensor.event_cost_ttc_per_hour, 4)} €/h</span>
                         </div>
                         <div class="metric-row">
                             <span class="label">Coût/jour:</span>
-                            <span class="value">${sensor.event_cost_ttc_per_day.toFixed(2)} €/j</span>
+                            <span class="value">${this.formatNumber(sensor.event_cost_ttc_per_day, 2)} €/j</span>
                         </div>
                     </div>
                     <button class="btn-focus" data-entity="${sensor.entity_id}">
