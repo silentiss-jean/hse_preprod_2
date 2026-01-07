@@ -1869,3 +1869,321 @@
         transform: rotate(90deg);
     }
 }
+/* ========================================
+   TODAY PANEL - PANNEAU DE RÉFÉRENCE CONSOLIDÉ
+======================================== */
+
+/* Placeholder référence (si pas configuré) */
+.reference-sensor-placeholder {
+    background: var(--bg-secondary, #f8f9fa);
+    border: 2px dashed var(--border-color, #dee2e6);
+    border-radius: var(--border-radius, 8px);
+    padding: var(--spacing-xl, 32px);
+    text-align: center;
+    margin-bottom: var(--spacing-lg, 24px);
+    color: var(--text-secondary, #6c757d);
+}
+
+.reference-sensor-placeholder p:first-child {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm, 8px);
+}
+
+.reference-sensor-placeholder .subtitle {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    line-height: 1.5;
+}
+
+/* Panel référence pour TODAY */
+.reference-panel-today {
+    background: linear-gradient(135deg, var(--hse-primary, #2c3e50) 0%, var(--hse-primary-dark, #1a252f) 100%);
+    color: #ffffff;
+    border-radius: var(--border-radius, 8px);
+    padding: var(--spacing-lg, 24px);
+    margin-bottom: var(--spacing-xl, 32px);
+    box-shadow: 0 8px 24px rgba(44, 62, 80, 0.3);
+}
+
+.reference-panel-today .ref-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg, 24px);
+}
+
+.reference-panel-today .ref-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: var(--spacing-sm, 8px);
+}
+
+.reference-panel-today .ref-header h3 {
+    margin: var(--spacing-sm, 8px) 0 var(--spacing-xs, 4px);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.reference-panel-today .ref-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* Métriques de référence */
+.reference-panel-today .ref-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md, 16px);
+    margin-bottom: var(--spacing-lg, 24px);
+}
+
+.reference-panel-today .metric-item {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-sm, 4px);
+    padding: var(--spacing-md, 16px);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.reference-panel-today .metric-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.reference-panel-today .metric-label {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xs, 4px);
+    font-weight: 500;
+}
+
+.reference-panel-today .metric-value {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.reference-panel-today .metric-value.primary {
+    font-size: 1.6rem;
+    color: #ffd93d;
+}
+
+/* Alerte d'écart (gap) */
+.gap-alert {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius, 8px);
+    padding: var(--spacing-md, 16px);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md, 16px);
+    margin-top: var(--spacing-lg, 24px);
+}
+
+.gap-alert.warning {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: rgba(255, 107, 107, 0.5);
+}
+
+.gap-alert.info {
+    background: rgba(81, 207, 102, 0.2);
+    border-color: rgba(81, 207, 102, 0.5);
+}
+
+.gap-alert .gap-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.gap-alert .gap-content {
+    flex: 1;
+}
+
+.gap-alert .gap-content strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-xs, 4px);
+}
+
+.gap-alert .gap-explanation {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin: var(--spacing-xs, 4px) 0 0;
+    font-style: italic;
+}
+
+/* Section Top Sensors */
+.top-sensors-section h3 {
+    color: var(--text-primary, #212529);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md, 16px);
+}
+
+/* Carte de capteur avec rang */
+.sensor-card .card-rank {
+    position: absolute;
+    top: var(--spacing-sm, 8px);
+    right: var(--spacing-sm, 8px);
+    z-index: 10;
+}
+
+.sensor-card .card-rank .rank-badge {
+    font-size: 1.2rem;
+    padding: 6px 10px;
+    background: var(--hse-primary, #2c3e50);
+    color: #ffffff;
+    border-radius: 50%;
+    min-width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sensor-card .card-content {
+    padding-right: 48px; /* Pour éviter le chevauchement avec le rang */
+}
+
+.sensor-card .sensor-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+    margin-bottom: var(--spacing-xs, 4px);
+    line-height: 1.3;
+}
+
+.sensor-card .sensor-source {
+    font-size: 0.8rem;
+    color: var(--text-tertiary, #adb5bd);
+    margin-bottom: var(--spacing-sm, 8px);
+}
+
+.sensor-card .sensor-metrics {
+    border-top: 1px solid var(--border-color-light, #e9ecef);
+    padding-top: var(--spacing-sm, 8px);
+    margin-top: var(--spacing-sm, 8px);
+}
+
+/* Panneau de chargement */
+.loading-panel {
+    text-align: center;
+    padding: var(--spacing-xl, 48px);
+    background: var(--card-bg, #ffffff);
+    border-radius: var(--border-radius, 8px);
+}
+
+.loading-panel .spinner {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto var(--spacing-lg, 24px);
+    border: 6px solid var(--border-color-light, #e9ecef);
+    border-top-color: var(--hse-primary, #2c3e50);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loading-panel p {
+    color: var(--text-secondary, #6c757d);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Panneau d'erreur */
+.error-panel {
+    text-align: center;
+    padding: var(--spacing-xl, 48px);
+    background: var(--hse-danger-light, #f8d7da);
+    border: 2px solid var(--hse-danger, #dc3545);
+    border-radius: var(--border-radius, 8px);
+}
+
+.error-panel h3 {
+    color: var(--hse-danger-dark, #721c24);
+    font-size: 1.3rem;
+    margin-bottom: var(--spacing-md, 16px);
+}
+
+.error-panel p {
+    color: var(--hse-danger-dark, #721c24);
+    font-size: 1rem;
+    margin-bottom: var(--spacing-lg, 24px);
+}
+
+.btn-retry {
+    padding: var(--spacing-sm, 8px) var(--spacing-lg, 24px);
+    background: var(--hse-danger, #dc3545);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--border-radius, 8px);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-retry:hover {
+    background: var(--hse-danger-dark, #c82333);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Section autres capteurs */
+.other-sensors-section {
+    margin-top: var(--spacing-xl, 32px);
+}
+
+.other-sensors-section h3 {
+    color: var(--text-primary, #212529);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md, 16px);
+}
+
+/* Responsive pour TODAY PANEL */
+@media (max-width: 992px) {
+    .reference-panel-today .ref-metrics {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .reference-panel-today .ref-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .sensor-card .card-rank .rank-badge {
+        font-size: 1rem;
+        min-width: 32px;
+        height: 32px;
+    }
+    
+    .sensor-card .card-content {
+        padding-right: 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .reference-panel-today {
+        padding: var(--spacing-md, 16px);
+    }
+    
+    .reference-panel-today .ref-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .reference-panel-today .metric-value {
+        font-size: 1.2rem;
+    }
+}
