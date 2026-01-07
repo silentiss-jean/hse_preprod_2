@@ -84,6 +84,7 @@ export class TodayPanel {
         `;
     }
 
+
     /**
      * Résumé global
      */
@@ -135,6 +136,153 @@ export class TodayPanel {
                             <div class="metric-value">${this.data.sensor_count}</div>
                         </div>
                     </div>
+                </div>
+            </div>
+        `;
+    }
+
+/**
+ * Render the "Today" view with reference sensor
+ */
+async renderTodayView() {
+    try {
+        const response = await this.api.getCurrentCosts();
+        
+        if (!response) {
+            this.showError("Impossible de charger les coûts");
+            return;
+        }
+        
+        const { reference_sensor, top_10, other_sensors, total_cost_ttc, total_cost_ht, total_energy_kwh, gap, sensor_count } = response;
+        
+        let html = '<div class="today-view">';
+        
+        // 🆕 PANEL RÉFÉRENCE (si configuré)
+        if (reference_sensor) {
+            html += this.renderReferenceSensorToday(reference_sensor, gap);
+        }
+        
+        // TOTAUX INTERNES
+        html += `
+            <div class="totals-section">
+                <h3>📊 Capteurs internes (${sensor_count} actifs)</h3>
+                <div class="totals-cards">
+                    <div class="total-card">
+                        <span class="card-icon">💰</span>
+                        <span class="card-label">Total TTC</span>
+                        <span class="card-value">${total_cost_ttc.toFixed(2)} €</span>
+                    </div>
+                    <div class="total-card">
+                        <span class="card-icon">💵</span>
+                        <span class="card-label">Total HT</span>
+                        <span class="card-value">${total_cost_ht.toFixed(2)} €</span>
+                    </div>
+                    <div class="total-card">
+                        <span class="card-icon">⚡</span>
+                        <span class="card-label">Énergie</span>
+                        <span class="card-value">${total_energy_kwh.toFixed(3)} kWh</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // 🆕 ALERTE ÉCART (si significatif)
+        if (gap && Math.abs(gap.percent) > 5) {
+            html += this.renderGapAlert(gap);
+        }
+        
+        // TOP 10
+        html += '<div class="top-consumers"><h3>💰 Top 10 des plus coûteux</h3>';
+        html += '<div class="sensors-grid">';
+        top_10.forEach((sensor, index) => {
+            html += this.renderSensorCard(sensor, index + 1);
+        });
+        html += '</div></div>';
+        
+        // Autres capteurs
+        if (other_sensors && other_sensors.length > 0) {
+            html += `
+                <div class="other-sensors">
+                    <details>
+                        <summary>📋 Autres capteurs (${other_sensors.length})</summary>
+                        <div class="sensors-list">
+                            ${other_sensors.map(s => this.renderCompactSensor(s)).join('')}
+                        </div>
+                    </details>
+                </div>
+            `;
+        }
+        
+        html += '</div>';
+        
+        this.container.innerHTML = html;
+        
+    } catch (error) {
+        console.error('[HISTORY] Error rendering today view:', error);
+        this.showError(`Erreur: ${error.message}`);
+    }
+}
+
+    /**
+     * 🆕 Render reference sensor for "Today" view
+     */
+    renderReferenceSensorToday(refSensor, gap) {
+        const gapHtml = gap ? `
+            <div class="ref-gap-indicator ${gap.energy_kwh > 0 ? 'positive' : 'negative'}">
+                <span class="gap-icon">⚠️</span>
+                <div class="gap-text">
+                    <strong>Écart avec capteurs internes :</strong><br>
+                    ${gap.energy_kwh > 0 ? '+' : ''}${gap.energy_kwh.toFixed(3)} kWh 
+                    (${gap.energy_kwh > 0 ? '+' : ''}${gap.percent.toFixed(1)}%) 
+                    → ${gap.energy_kwh > 0 ? '+' : ''}${gap.cost_ttc.toFixed(2)} € TTC
+                </div>
+            </div>
+        ` : '';
+        
+        return `
+            <div class="reference-panel-today">
+                <div class="ref-header">
+                    <span class="ref-badge">🏠 RÉFÉRENCE</span>
+                    <h3>${refSensor.friendly_name}</h3>
+                    <p class="ref-subtitle">Consommation totale au compteur</p>
+                </div>
+                
+                <div class="ref-stats">
+                    <div class="ref-stat">
+                        <span class="stat-label">Énergie</span>
+                        <span class="stat-value">${refSensor.energy_kwh.toFixed(3)} kWh</span>
+                    </div>
+                    <div class="ref-stat">
+                        <span class="stat-label">Coût HT</span>
+                        <span class="stat-value">${refSensor.cost_ht.toFixed(2)} €</span>
+                    </div>
+                    <div class="ref-stat primary">
+                        <span class="stat-label">Coût TTC</span>
+                        <span class="stat-value">${refSensor.cost_ttc.toFixed(2)} €</span>
+                    </div>
+                </div>
+                
+                ${gapHtml}
+            </div>
+        `;
+    }
+
+    /**
+     * 🆕 Render gap alert
+     */
+    renderGapAlert(gap) {
+        const isPositive = gap.energy_kwh > 0;
+        return `
+            <div class="gap-alert ${isPositive ? 'warning' : 'info'}">
+                <div class="alert-icon">${isPositive ? '⚠️' : 'ℹ️'}</div>
+                <div class="alert-content">
+                    <strong>${isPositive ? 'Consommation non tracée détectée' : 'Suivi cohérent'}</strong>
+                    <p>
+                        ${Math.abs(gap.energy_kwh).toFixed(3)} kWh 
+                        (${Math.abs(gap.percent).toFixed(1)}%) 
+                        ${isPositive ? 'non tracés par les capteurs internes' : 'en trop dans les capteurs internes'}
+                        → ${Math.abs(gap.cost_ttc).toFixed(2)} € TTC
+                    </p>
                 </div>
             </div>
         `;
