@@ -14,6 +14,14 @@ export class ComparisonController {
     }
 
     /**
+     * Initialize the comparison view (called by history_main.js)
+     */
+    async init() {
+        console.log('[COMPARISON] Initializing comparison controller...');
+        await this.render(this.currentComparison);
+    }
+
+    /**
      * Render the comparison interface
      */
     async render(comparisonType = 'today_yesterday') {
