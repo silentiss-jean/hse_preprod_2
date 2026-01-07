@@ -11,6 +11,7 @@ export class HistoryMainController {
     constructor() {
         this.currentView = 'today'; // 'today' or 'comparison'
         this.container = null;
+        this.api = new HistoryAPI(); // ✅ Instance API partagée
         this.todayPanel = null;
         this.comparisonController = null;
     }
@@ -20,7 +21,7 @@ export class HistoryMainController {
      */
     async init(container) {
         this.container = container;
-
+        
         console.log('[HISTORY-MAIN] Initializing...');
 
         // Create main layout
@@ -70,7 +71,7 @@ export class HistoryMainController {
      */
     async switchView(view) {
         console.log(`[HISTORY-MAIN] Switching to view: ${view}`);
-
+        
         this.currentView = view;
 
         // Update active button
@@ -102,7 +103,7 @@ export class HistoryMainController {
     async renderTodayView(container) {
         console.log('[HISTORY-MAIN] Rendering Today view...');
         
-        this.todayPanel = new TodayPanel(container, this);
+        this.todayPanel = new TodayPanel(container, this.api); // ✅ Passer l'API
         await this.todayPanel.init();
     }
 
@@ -112,7 +113,7 @@ export class HistoryMainController {
     async renderComparisonView(container) {
         console.log('[HISTORY-MAIN] Rendering Comparison view...');
         
-        this.comparisonController = new ComparisonController(container, this);
+        this.comparisonController = new ComparisonController(container, this.api); // ✅ Passer l'API
         await this.comparisonController.init();
     }
 }

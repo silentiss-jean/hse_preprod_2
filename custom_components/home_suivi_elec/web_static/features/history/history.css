@@ -1451,3 +1451,210 @@
         min-width: unset;
     }
 }
+/* Badge d'information pour capteurs exclus */
+.excluded-info {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left: 4px solid #ffc107;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.excluded-info::before {
+    content: '';
+    flex-shrink: 0;
+}
+
+.excluded-details {
+    font-size: 0.85em;
+    color: #6c5200;
+    font-style: italic;
+    margin-left: 4px;
+}
+
+/* Animation d'apparition du badge */
+.excluded-info {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* ===== SECTION RÉSUMÉ ===== */
+.summary-section {
+    margin-bottom: 24px;
+}
+
+/* Badge d'alerte pour capteurs exclus */
+.summary-alert {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left: 4px solid #ffc107;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+.summary-alert .alert-icon {
+    font-size: 1.5em;
+    flex-shrink: 0;
+}
+
+.summary-alert .alert-content {
+    flex: 1;
+}
+
+.summary-alert strong {
+    display: block;
+    color: #856404;
+    font-size: 0.95em;
+    margin-bottom: 4px;
+}
+
+.summary-alert .alert-details {
+    font-size: 0.85em;
+    color: #6c5200;
+    opacity: 0.9;
+}
+
+/* Grille de métriques */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+/* Carte de métrique individuelle */
+.summary-metric {
+    background: var(--card-background-color, #fff);
+    border: 1px solid var(--divider-color, #e0e0e0);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.summary-metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color, #03a9f4);
+}
+
+/* Icône de métrique */
+.summary-metric .metric-icon {
+    font-size: 2em;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-color, #03a9f4);
+    background: linear-gradient(135deg, var(--primary-color, #03a9f4) 0%, var(--accent-color, #0288d1) 100%);
+    border-radius: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 8px rgba(3, 169, 244, 0.3);
+}
+
+/* Contenu de la métrique */
+.summary-metric .metric-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.summary-metric .metric-label {
+    font-size: 0.85em;
+    color: var(--secondary-text-color, #666);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.summary-metric .metric-value {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--primary-text-color, #333);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Valeur principale (TTC) avec mise en évidence */
+.summary-metric .metric-value.primary {
+    color: var(--primary-color, #03a9f4);
+    font-size: 1.8em;
+}
+
+/* Animation d'entrée */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive : mobile */
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-metric {
+        padding: 16px;
+    }
+    
+    .summary-metric .metric-icon {
+        font-size: 1.5em;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .summary-metric .metric-value {
+        font-size: 1.3em;
+    }
+}
+
+/* Mode sombre */
+@media (prefers-color-scheme: dark) {
+    .summary-metric {
+        background: var(--card-background-color, #1e1e1e);
+        border-color: var(--divider-color, #333);
+    }
+    
+    .summary-alert {
+        background: linear-gradient(135deg, #3d3520 0%, #4a3f28 100%);
+        border-left-color: #ffa000;
+    }
+    
+    .summary-alert strong {
+        color: #ffb74d;
+    }
+    
+    .summary-alert .alert-details {
+        color: #ffcc80;
+    }
+}

@@ -3,12 +3,10 @@
  * @description Panneau "Aujourd'hui" - Vue en temps réel des coûts
  */
 
-import HistoryAPI from '../history.api.js';
-
 export class TodayPanel {
-    constructor(container, mainController) {
+    constructor(container, api) { // ✅ Recevoir l'instance API
         this.container = container;
-        this.mainController = mainController;
+        this.api = api; // ✅ Stocker l'instance
         this.data = null;
     }
 
@@ -41,7 +39,7 @@ export class TodayPanel {
     async loadData() {
         try {
             console.log('[TODAY-PANEL] Loading data...');
-            this.data = await HistoryAPI.fetchCurrentCosts();
+            this.data = await this.api.fetchCurrentCosts(); // ✅ Utiliser l'instance
             console.log('[TODAY-PANEL] Data loaded:', this.data);
             this.render();
         } catch (error) {
@@ -67,7 +65,7 @@ export class TodayPanel {
                 ${this.renderOtherSensors()}
             </div>
         `;
-
+        
         this.container.innerHTML = html;
         this.attachEventListeners();
     }
@@ -90,27 +88,103 @@ export class TodayPanel {
      * Résumé global
      */
     renderSummary() {
+        // Badge d'information si des capteurs sont exclus
+        const excludedBadge = this.data.excluded_count > 0 
+            ? `<div class="summary-alert">
+                <span class="alert-icon">⚠️</span>
+                <div class="alert-content">
+                    <strong>${this.data.excluded_count} capteur(s) exclu(s)</strong>
+                    ${this.renderExcludedDetails()}
+                </div>
+            </div>`
+            : '';
+        
         return `
-            <div class="summary-card">
-                <div class="summary-item">
-                    <span class="label">Total TTC:</span>
-                    <span class="value">${this.formatPrice(this.data.total_cost_ttc)}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="label">Total HT:</span>
-                    <span class="value">${this.formatPrice(this.data.total_cost_ht)}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="label">Énergie totale:</span>
-                    <span class="value">${this.formatEnergy(this.data.total_energy_kwh)}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="label">Capteurs:</span>
-                    <span class="value">${this.data.sensor_count}</span>
+            <div class="summary-section">
+                ${excludedBadge}
+                
+                <div class="summary-grid">
+                    <div class="summary-metric">
+                        <div class="metric-icon">💶</div>
+                        <div class="metric-content">
+                            <div class="metric-label">Total TTC</div>
+                            <div class="metric-value primary">${this.formatPrice(this.data.total_cost_ttc)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-metric">
+                        <div class="metric-icon">💵</div>
+                        <div class="metric-content">
+                            <div class="metric-label">Total HT</div>
+                            <div class="metric-value">${this.formatPrice(this.data.total_cost_ht)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-metric">
+                        <div class="metric-icon">⚡</div>
+                        <div class="metric-content">
+                            <div class="metric-label">Énergie totale</div>
+                            <div class="metric-value">${this.formatEnergy(this.data.total_energy_kwh)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-metric">
+                        <div class="metric-icon">📊</div>
+                        <div class="metric-content">
+                            <div class="metric-label">Capteurs actifs</div>
+                            <div class="metric-value">${this.data.sensor_count}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
     }
+
+    /**
+     * Détails des capteurs exclus
+     */
+    renderExcludedDetails() {
+        const reasons = this.data.excluded_reasons || {};
+        const details = [];
+        
+        if (reasons.unavailable > 0) {
+            details.push(`${reasons.unavailable} indisponible(s)`);
+        }
+        if (reasons.source_unavailable > 0) {
+            details.push(`${reasons.source_unavailable} source(s) indisponible(s)`);
+        }
+        if (reasons.zero_values > 0) {
+            details.push(`${reasons.zero_values} inactif(s)`);
+        }
+        
+        if (details.length === 0) return '';
+        
+        return `<div class="alert-details">${details.join(' • ')}</div>`;
+    }
+
+
+    /**
+     * Détails des capteurs exclus (tooltip/badge)
+     */
+    renderExcludedDetails() {
+        const reasons = this.data.excluded_reasons || {};
+        const details = [];
+        
+        if (reasons.unavailable > 0) {
+            details.push(`${reasons.unavailable} indisponible(s)`);
+        }
+        if (reasons.source_unavailable > 0) {
+            details.push(`${reasons.source_unavailable} source(s) indisponible(s)`);
+        }
+        if (reasons.zero_values > 0) {
+            details.push(`${reasons.zero_values} inactif(s)`);
+        }
+        
+        if (details.length === 0) return '';
+        
+        return `<span class="excluded-details">(${details.join(', ')})</span>`;
+    }
+
 
     /**
      * Top 10 des capteurs
