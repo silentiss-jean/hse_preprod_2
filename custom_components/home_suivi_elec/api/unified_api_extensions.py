@@ -1706,7 +1706,16 @@ class HistoryAnalysisView(HomeAssistantView):
             top_variations = compute_top_entities(entity_comparisons, sort_by, top_limit)
             top_entity_ids = {c["entity_id"] for c in top_variations}
             other_sensors = [c for c in entity_comparisons if c["entity_id"] not in top_entity_ids]
-            
+
+            # ➕ NOUVEAU : Top 10 des plus grandes consommations (période event)
+            top_consumers = sorted(
+                entity_comparisons, 
+                key=lambda x: x.get("event_cost_ttc", 0.0), 
+                reverse=True
+            )[:top_limit]
+
+            _LOGGER.info(f"[COST-ANALYSIS] Top {len(top_consumers)} consumers calculated")
+
             # ═══════════════════════════════════════════════════════════
             # 8. Construire la réponse finale
             # ═══════════════════════════════════════════════════════════
@@ -1733,6 +1742,7 @@ class HistoryAnalysisView(HomeAssistantView):
                     "trend": trend
                 },
                 "top_variations": top_variations,
+                "top_consumers": top_consumers,
                 "other_sensors": other_sensors,
                 "timestamp": self._get_timestamp()
             }

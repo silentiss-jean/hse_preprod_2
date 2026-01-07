@@ -1658,3 +1658,59 @@
         color: #ffcc80;
     }
 }
+
+/* Top consumers grid */
+.top-consumers-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--card-background-color);
+    border-radius: 8px;
+}
+
+.consumers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.consumer-card {
+    background: var(--primary-background-color);
+    border: 2px solid var(--divider-color);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.consumer-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+}
+
+.rank-badge {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.consumption-highlight {
+    margin: 1rem 0;
+    text-align: center;
+    padding: 1rem;
+    background: var(--secondary-background-color);
+    border-radius: 6px;
+}
+
+.value-large {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.value-subtitle {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+    margin-top: 0.25rem;
+}

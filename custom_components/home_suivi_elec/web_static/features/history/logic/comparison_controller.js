@@ -66,6 +66,7 @@ export class ComparisonController {
                 <div id="comparison-results" class="comparison-results" style="display: none;">
                     <div id="comparison-summary"></div>
                     <div id="comparison-top-variations"></div>
+                    <div id="comparison-top-consumers"></div>
                     <div id="comparison-other-sensors"></div>
                     <div id="comparison-focus"></div>
                 </div>
@@ -340,6 +341,9 @@ export class ComparisonController {
         // Top variations
         this.renderTopVariations();
 
+        // ➕ NOUVEAU : Top consommateurs
+        this.renderTopConsumers();
+
         // Other sensors
         this.renderOtherSensors();
 
@@ -432,6 +436,92 @@ export class ComparisonController {
                 <h3>🔝 Top ${topVariations.length} des plus grandes variations</h3>
                 <div class="variations-grid">
                     ${topVariations.map((sensor, index) => this.renderVariationCard(sensor, index + 1)).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Render top consumers (highest absolute consumption)
+     */
+    renderTopConsumers() {
+        const topEl = document.getElementById('comparison-top-consumers');
+        if (!topEl) {
+            // Créer la section si elle n'existe pas
+            const resultsEl = document.getElementById('comparison-results');
+            if (resultsEl) {
+                const topVariationsEl = document.getElementById('comparison-top-variations');
+                if (topVariationsEl) {
+                    const div = document.createElement('div');
+                    div.id = 'comparison-top-consumers';
+                    topVariationsEl.insertAdjacentElement('afterend', div);
+                }
+            }
+        }
+        
+        const topConsumersEl = document.getElementById('comparison-top-consumers');
+        if (!topConsumersEl) return;
+        
+        const topConsumers = this.data.top_consumers || [];
+        
+        if (topConsumers.length === 0) {
+            topConsumersEl.innerHTML = '<p class="no-data">Aucune donnée de consommation</p>';
+            return;
+        }
+        
+        topConsumersEl.innerHTML = `
+            <div class="top-consumers-section">
+                <h3>⚡ Top ${topConsumers.length} des plus gros consommateurs</h3>
+                <div class="consumers-grid">
+                    ${topConsumers.map((sensor, index) => this.renderConsumerCard(sensor, index + 1)).join('')}
+                </div>
+            </div>
+        `;
+        
+        // Attacher les listeners pour les boutons focus
+        this.attachFocusListeners();
+    }
+
+    /**
+     * Render a single consumer card
+     */
+    renderConsumerCard(sensor, rank) {
+        const eventCost = sensor.event_cost_ttc;
+        const eventEnergy = sensor.event_energy_kwh;
+        
+        // Icône selon le rang
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+        
+        return `
+            <div class="consumer-card" data-entity="${sensor.entity_id}">
+                <div class="card-header">
+                    <span class="rank-badge">${medal}</span>
+                </div>
+                <div class="card-body">
+                    <h4 class="sensor-name">${sensor.display_name}</h4>
+                    <div class="consumption-highlight">
+                        <div class="consumption-value">
+                            <span class="value-large">${eventCost.toFixed(2)} €</span>
+                            <span class="value-subtitle">${eventEnergy.toFixed(3)} kWh</span>
+                        </div>
+                    </div>
+                    <p class="sensor-description">
+                        Ce capteur représente <strong>${((eventCost / this.data.event_period.total_cost_ttc) * 100).toFixed(1)}%</strong> 
+                        de la consommation totale.
+                    </p>
+                    <div class="metrics-comparison">
+                        <div class="metric-row">
+                            <span class="label">Coût/heure:</span>
+                            <span class="value">${sensor.event_cost_ttc_per_hour.toFixed(4)} €/h</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="label">Coût/jour:</span>
+                            <span class="value">${sensor.event_cost_ttc_per_day.toFixed(2)} €/j</span>
+                        </div>
+                    </div>
+                    <button class="btn-focus" data-entity="${sensor.entity_id}">
+                        🎯 Focus sur ce capteur
+                    </button>
                 </div>
             </div>
         `;
