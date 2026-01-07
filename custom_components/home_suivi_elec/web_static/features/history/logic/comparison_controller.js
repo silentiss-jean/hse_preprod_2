@@ -375,7 +375,10 @@ export class ComparisonController {
                     <div class="comparison-delta ${trendClass}">
                         <div class="trend-icon">${trendIcon}</div>
                         <div class="delta-values">
-                            <div class="delta-item
+                            <div class="delta-item">
+                                <span class="label">Δ Énergie</span>
+                                <span class="value">${total.delta_kwh >= 0 ? '+' : ''}${total.delta_kwh.toFixed(3)} kWh (${total.delta_pct_kwh >= 0 ? '+' : ''}${total.delta_pct_kwh.toFixed(1)}%)</span>
+                            </div>
                             <div class="delta-item">
                                 <span class="label">Δ Coût TTC</span>
                                 <span class="value">${total.delta_cost_ttc >= 0 ? '+' : ''}${total.delta_cost_ttc.toFixed(2)} € (${total.delta_pct_cost >= 0 ? '+' : ''}${total.delta_pct_cost.toFixed(1)}%)</span>

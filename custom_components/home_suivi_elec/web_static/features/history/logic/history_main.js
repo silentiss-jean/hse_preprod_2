@@ -5,11 +5,10 @@
 
 import HistoryAPI from '../history.api.js';
 import TodayPanel from '../panels/today_panel.js';
-import { ComparisonController } from './comparison_controller.js';
+import ComparisonController from './comparison_controller.js';
 
 export class HistoryMainController {
     constructor() {
-        this.api = new HistoryAPI();
         this.currentView = 'today'; // 'today' or 'comparison'
         this.container = null;
         this.todayPanel = null;
@@ -70,8 +69,6 @@ export class HistoryMainController {
      * Switch between views
      */
     async switchView(view) {
-        if (this.currentView === view) return;
-
         console.log(`[HISTORY-MAIN] Switching to view: ${view}`);
 
         this.currentView = view;
@@ -83,7 +80,13 @@ export class HistoryMainController {
 
         // Get content container
         const contentEl = document.getElementById('history-content');
-        if (!contentEl) return;
+        if (!contentEl) {
+            console.error('[HISTORY-MAIN] Content container not found');
+            return;
+        }
+
+        // Clear content
+        contentEl.innerHTML = '';
 
         // Render appropriate view
         if (view === 'today') {
@@ -97,26 +100,20 @@ export class HistoryMainController {
      * Render "Aujourd'hui" view
      */
     async renderTodayView(container) {
-        container.innerHTML = '<div id="today-container"></div>';
-        const todayContainer = document.getElementById('today-container');
-
-        if (!todayContainer) return;
-
-        this.todayPanel = new TodayPanel(todayContainer, this.api);
-        await this.todayPanel.render();
+        console.log('[HISTORY-MAIN] Rendering Today view...');
+        
+        this.todayPanel = new TodayPanel(container, this);
+        await this.todayPanel.init();
     }
 
     /**
      * Render comparison view
      */
     async renderComparisonView(container) {
-        container.innerHTML = '<div id="comparison-container"></div>';
-        const comparisonContainer = document.getElementById('comparison-container');
-
-        if (!comparisonContainer) return;
-
-        this.comparisonController = new ComparisonController(comparisonContainer, this.api);
-        await this.comparisonController.render('today_yesterday');
+        console.log('[HISTORY-MAIN] Rendering Comparison view...');
+        
+        this.comparisonController = new ComparisonController(container, this);
+        await this.comparisonController.init();
     }
 }
 
