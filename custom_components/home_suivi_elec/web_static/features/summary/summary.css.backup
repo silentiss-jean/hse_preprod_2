@@ -95,7 +95,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    var(--hse-surface),
+    rgba(255, 255, 255, 0.3),
     transparent
   );
   animation: hse-shine 2s infinite;
@@ -361,7 +361,7 @@
   margin-top: 16px;
   padding: 16px;
   border-radius: 12px;
-  background: var(--hse-surface, var(--hse-surface));
+  background: var(--hse-surface, #ffffff);
   border: 1px solid var(--hse-border, #e5e7eb);
 }
 
@@ -401,7 +401,7 @@
 }
 
 .hse-top-consumers-row.level-medium {
-  background: rgba(var(--hse-accent), 0.04);
+  background: rgba(59, 130, 246, 0.04);
 }
 
 .hse-top-consumers-row.level-high {
@@ -447,11 +447,11 @@
 }
 
 .hse-top-consumers-badge.integration {
-  background: rgba(var(--hse-accent), 0.08);
+  background: rgba(59, 130, 246, 0.08);
 }
 
 .hse-top-consumers-badge.category {
-  background: rgba(var(--hse-success), 0.08);
+  background: rgba(16, 185, 129, 0.08);
 }
 
 
@@ -523,7 +523,7 @@
 
 /* Panel coûts globaux */
 .hse-costs-global-panel {
-  background: var(--card-background-color, var(--hse-surface));
+  background: var(--card-background-color, #fff);
   border-radius: 8px;
   padding: 20px;
   margin: 20px 0;
@@ -638,7 +638,7 @@
    ============================================ */
 
 .hse-costs-per-entity {
-  background: var(--card-background-color, var(--hse-surface));
+  background: var(--card-background-color, #fff);
   border-radius: 8px;
   padding: 20px;
   margin: 20px 0;
@@ -681,7 +681,7 @@
 
 .hse-costs-th {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: var(--hse-surface);
+  color: #fff;
   padding: 12px;
   text-align: left;
   font-weight: 600;

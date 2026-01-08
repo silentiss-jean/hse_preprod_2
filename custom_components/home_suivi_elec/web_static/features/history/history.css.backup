@@ -16,22 +16,22 @@
 .history-module,
 .history-feature {
   /* --- Surfaces / fond --- */
-  --card-bg: var(--hse-surface, var(--hse-surface));
-  --input-bg: var(--hse-surface, var(--hse-surface));
-  --bg-secondary: var(--hse-surface-muted, var(--hse-border-soft));
-  --bg-hover: var(--hse-accent-soft, rgba(var(--hse-accent), 0.1));
-  --bg-highlight: var(--hse-warning-soft, rgba(var(--hse-warning), 0.12));
+  --card-bg: var(--hse-surface, #ffffff);
+  --input-bg: var(--hse-surface, #ffffff);
+  --bg-secondary: var(--hse-surface-muted, #f1f5f9);
+  --bg-hover: var(--hse-accent-soft, rgba(59, 130, 246, 0.1));
+  --bg-highlight: var(--hse-warning-soft, rgba(245, 158, 11, 0.12));
 
   /* --- Bordures / ombres --- */
-  --border-color: var(--hse-border, var(--hse-border));
-  --border-color-light: var(--hse-border-soft, var(--hse-border-soft));
+  --border-color: var(--hse-border, #e2e8f0);
+  --border-color-light: var(--hse-border-soft, #f1f5f9);
   --shadow-md: var(--hse-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.05));
   --shadow-lg: var(--hse-shadow-lg, 0 10px 15px rgba(0, 0, 0, 0.1));
 
   /* --- Texte --- */
-  --text-primary: var(--hse-text-main, var(--hse-text-main));
-  --text-secondary: var(--hse-text-muted, var(--hse-text-muted));
-  --text-tertiary: var(--hse-text-soft, var(--hse-text-soft));
+  --text-primary: var(--hse-text-main, #0f172a);
+  --text-secondary: var(--hse-text-muted, #64748b);
+  --text-tertiary: var(--hse-text-soft, #94a3b8);
 
   /* --- Rayons / transitions --- */
   --border-radius-sm: var(--hse-radius-sm, 6px);
@@ -42,27 +42,27 @@
   --transition-slow: var(--hse-transition-slow, 0.3s ease);
 
   /* --- Couleurs sémantiques (legacy => thème HSE) --- */
-  --hse-primary: var(--hse-accent, var(--hse-accent));
-  --hse-primary-dark: var(--hse-accent-hover, var(--hse-accent-hover));
-  --hse-primary-alpha: var(--hse-accent-soft, rgba(var(--hse-accent), 0.1));
+  --hse-primary: var(--hse-accent, #3b82f6);
+  --hse-primary-dark: var(--hse-accent-hover, #2563eb);
+  --hse-primary-alpha: var(--hse-accent-soft, rgba(59, 130, 246, 0.1));
 
-  --hse-success: var(--hse-success, var(--hse-success));
-  --hse-success-dark: var(--hse-success, var(--hse-success));
-  --hse-success-light: var(--hse-success-soft, rgba(var(--hse-success), 0.12));
+  --hse-success: var(--hse-success, #10b981);
+  --hse-success-dark: var(--hse-success, #10b981);
+  --hse-success-light: var(--hse-success-soft, rgba(16, 185, 129, 0.12));
 
-  --hse-warning: var(--hse-warning, var(--hse-warning));
-  --hse-warning-dark: var(--hse-warning, var(--hse-warning));
-  --hse-warning-light: var(--hse-warning-soft, rgba(var(--hse-warning), 0.12));
+  --hse-warning: var(--hse-warning, #f59e0b);
+  --hse-warning-dark: var(--hse-warning, #f59e0b);
+  --hse-warning-light: var(--hse-warning-soft, rgba(245, 158, 11, 0.12));
 
-  --hse-danger: var(--hse-error, var(--hse-error));
-  --hse-danger-dark: var(--hse-error, var(--hse-error));
-  --hse-danger-light: var(--hse-error-soft, rgba(var(--hse-error), 0.12));
+  --hse-danger: var(--hse-error, #ef4444);
+  --hse-danger-dark: var(--hse-error, #ef4444);
+  --hse-danger-light: var(--hse-error-soft, rgba(239, 68, 68, 0.12));
 
-  --hse-info: var(--hse-info, var(--hse-info));
-  --hse-info-dark: var(--hse-info, var(--hse-info));
+  --hse-info: var(--hse-info, #06b6d4);
+  --hse-info-dark: var(--hse-info, #06b6d4);
 
   /* --- Gradients (thème) --- */
-  --hse-gradient-primary: var(--hse-gradient-primary, linear-gradient(135deg, var(--hse-accent) 0%, #8b5cf6 100%));
+  --hse-gradient-primary: var(--hse-gradient-primary, linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%));
   --hse-gradient-header: var(--hse-gradient-header, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
 }
 
@@ -157,7 +157,7 @@
 
 .view-btn.active {
   background: var(--hse-primary);
-  color: var(--hse-surface);
+  color: #ffffff;
   border-color: var(--hse-primary);
 }
 
@@ -208,7 +208,7 @@
 
 .preset-btn.active {
   background: var(--hse-primary);
-  color: var(--hse-surface);
+  color: #ffffff;
   border-color: var(--hse-primary);
 }
 
@@ -267,7 +267,7 @@
   width: 100%;
   padding: var(--spacing-md);
   background: var(--hse-gradient-primary);
-  color: var(--hse-surface);
+  color: #ffffff;
   border: none;
   border-radius: var(--border-radius);
   font-size: 1rem;
@@ -623,7 +623,7 @@
 .btn-retry {
   padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--hse-danger);
-  color: var(--hse-surface);
+  color: #ffffff;
   border: none;
   border-radius: var(--border-radius);
   font-size: 1rem;
@@ -666,7 +666,7 @@
 .btn-refresh {
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--hse-info);
-  color: var(--hse-surface);
+  color: #ffffff;
   border: none;
   border-radius: var(--border-radius);
   font-size: 0.9rem;
@@ -686,7 +686,7 @@
   border-radius: var(--border-radius);
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
-  color: var(--hse-surface);
+  color: #ffffff;
   box-shadow: var(--shadow-lg);
 }
 
@@ -701,7 +701,7 @@
   margin: 0;
   font-size: 1.2rem;
   font-weight: 900;
-  color: var(--hse-surface);
+  color: #ffffff;
 }
 
 .summary-header .timestamp {
@@ -718,9 +718,9 @@
 .summary-metrics .metric {
   text-align: center;
   padding: var(--spacing-sm);
-  background: var(--hse-surface);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: var(--border-radius-sm);
-  border: 1px solid var(--hse-surface);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .summary-metrics .metric .label {
@@ -788,7 +788,7 @@
   top: var(--spacing-sm);
   right: var(--spacing-sm);
   background: var(--hse-primary);
-  color: var(--hse-surface);
+  color: #ffffff;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -887,7 +887,7 @@
 
 .comparison-tabs .tab.active {
   background: var(--hse-primary);
-  color: var(--hse-surface);
+  color: #ffffff;
   border-color: var(--hse-primary);
 }
 
@@ -902,7 +902,7 @@
   flex: 1;
   padding: var(--spacing-md);
   background: var(--hse-gradient-primary);
-  color: var(--hse-surface);
+  color: #ffffff;
   border: none;
   border-radius: var(--border-radius);
   font-size: 1rem;
@@ -1154,7 +1154,7 @@
 
 .focus-info {
   background: var(--hse-gradient-header);
-  color: var(--hse-surface);
+  color: #ffffff;
   padding: var(--spacing-lg);
   border-radius: var(--border-radius);
   margin-bottom: var(--spacing-lg);
@@ -1165,7 +1165,7 @@
   margin: 0 0 var(--spacing-sm);
   font-size: 1.2rem;
   font-weight: 900;
-  color: var(--hse-surface);
+  color: #ffffff;
 }
 
 .focus-info .entity-id {
@@ -1183,9 +1183,9 @@
 .focus-metrics .metric {
   text-align: center;
   padding: var(--spacing-sm);
-  background: var(--hse-surface);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: var(--border-radius-sm);
-  border: 1px solid var(--hse-surface);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .focus-metrics .metric .label {
