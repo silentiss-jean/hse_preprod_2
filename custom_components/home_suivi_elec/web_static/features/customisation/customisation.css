@@ -1,0 +1,98 @@
+/**
+ * Customisation Module
+ * Gestion des options de personnalisation
+ */
+
+.customisation-module {
+  max-width: var(--hse-container-max-width);
+  margin: 0 auto;
+  padding: var(--hse-spacing-lg);
+}
+
+.customisation-header {
+  text-align: center;
+  margin-bottom: var(--hse-spacing-2xl);
+}
+
+.customisation-header h1 {
+  color: var(--hse-text-main);
+  font-weight: var(--hse-font-weight-black);
+  margin-bottom: var(--hse-spacing-sm);
+}
+
+.customisation-tabs {
+  margin-bottom: var(--hse-spacing-xl);
+}
+
+.customisation-panel {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  padding: var(--hse-spacing-xl);
+  box-shadow: var(--hse-shadow-md);
+}
+
+/* Options de personnalisation */
+.customisation-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--hse-spacing-md);
+  border-bottom: 1px solid var(--hse-border-soft);
+}
+
+.customisation-option:last-child {
+  border-bottom: none;
+}
+
+.customisation-option-label {
+  flex: 1;
+}
+
+.customisation-option-label h3 {
+  color: var(--hse-text-main);
+  font-size: var(--hse-font-size-base);
+  font-weight: var(--hse-font-weight-semibold);
+  margin-bottom: var(--hse-spacing-xs);
+}
+
+.customisation-option-description {
+  color: var(--hse-text-muted);
+  font-size: var(--hse-font-size-sm);
+}
+
+.customisation-option-control {
+  flex-shrink: 0;
+  margin-left: var(--hse-spacing-lg);
+}
+
+/* Preview */
+.customisation-preview {
+  background: var(--hse-surface-muted);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-md);
+  padding: var(--hse-spacing-lg);
+  margin-top: var(--hse-spacing-lg);
+}
+
+.customisation-preview-title {
+  color: var(--hse-text-muted);
+  font-size: var(--hse-font-size-sm);
+  font-weight: var(--hse-font-weight-semibold);
+  margin-bottom: var(--hse-spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .customisation-option {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--hse-spacing-md);
+  }
+  
+  .customisation-option-control {
+    margin-left: 0;
+    width: 100%;
+  }
+}
