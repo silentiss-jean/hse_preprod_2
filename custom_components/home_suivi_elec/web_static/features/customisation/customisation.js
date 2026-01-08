@@ -30,12 +30,6 @@ export async function loadCustomisation() {
   container.innerHTML = renderCustomisationLayout();
   console.log("[customisation] Layout injecté");
 
-  const selectEl = container.querySelector("#hse-theme-select");
-  if (!selectEl) {
-    console.error("[customisation] Select de thème introuvable");
-    return;
-  }
-
   // Thème courant stocké
   const storedThemeId = getCurrentTheme();
   const fallbackThemeId = storedThemeId || (THEMES.find((t) => t.default) || THEMES[0]).id;
