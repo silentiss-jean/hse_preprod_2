@@ -1,66 +1,51 @@
 "use strict";
 /**
- * customisation.view.js - VERSION AMÉLIORÉE
+ * customisation.view.js - VERSION COMPACTE HORIZONTALE
  */
 
 import { THEMES } from "./logic/themesRegistry.js";
 
 export function renderCustomisationLayout() {
-  const optionsHtml = THEMES.map(
-    (t) => `<option value="${t.id}">${t.icon} ${t.label}</option>`
-  ).join("");
-
-  return `
+    return `
     <div class="customisation-layout">
-      <div class="customisation-header">
-        <h2>Apparence & Thème</h2>
-      </div>
-      
-      <div class="customisation-content">
-        <!-- Sélecteur de thème avec preview -->
-        <div class="theme-selector-panel">
-          <label for="hse-theme-select" class="theme-label">
-            🎨 Thème de l'interface :
-          </label>
-          
-          <select id="hse-theme-select" class="hse-select theme-select">
-            ${optionsHtml}
-          </select>
-          
-          <p class="theme-hint">
-            Le thème est mémorisé dans ce navigateur (localStorage).
-          </p>
+        <div class="customisation-header">
+            <h2>Apparence & Thème</h2>
         </div>
-
-        <!-- Preview des thèmes (grille de cartes) -->
-        <div class="theme-preview-grid">
-          ${THEMES.map(theme => `
-            <div class="theme-preview-card" data-theme="${theme.key}">
-              <div class="theme-preview-header">
-                <span class="theme-icon">${theme.icon}</span>
-                <h3>${theme.label}</h3>
-              </div>
-              <div class="theme-preview-description">
-                ${theme.description}
-              </div>
-              <div class="theme-preview-colors" data-theme-preview="${theme.key}">
-                <div class="color-sample accent"></div>
-                <div class="color-sample success"></div>
-                <div class="color-sample warning"></div>
-                <div class="color-sample error"></div>
-              </div>
-              <button class="hse-btn hse-btn-sm apply-theme-btn" data-theme="${theme.key}">
-                Appliquer
-              </button>
+        
+        <div class="customisation-content">
+            <!-- Grille de thèmes horizontale compacte -->
+            <div class="theme-compact-selector">
+                <p class="theme-hint">
+                    🎨 Cliquez sur un thème pour l'appliquer (mémorisé dans le navigateur)
+                </p>
+                <div class="theme-compact-grid">
+                    ${THEMES.map(theme => `
+                        <div class="theme-compact-card ${theme.default ? 'is-active' : ''}" 
+                             data-theme="${theme.key}"
+                             role="button"
+                             tabindex="0"
+                             aria-label="Appliquer le thème ${theme.label}">
+                            <span class="theme-compact-icon">${theme.icon}</span>
+                            <div class="theme-compact-info">
+                                <strong>${theme.label}</strong>
+                                <span class="theme-compact-desc">${theme.description}</span>
+                            </div>
+                            <div class="theme-compact-colors" data-theme-preview="${theme.key}">
+                                <div class="color-dot accent"></div>
+                                <div class="color-dot success"></div>
+                                <div class="color-dot warning"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
-          `).join('')}
         </div>
-      </div>
 
-      <section style="margin-top:30px;">
-        <h2>Regroupement des capteurs</h2>
-        <div id="hse-groups-panel"></div>
-      </section>
+        <section style="margin-top: 40px;">
+            <h2>Regroupement des capteurs</h2>
+            <div id="hse-groups-panel"></div>
+        </section>
     </div>
-  `;
+    `;
 }
+
