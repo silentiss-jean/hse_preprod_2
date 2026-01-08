@@ -1,4 +1,9 @@
 "use strict";
+
+/**
+ * Module Customisation
+ */
+
 import { renderCustomisationLayout } from "./customisation.view.js";
 import { getCurrentTheme, setCurrentTheme } from "./customisation.state.js";
 import { THEMES } from "./logic/themesRegistry.js";
@@ -8,67 +13,59 @@ console.log("[customisation] Module chargé");
 
 function applyThemeClass(themeId) {
   const root = document.body;
-  
-  // CORRECTION : Utiliser data-theme au lieu de classes
+
+  // Nettoyer toutes les classes de thème
+  THEMES.forEach((t) => root.classList.remove(t.id));
+
+  // Appliquer le thème choisi
   if (themeId) {
-    root.setAttribute('data-theme', themeId);
-    console.log("[customisation] Thème appliqué via data-theme:", themeId);
-  } else {
-    root.removeAttribute('data-theme');
+    root.classList.add(themeId);
   }
 }
 
+/**
+ * Point d'entrée principal
+ */
 export async function loadCustomisation() {
-    console.log("[customisation] loadCustomisation appelé");
-    
-    const container = document.getElementById("customisation");
-    if (!container) {
-        console.error("[customisation] Container #customisation introuvable");
-        return;
-    }
+  console.log("[customisation] loadCustomisation appelé");
 
-    container.innerHTML = renderCustomisationLayout();
-    console.log("[customisation] Layout injecté");
+  const container = document.getElementById("customisation");
+  if (!container) {
+    console.error("[customisation] Container #customisation introuvable");
+    return;
+  }
 
-    // Thème courant stocké
-    const storedThemeId = getCurrentTheme();
-    const fallbackThemeId = storedThemeId || (THEMES.find((t) => t.default) || THEMES[0]).id;
-    
-    applyThemeClass(fallbackThemeId);
+  // Injecter le layout HTML
+  container.innerHTML = renderCustomisationLayout();
+  console.log("[customisation] Layout injecté");
 
-    // NOUVELLE GESTION : Clic direct sur les cartes compactes
-    container.addEventListener("click", (e) => {
-        const themeCard = e.target.closest(".theme-compact-card");
-        if (themeCard) {
-            const newThemeId = themeCard.dataset.theme;
-            if (newThemeId) {
-                // Retirer la classe active de toutes les cartes
-                document.querySelectorAll(".theme-compact-card").forEach(card => {
-                    card.classList.remove("is-active");
-                });
-                
-                // Ajouter la classe active à la carte cliquée
-                themeCard.classList.add("is-active");
-                
-                // Appliquer le thème
-                setCurrentTheme(newThemeId);
-                applyThemeClass(newThemeId);
-                console.log("[customisation] Thème appliqué via carte compacte:", newThemeId);
-            }
-        }
-    });
+  const selectEl = container.querySelector("#hse-theme-select");
+  if (!selectEl) {
+    console.error("[customisation] Select de thème introuvable");
+    return;
+  }
 
-    // Marquer le thème actif au chargement
-    const activeCard = container.querySelector(`[data-theme="${fallbackThemeId}"]`);
-    if (activeCard) {
-        activeCard.classList.add("is-active");
-    }
+  // Thème courant stocké (id de la classe, ex: "hse_dark")
+  const storedThemeId = getCurrentTheme(); // doit retourner une string type "hse_dark"
+  const fallbackThemeId =
+    storedThemeId || (THEMES.find((t) => t.default) || THEMES[0]).id;
 
-    // Regroupement des capteurs
-    const groupsContainer = container.querySelector("#hse-groups-panel");
-    if (groupsContainer) {
-        await renderGroupsPanel(groupsContainer);
-    } else {
-        console.error("[customisation] #hse-groups-panel introuvable");
-    }
+  selectEl.value = fallbackThemeId;
+  applyThemeClass(fallbackThemeId);
+
+  // Réagir aux changements utilisateur
+  selectEl.addEventListener("change", (e) => {
+    const newThemeId = e.target.value;
+    setCurrentTheme(newThemeId); // sauvegarde l'id dans localStorage
+    applyThemeClass(newThemeId);
+    console.log("[customisation] Thème appliqué:", newThemeId);
+  });
+
+  // === Regroupement des capteurs ===
+  const groupsContainer = container.querySelector("#hse-groups-panel");
+  if (groupsContainer) {
+    await renderGroupsPanel(groupsContainer);
+  } else {
+    console.error("[customisation] #hse-groups-panel introuvable");
+  }
 }

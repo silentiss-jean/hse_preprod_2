@@ -277,7 +277,7 @@ Refactor/cleanup + Score Hero isolé
 .no-parents {
   padding: 2rem;
   text-align: center;
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  background: var(--warning-bg, #fff3cd);
   border-radius: 8px;
   color: var(--warning-text, #856404);
 }
@@ -287,7 +287,7 @@ Refactor/cleanup + Score Hero isolé
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 8px;
   margin-bottom: 1rem;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--card-bg, #ffffff);
 }
 
 .parent-group[open] {
@@ -342,7 +342,7 @@ Refactor/cleanup + Score Hero isolé
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--card-bg, #ffffff);
   border-radius: 6px;
   border: 1px solid var(--border-color, #e0e0e0);
 }
@@ -367,7 +367,7 @@ Refactor/cleanup + Score Hero isolé
 /* Orphans section */
 .orphans-section {
   padding: 1.5rem;
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  background: var(--warning-bg, #fff3cd);
   border: 2px solid var(--warning-border, #ffc107);
   border-radius: 8px;
 }
@@ -394,7 +394,7 @@ Refactor/cleanup + Score Hero isolé
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--card-bg, #ffffff);
   border-radius: 6px;
   border: 1px solid var(--warning-border, #ffc107);
 }
@@ -468,7 +468,7 @@ Refactor/cleanup + Score Hero isolé
   padding: 1.25rem;
   border-radius: 8px;
   border-left: 4px solid;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--card-bg, #ffffff);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -484,7 +484,7 @@ Refactor/cleanup + Score Hero isolé
 
 .alert-warning {
   border-left-color: var(--warning, #ffc107);
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  background: var(--warning-bg, #fff3cd);
 }
 
 .alert-info {
@@ -563,7 +563,7 @@ Refactor/cleanup + Score Hero isolé
 
 .capteurs-filters button.active {
   background: var(--primary);
-  color: var(--hse-surface);
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -597,7 +597,7 @@ Refactor/cleanup + Score Hero isolé
 .sensor-card {
   padding: 1rem;
   border-radius: 8px;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--card-bg, #ffffff);
   border: 2px solid;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.2s;
@@ -616,7 +616,7 @@ Refactor/cleanup + Score Hero isolé
 
 .sensor-unknown {
   border-color: var(--warning, #ffc107);
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  background: var(--warning-bg, #fff3cd);
 }
 
 .sensor-disabled {
@@ -627,7 +627,7 @@ Refactor/cleanup + Score Hero isolé
 
 .sensor-restored {
   border-color: var(--warning, #ffc107);
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  background: var(--warning-bg, #fff3cd);
 }
 
 /* Summary compact */
@@ -800,7 +800,7 @@ Refactor/cleanup + Score Hero isolé
   border-radius: 18px;
   padding: 2.2rem;
   overflow: hidden;
-  color: var(--hse-surface);
+  color: #ffffff;
 
   background: linear-gradient(135deg, #5b7cfa 0%, #7c3aed 55%, #a855f7 100%) !important;
   box-shadow:
@@ -814,8 +814,8 @@ Refactor/cleanup + Score Hero isolé
   position: absolute;
   inset: -40%;
   background:
-    radial-gradient(circle at 20% 20%, var(--hse-surface), transparent 45%),
-    radial-gradient(circle at 80% 30%, var(--hse-surface), transparent 50%),
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.20), transparent 45%),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.12), transparent 50%),
     radial-gradient(circle at 40% 90%, rgba(0,0,0,0.15), transparent 55%);
   pointer-events: none;
   transform: rotate(8deg);
@@ -825,7 +825,7 @@ Refactor/cleanup + Score Hero isolé
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--hse-surface), var(--hse-surface));
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.00));
   pointer-events: none;
 }
 
@@ -856,11 +856,11 @@ Refactor/cleanup + Score Hero isolé
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background: var(--hse-surface);
-  border: 6px solid var(--hse-surface);
+  background: rgba(255, 255, 255, 0.98);
+  border: 6px solid rgba(255,255,255,0.95);
   box-shadow:
     0 20px 60px rgba(15, 23, 42, 0.25),
-    inset 0 1px 0 var(--hse-surface);
+    inset 0 1px 0 rgba(255,255,255,0.65);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -881,7 +881,7 @@ Refactor/cleanup + Score Hero isolé
   font-size: 1rem;
   font-weight: 500;
   opacity: 0.9;
-  color: var(--hse-text-muted) !important;
+  color: #64748b !important;
 }
 
 /* Grade */
@@ -903,7 +903,7 @@ Refactor/cleanup + Score Hero isolé
   font-size: 1.15rem;
   font-weight: 600;
   opacity: 0.95;
-  color: var(--hse-surface) !important;
+  color: #ffffff !important;
 }
 
 /* Description */
@@ -915,8 +915,8 @@ Refactor/cleanup + Score Hero isolé
   font-size: 1rem;
   line-height: 1.6;
   opacity: 0.95;
-  color: var(--hse-surface) !important;
-  border-top: 1px solid var(--hse-surface);
+  color: #ffffff !important;
+  border-top: 1px solid rgba(255,255,255,0.18);
 }
 
 @media (max-width: 768px) {
@@ -1065,25 +1065,25 @@ Refactor/cleanup + Score Hero isolé
 /* On garde vos classes existantes mais en basant sur var HSE */
 .alert-critical {
   background: var(--hse-error-soft);
-  border-color: rgba(var(--hse-error), 0.35);
+  border-color: rgba(239, 68, 68, 0.35);
   color: var(--hse-text-main);
 }
 
 .alert-error {
   background: var(--hse-error-soft);
-  border-color: rgba(var(--hse-error), 0.25);
+  border-color: rgba(239, 68, 68, 0.25);
   color: var(--hse-text-main);
 }
 
 .alert-warning {
   background: var(--hse-warning-soft);
-  border-color: rgba(var(--hse-warning), 0.30);
+  border-color: rgba(245, 158, 11, 0.30);
   color: var(--hse-text-main);
 }
 
 .alert-info {
   background: var(--hse-accent-soft);
-  border-color: rgba(var(--hse-accent), 0.28);
+  border-color: rgba(59, 130, 246, 0.28);
   color: var(--hse-text-main);
 }
 
@@ -1117,18 +1117,18 @@ Refactor/cleanup + Score Hero isolé
   border-radius: var(--hse-radius-lg, 14px);
   border: 1px solid var(--hse-border, rgba(148,163,184,0.35));
   box-shadow: var(--hse-shadow-md, 0 10px 25px rgba(15,23,42,0.08));
-  background: var(--hse-surface, var(--hse-surface));
-  color: var(--hse-text-main, var(--hse-text-main));
+  background: var(--hse-surface, #ffffff);
+  color: var(--hse-text-main, #0f172a);
 }
 
 .relations-section h3 {
-  color: var(--hse-text-main, var(--hse-text-main));
+  color: var(--hse-text-main, #0f172a);
 }
 
 .parent-group,
 .child-row,
 .orphan-row {
-  background: var(--hse-surface, var(--hse-surface));
+  background: var(--hse-surface, #ffffff);
   border: 1px solid var(--hse-border, rgba(148,163,184,0.35));
   border-radius: 12px;
   box-shadow: var(--hse-shadow-sm, 0 6px 16px rgba(15,23,42,0.06));
@@ -1140,11 +1140,11 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .parent-header:hover {
-  background: var(--hse-accent-soft, rgba(var(--hse-accent),0.12));
+  background: var(--hse-accent-soft, rgba(59,130,246,0.12));
 }
 
 .entity-id-small {
-  color: var(--hse-text-muted, var(--hse-text-muted));
+  color: var(--hse-text-muted, #64748b);
   background: var(--hse-surface-elevated, rgba(148,163,184,0.10));
   border: 1px solid var(--hse-border-soft, rgba(148,163,184,0.25));
 }
@@ -1157,9 +1157,9 @@ Refactor/cleanup + Score Hero isolé
 
 .no-parents,
 .orphans-section {
-  background: var(--hse-warning-soft, rgba(var(--hse-warning),0.12));
-  border: 1px solid rgba(var(--hse-warning),0.35);
-  color: var(--hse-text-main, var(--hse-text-main));
+  background: var(--hse-warning-soft, rgba(245,158,11,0.12));
+  border: 1px solid rgba(245,158,11,0.35);
+  color: var(--hse-text-main, #0f172a);
   border-radius: 12px;
 }
 
@@ -1174,23 +1174,23 @@ Refactor/cleanup + Score Hero isolé
 
 .alert-critical,
 .alert-error {
-  background: var(--hse-error-soft, rgba(var(--hse-error),0.12));
-  border-left-color: rgba(var(--hse-error),0.65);
+  background: var(--hse-error-soft, rgba(239,68,68,0.12));
+  border-left-color: rgba(239,68,68,0.65);
 }
 
 .alert-warning {
-  background: var(--hse-warning-soft, rgba(var(--hse-warning),0.12));
-  border-left-color: rgba(var(--hse-warning),0.65);
+  background: var(--hse-warning-soft, rgba(245,158,11,0.12));
+  border-left-color: rgba(245,158,11,0.65);
 }
 
 .alert-info {
-  background: var(--hse-accent-soft, rgba(var(--hse-accent),0.12));
-  border-left-color: rgba(var(--hse-accent),0.65);
+  background: var(--hse-accent-soft, rgba(59,130,246,0.12));
+  border-left-color: rgba(59,130,246,0.65);
 }
 
 .alert-description,
 .alert-details small {
-  color: var(--hse-text-main, var(--hse-text-main));
+  color: var(--hse-text-main, #0f172a);
 }
 
 .hse-score-card .card-body {
@@ -1260,7 +1260,7 @@ Refactor/cleanup + Score Hero isolé
   border: 1px solid rgba(0,0,0,0.1);
   border-radius: 8px;
   padding: 0;
-  background: var(--hse-surface);
+  background: #ffffff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   transition: all 0.2s ease;
 }
@@ -1468,7 +1468,7 @@ Refactor/cleanup + Score Hero isolé
   align-items: center;
   gap: 8px;
   padding: 10px;
-  background: var(--hse-surface);
+  background: #ffffff;
   border-radius: 6px;
   border: 1px solid rgba(255,152,0,0.15);
   font-size: 13px;
@@ -1510,7 +1510,7 @@ Refactor/cleanup + Score Hero isolé
 
 .badge.info { background: #e3f2fd; color: #1976d2; }
 .badge.success { background: #e8f5e9; color: #2e7d32; }
-.badge.warning { background: var(--hse-surface)3e0; color: #e65100; }
+.badge.warning { background: #fff3e0; color: #e65100; }
 .badge.error { background: #ffebee; color: #c62828; }
 .badge.secondary { background: #f5f5f5; color: #616161; }
 
@@ -1535,12 +1535,12 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .alert-item-grouped.alert-error {
-  background: var(--hse-surface)3e0;
+  background: #fff3e0;
   border-color: #ff9800;
 }
 
 .alert-item-grouped.alert-warning {
-  background: var(--hse-surface)8e1;
+  background: #fff8e1;
   border-color: #ffc107;
 }
 
