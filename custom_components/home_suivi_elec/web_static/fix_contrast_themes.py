@@ -86,7 +86,7 @@ def fix_contrast_issues(css_content):
 
 def main():
     # Chemin du fichier CSS
-    css_file = 'style.hse.themes.css'
+    css_file = 'web_static/style.hse.themes.css'
     
     if not os.path.exists(css_file):
         print(f"Erreur: Le fichier {css_file} n'existe pas")
