@@ -1,0 +1,160 @@
+/**
+ * HOME SUIVI ÉLEC — DESIGN TOKENS (Core)
+ * Version 3.0
+ * 
+ * Variables immuables utilisées par tous les thèmes.
+ * Ne pas modifier directement — utiliser les variables --hse-* des thèmes.
+ */
+
+:root {
+  /* ========================================================================
+     SPACING SYSTEM (Base 4px)
+     ======================================================================== */
+  --hse-spacing-xs: 4px;
+  --hse-spacing-sm: 8px;
+  --hse-spacing-md: 16px;
+  --hse-spacing-lg: 24px;
+  --hse-spacing-xl: 32px;
+  --hse-spacing-2xl: 48px;
+  --hse-spacing-3xl: 64px;
+
+  /* ========================================================================
+     TYPOGRAPHY
+     ======================================================================== */
+  --hse-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+                          'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 
+                          'Fira Sans', 'Droid Sans', 'Helvetica Neue', 
+                          sans-serif;
+  --hse-font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', 
+                          Consolas, 'Courier New', monospace;
+  
+  --hse-font-size-xs: 0.75rem;    /* 12px */
+  --hse-font-size-sm: 0.875rem;   /* 14px */
+  --hse-font-size-base: 1rem;     /* 16px */
+  --hse-font-size-lg: 1.125rem;   /* 18px */
+  --hse-font-size-xl: 1.25rem;    /* 20px */
+  --hse-font-size-2xl: 1.5rem;    /* 24px */
+  --hse-font-size-3xl: 1.875rem;  /* 30px */
+  --hse-font-size-4xl: 2.25rem;   /* 36px */
+  
+  --hse-font-weight-light: 300;
+  --hse-font-weight-normal: 400;
+  --hse-font-weight-medium: 500;
+  --hse-font-weight-semibold: 600;
+  --hse-font-weight-bold: 700;
+  --hse-font-weight-black: 900;
+  
+  --hse-line-height-tight: 1.25;
+  --hse-line-height-base: 1.5;
+  --hse-line-height-relaxed: 1.75;
+
+  /* ========================================================================
+     LAYOUT
+     ======================================================================== */
+  --hse-container-max-width: 1400px;
+  --hse-container-padding: var(--hse-spacing-lg);
+  
+  --hse-header-height: 60px;
+  --hse-sidebar-width: 280px;
+
+  /* ========================================================================
+     Z-INDEX SCALE
+     ======================================================================== */
+  --hse-z-dropdown: 1000;
+  --hse-z-sticky: 1100;
+  --hse-z-modal-backdrop: 1200;
+  --hse-z-modal: 1300;
+  --hse-z-popover: 1400;
+  --hse-z-toast: 1500;
+
+  /* ========================================================================
+     BREAKPOINTS (pour usage JS)
+     ======================================================================== */
+  --hse-breakpoint-sm: 640px;
+  --hse-breakpoint-md: 768px;
+  --hse-breakpoint-lg: 1024px;
+  --hse-breakpoint-xl: 1280px;
+  --hse-breakpoint-2xl: 1536px;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+/* Text utilities */
+.hse-text-xs { font-size: var(--hse-font-size-xs); }
+.hse-text-sm { font-size: var(--hse-font-size-sm); }
+.hse-text-base { font-size: var(--hse-font-size-base); }
+.hse-text-lg { font-size: var(--hse-font-size-lg); }
+.hse-text-xl { font-size: var(--hse-font-size-xl); }
+.hse-text-2xl { font-size: var(--hse-font-size-2xl); }
+
+.hse-font-light { font-weight: var(--hse-font-weight-light); }
+.hse-font-normal { font-weight: var(--hse-font-weight-normal); }
+.hse-font-medium { font-weight: var(--hse-font-weight-medium); }
+.hse-font-semibold { font-weight: var(--hse-font-weight-semibold); }
+.hse-font-bold { font-weight: var(--hse-font-weight-bold); }
+.hse-font-black { font-weight: var(--hse-font-weight-black); }
+
+/* Spacing utilities */
+.hse-m-0 { margin: 0; }
+.hse-mt-xs { margin-top: var(--hse-spacing-xs); }
+.hse-mt-sm { margin-top: var(--hse-spacing-sm); }
+.hse-mt-md { margin-top: var(--hse-spacing-md); }
+.hse-mt-lg { margin-top: var(--hse-spacing-lg); }
+.hse-mt-xl { margin-top: var(--hse-spacing-xl); }
+
+.hse-mb-xs { margin-bottom: var(--hse-spacing-xs); }
+.hse-mb-sm { margin-bottom: var(--hse-spacing-sm); }
+.hse-mb-md { margin-bottom: var(--hse-spacing-md); }
+.hse-mb-lg { margin-bottom: var(--hse-spacing-lg); }
+.hse-mb-xl { margin-bottom: var(--hse-spacing-xl); }
+
+.hse-p-0 { padding: 0; }
+.hse-p-xs { padding: var(--hse-spacing-xs); }
+.hse-p-sm { padding: var(--hse-spacing-sm); }
+.hse-p-md { padding: var(--hse-spacing-md); }
+.hse-p-lg { padding: var(--hse-spacing-lg); }
+.hse-p-xl { padding: var(--hse-spacing-xl); }
+
+/* Display utilities */
+.hse-hidden { display: none !important; }
+.hse-block { display: block; }
+.hse-inline-block { display: inline-block; }
+.hse-flex { display: flex; }
+.hse-inline-flex { display: inline-flex; }
+.hse-grid { display: grid; }
+
+/* Flex utilities */
+.hse-flex-row { flex-direction: row; }
+.hse-flex-col { flex-direction: column; }
+.hse-flex-wrap { flex-wrap: wrap; }
+.hse-items-center { align-items: center; }
+.hse-items-start { align-items: flex-start; }
+.hse-items-end { align-items: flex-end; }
+.hse-justify-center { justify-content: center; }
+.hse-justify-between { justify-content: space-between; }
+.hse-justify-around { justify-content: space-around; }
+.hse-gap-xs { gap: var(--hse-spacing-xs); }
+.hse-gap-sm { gap: var(--hse-spacing-sm); }
+.hse-gap-md { gap: var(--hse-spacing-md); }
+.hse-gap-lg { gap: var(--hse-spacing-lg); }
+
+/* Width utilities */
+.hse-w-full { width: 100%; }
+.hse-w-auto { width: auto; }
+.hse-max-w-container { max-width: var(--hse-container-max-width); }
+
+/* Text alignment */
+.hse-text-left { text-align: left; }
+.hse-text-center { text-align: center; }
+.hse-text-right { text-align: right; }
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .hse-hidden-mobile { display: none !important; }
+}
+
+@media (min-width: 769px) {
+  .hse-hidden-desktop { display: none !important; }
+}
