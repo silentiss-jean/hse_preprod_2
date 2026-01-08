@@ -777,6 +777,313 @@
 }
 
 /* ==========================================================================
+   THÈME 7 — OCEAN (Bleu profond)
+   ========================================================================== */
+[data-theme="hse_ocean"] {
+  /* Surfaces */
+  --hse-bg: #0c1e2e;
+  --hse-surface: #1a3446;
+  --hse-surface-muted: #234557;
+  --hse-surface-elevated: #2d5670;
+  --hse-surface-hover: #356685;
+
+  --card-bg: var(--hse-surface);
+  --bg-secondary: var(--hse-surface-muted);
+  --surface-bg: var(--hse-surface);
+  --input-bg: var(--hse-surface);
+  --code-bg: #1a3446;
+  --children-bg: #1a3446;
+  --bg-hover: rgba(59, 130, 246, 0.12);
+  --bg-highlight: rgba(14, 165, 233, 0.15);
+
+  /* Bordures */
+  --hse-border: #2d5670;
+  --hse-border-soft: #234557;
+  --hse-border-strong: #3b729c;
+
+  --border-color: var(--hse-border);
+  --border-color-light: var(--hse-border-soft);
+
+  /* Texte */
+  --hse-text: #e0f2fe;
+  --hse-text-main: #e0f2fe;
+  --hse-text-muted: #bae6fd;
+  --hse-text-soft: #7dd3fc;
+
+  --text-primary: var(--hse-text-main);
+  --text-secondary: var(--hse-text-muted);
+  --text-tertiary: var(--hse-text-soft);
+
+  /* Accent */
+  --hse-accent: #0ea5e9;
+  --hse-accent-hover: #0284c7;
+  --hse-accent-soft: rgba(14, 165, 233, 0.15);
+
+  /* Success */
+  --hse-success: #14b8a6;
+  --hse-success-soft: rgba(20, 184, 166, 0.15);
+  --success-bg: var(--hse-success-soft);
+
+  /* Warning */
+  --hse-warning: #f59e0b;
+  --hse-warning-soft: rgba(245, 158, 11, 0.15);
+  --warning-bg: var(--hse-warning-soft);
+
+  /* Error */
+  --hse-error: #ef4444;
+  --hse-error-soft: rgba(239, 68, 68, 0.15);
+  --danger-bg: var(--hse-error-soft);
+
+  /* Info */
+  --hse-info: #06b6d4;
+  --hse-info-soft: rgba(6, 182, 212, 0.15);
+  --info-bg: var(--hse-info-soft);
+
+  /* Ombres (effet aquatique) */
+  --hse-shadow-sm: 0 2px 4px rgba(6, 78, 117, 0.4);
+  --hse-shadow-md: 0 4px 8px rgba(6, 78, 117, 0.5), 0 2px 4px rgba(14, 165, 233, 0.2);
+  --hse-shadow-lg: 0 10px 20px rgba(6, 78, 117, 0.6), 0 4px 8px rgba(14, 165, 233, 0.3);
+  --hse-shadow-glow: 0 0 25px rgba(14, 165, 233, 0.5), 0 0 50px rgba(6, 182, 212, 0.3);
+
+  --shadow-md: var(--hse-shadow-md);
+  --shadow-lg: var(--hse-shadow-lg);
+
+  /* Gradients ocean */
+  --hse-gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #14b8a6 100%);
+  --hse-gradient-header: linear-gradient(135deg, #0c4a6e 0%, #164e63 100%);
+  --hse-gradient-success: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+
+  /* Animations (Ocean) */
+  --hse-animation-spin: spin-ocean 2s ease-in-out infinite;
+  --hse-animation-pulse: pulse-ocean 3s ease-in-out infinite;
+}
+
+/* Effet backdrop pour Ocean */
+[data-theme="hse_ocean"] .card,
+[data-theme="hse_ocean"] .hse-surface,
+[data-theme="hse_ocean"] .sensor-card,
+[data-theme="hse_ocean"] .comparison-panel,
+[data-theme="hse_ocean"] .today-panel {
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
+@keyframes spin-ocean {
+  0% { 
+    transform: rotate(0deg); 
+    filter: drop-shadow(0 0 12px #0ea5e9) 
+            drop-shadow(0 0 24px #06b6d4);
+  }
+  33% {
+    filter: drop-shadow(0 0 16px #06b6d4) 
+            drop-shadow(0 0 20px #14b8a6);
+  }
+  66% {
+    filter: drop-shadow(0 0 16px #14b8a6) 
+            drop-shadow(0 0 20px #0ea5e9);
+  }
+  100% { 
+    transform: rotate(360deg); 
+    filter: drop-shadow(0 0 12px #0ea5e9) 
+            drop-shadow(0 0 24px #06b6d4);
+  }
+}
+
+@keyframes pulse-ocean {
+  0%, 100% { 
+    opacity: 1; 
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4), 
+                0 0 30px rgba(6, 182, 212, 0.3);
+    transform: scale(1);
+  }
+  25% {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 
+                0 0 40px rgba(20, 184, 166, 0.3);
+    transform: scale(1.01);
+  }
+  50% { 
+    opacity: 0.95; 
+    box-shadow: 0 0 25px rgba(20, 184, 166, 0.5), 
+                0 0 50px rgba(14, 165, 233, 0.4);
+    transform: scale(1.02);
+  }
+  75% {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.5), 
+                0 0 40px rgba(6, 182, 212, 0.4);
+    transform: scale(1.01);
+  }
+}
+
+/* Effet de vague ocean */
+@keyframes wave-ocean {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(-2px) translateY(2px);
+  }
+  50% {
+    transform: translateX(2px) translateY(-2px);
+  }
+  75% {
+    transform: translateX(-2px) translateY(-2px);
+  }
+}
+
+[data-theme="hse_ocean"] body,
+[data-theme="hse_ocean"] .hse-bg {
+  background: linear-gradient(
+    180deg, 
+    #0c1e2e 0%, 
+    #1a3446 25%, 
+    #0c4a6e 50%, 
+    #1a3446 75%, 
+    #0c1e2e 100%
+  );
+  background-size: 100% 300%;
+  animation: wave-ocean 15s ease infinite;
+}
+
+/* ==========================================================================
+   THÈME 8 — FOREST (Vert nature)
+   ========================================================================== */
+[data-theme="hse_forest"] {
+  /* Surfaces */
+  --hse-bg: #0f1f0f;
+  --hse-surface: #1a2e1a;
+  --hse-surface-muted: #243b24;
+  --hse-surface-elevated: #2d4a2d;
+  --hse-surface-hover: #365936;
+
+  --card-bg: var(--hse-surface);
+  --bg-secondary: var(--hse-surface-muted);
+  --surface-bg: var(--hse-surface);
+  --input-bg: var(--hse-surface);
+  --code-bg: #1a2e1a;
+  --children-bg: #1a2e1a;
+  --bg-hover: rgba(34, 197, 94, 0.12);
+  --bg-highlight: rgba(132, 204, 22, 0.15);
+
+  /* Bordures */
+  --hse-border: #2d4a2d;
+  --hse-border-soft: #243b24;
+  --hse-border-strong: #3d6b3d;
+
+  --border-color: var(--hse-border);
+  --border-color-light: var(--hse-border-soft);
+
+  /* Texte */
+  --hse-text: #ecfccb;
+  --hse-text-main: #ecfccb;
+  --hse-text-muted: #d9f99d;
+  --hse-text-soft: #bef264;
+
+  --text-primary: var(--hse-text-main);
+  --text-secondary: var(--hse-text-muted);
+  --text-tertiary: var(--hse-text-soft);
+
+  /* Accent */
+  --hse-accent: #22c55e;
+  --hse-accent-hover: #16a34a;
+  --hse-accent-soft: rgba(34, 197, 94, 0.15);
+
+  /* Success */
+  --hse-success: #10b981;
+  --hse-success-soft: rgba(16, 185, 129, 0.15);
+  --success-bg: var(--hse-success-soft);
+
+  /* Warning */
+  --hse-warning: #eab308;
+  --hse-warning-soft: rgba(234, 179, 8, 0.15);
+  --warning-bg: var(--hse-warning-soft);
+
+  /* Error */
+  --hse-error: #ef4444;
+  --hse-error-soft: rgba(239, 68, 68, 0.15);
+  --danger-bg: var(--hse-error-soft);
+
+  /* Info */
+  --hse-info: #84cc16;
+  --hse-info-soft: rgba(132, 204, 22, 0.15);
+  --info-bg: var(--hse-info-soft);
+
+  /* Ombres (effet naturel) */
+  --hse-shadow-sm: 0 2px 4px rgba(20, 83, 45, 0.4);
+  --hse-shadow-md: 0 4px 8px rgba(20, 83, 45, 0.5), 0 2px 4px rgba(34, 197, 94, 0.2);
+  --hse-shadow-lg: 0 10px 20px rgba(20, 83, 45, 0.6), 0 4px 8px rgba(34, 197, 94, 0.3);
+  --hse-shadow-glow: 0 0 25px rgba(34, 197, 94, 0.5), 0 0 50px rgba(132, 204, 22, 0.3);
+
+  --shadow-md: var(--hse-shadow-md);
+  --shadow-lg: var(--hse-shadow-lg);
+
+  /* Gradients forest */
+  --hse-gradient-primary: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  --hse-gradient-header: linear-gradient(135deg, #14532d 0%, #166534 100%);
+  --hse-gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+  /* Animations (Forest) */
+  --hse-animation-spin: spin-forest 2s ease-in-out infinite;
+  --hse-animation-pulse: pulse-forest 3s ease-in-out infinite;
+}
+
+/* Effet backdrop pour Forest */
+[data-theme="hse_forest"] .card,
+[data-theme="hse_forest"] .hse-surface,
+[data-theme="hse_forest"] .sensor-card,
+[data-theme="hse_forest"] .comparison-panel,
+[data-theme="hse_forest"] .today-panel {
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
+@keyframes spin-forest {
+  0% { 
+    transform: rotate(0deg); 
+    filter: drop-shadow(0 0 12px #22c55e) 
+            drop-shadow(0 0 24px #84cc16);
+  }
+  33% {
+    filter: drop-shadow(0 0 16px #84cc16) 
+            drop-shadow(0 0 20px #10b981);
+  }
+  66% {
+    filter: drop-shadow(0 0 16px #10b981) 
+            drop-shadow(0 0 20px #22c55e);
+  }
+  100% { 
+    transform: rotate(360deg); 
+    filter: drop-shadow(0 0 12px #22c55e) 
+            drop-shadow(0 0 24px #84cc16);
+  }
+}
+
+@keyframes pulse-forest {
+  0%, 100% { 
+    opacity: 1; 
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.4), 
+                0 0 30px rgba(132, 204, 22, 0.3);
+    transform: scale(1);
+  }
+  25% {
+    box-shadow: 0 0 20px rgba(132, 204, 22, 0.5), 
+                0 0 40px rgba(16, 185, 129, 0.3);
+    transform: scale(1.01);
+  }
+  50% { 
+    opacity: 0.95; 
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.5), 
+                0 0 50px rgba(34, 197, 94, 0.4);
+    transform: scale(1.02);
+  }
+  75% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.5), 
+                0 0 40px rgba(132, 204, 22, 0.4);
+    transform: scale(1.01);
+  }
+}
+
+
+/* ==========================================================================
    UTILITAIRES COMMUNS À TOUS LES THÈMES
    ========================================================================== */
 
