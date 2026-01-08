@@ -50,7 +50,7 @@
   --hse-text: #0f172a;
   --hse-text-main: #0f172a;
   --hse-text-muted: #64748b;
-  --hse-text-soft: #cbd5e1;
+  --hse-text-soft: #94a3b8;
   
   /* Aliases legacy */
   --text-primary: var(--hse-text-main);
@@ -58,25 +58,6 @@
   --text-tertiary: var(--hse-text-soft);
   --primary-text-color: var(--hse-text-main);
   --secondary-text-color: var(--hse-text-muted);
-
-    /* ===== VARIABLES SÉMANTIQUES POUR ACCESSIBILITÉ WCAG AA ===== */
-    /* Garantit un contraste minimum de 4.5:1 pour le texte normal */
-    
-    --hse-text-accessible: var(--hse-text-main);
-    --hse-text-muted-accessible: var(--hse-text-muted);
-    
-    /* Pour les tableaux - garantit la lisibilité */
-    --hse-table-text: var(--hse-text-main);
-    --hse-table-header-bg: var(--hse-surface-muted);
-    --hse-table-header-text: var(--hse-text-main);
-    --hse-table-row-hover: var(--hse-surface-hover);
-    
-    /* Pour les badges et alertes - versions accessibles */
-    --hse-success-text-accessible: #065f46;  /* Vert foncé - ratio 7:1 */
-    --hse-warning-text-accessible: #92400e;  /* Orange foncé - ratio 7:1 */
-    --hse-error-text-accessible: #991b1b;    /* Rouge foncé - ratio 7:1 */
-    --hse-info-text-accessible: #075985;     /* Cyan foncé - ratio 7:1 */
-
 
   /* ===== ACCENT PRINCIPAL ===== */
   --hse-accent: #3b82f6;
@@ -222,8 +203,8 @@
   /* Texte */
   --hse-text: #f1f5f9;
   --hse-text-main: #f1f5f9;
-  --hse-text-muted: #e2e8f0;
-  --hse-text-soft: #cbd5e1;
+  --hse-text-muted: #cbd5e1;
+  --hse-text-soft: #94a3b8;
   
   --text-primary: var(--hse-text-main);
   --text-secondary: var(--hse-text-muted);
@@ -318,8 +299,8 @@
   /* Texte */
   --hse-text: #ffffff;
   --hse-text-main: #ffffff;
-  --hse-text-muted: rgba(255, 255, 255, 0.95);
-  --hse-text-soft: rgba(255, 255, 255, 0.9);
+  --hse-text-muted: rgba(255, 255, 255, 0.8);
+  --hse-text-soft: rgba(255, 255, 255, 0.6);
   
   --text-primary: var(--hse-text-main);
   --text-secondary: var(--hse-text-muted);
@@ -429,8 +410,8 @@
   
   /* Texte */
   --hse-text: #4a5568;
-  --hse-text-main: #2d3748;
-  --hse-text-muted: #4a5568;
+  --hse-text-main: #4a5568;
+  --hse-text-muted: #718096;
   --hse-text-soft: #a0aec0;
   
   --text-primary: var(--hse-text-main);
@@ -532,7 +513,7 @@
   --hse-text: #00ffff;
   --hse-text-main: #00ffff;
   --hse-text-muted: #ff00ff;
-  --hse-text-soft: rgba(0, 255, 255, 0.9);
+  --hse-text-soft: rgba(0, 255, 255, 0.6);
   
   --text-primary: var(--hse-text-main);
   --text-secondary: var(--hse-text-muted);
@@ -664,7 +645,7 @@
   /* Texte */
   --hse-text: #e8f5e9;
   --hse-text-main: #e8f5e9;
-  --hse-text-muted: #e8f5e9;
+  --hse-text-muted: #b2dfdb;
   --hse-text-soft: rgba(232, 245, 233, 0.7);
   
   --text-primary: var(--hse-text-main);
@@ -827,7 +808,7 @@
   --hse-text: #e0f2fe;
   --hse-text-main: #e0f2fe;
   --hse-text-muted: #bae6fd;
-  --hse-text-soft: #bae6fd;
+  --hse-text-soft: #7dd3fc;
 
   --text-primary: var(--hse-text-main);
   --text-secondary: var(--hse-text-muted);
@@ -995,7 +976,7 @@
   --hse-text: #ecfccb;
   --hse-text-main: #ecfccb;
   --hse-text-muted: #d9f99d;
-  --hse-text-soft: #d9f99d;
+  --hse-text-soft: #bef264;
 
   --text-primary: var(--hse-text-main);
   --text-secondary: var(--hse-text-muted);
@@ -1461,7 +1442,7 @@ select:focus {
     --hse-surface-muted: #334155;
     --hse-text: #f1f5f9;
     --hse-text-main: #f1f5f9;
-    --hse-text-muted: #e2e8f0;
+    --hse-text-muted: #cbd5e1;
     --hse-border: #475569;
     --hse-accent: #60a5fa;
   }

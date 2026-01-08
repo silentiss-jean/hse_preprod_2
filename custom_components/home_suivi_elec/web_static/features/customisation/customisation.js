@@ -72,4 +72,3 @@ export async function loadCustomisation() {
         console.error("[customisation] #hse-groups-panel introuvable");
     }
 }
-

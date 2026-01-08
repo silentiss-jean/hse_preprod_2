@@ -167,7 +167,6 @@
 }
 
 /* COMPACT THEME SELECTOR - UNE SEULE LIGNE HORIZONTALE */
-
 .theme-compact-selector {
     max-width: 100%;
     margin-bottom: var(--hse-spacing-lg);
@@ -266,4 +265,3 @@
 .theme-preview-grid {
     display: none !important;
 }
-

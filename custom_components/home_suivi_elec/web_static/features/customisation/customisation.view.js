@@ -48,4 +48,3 @@ export function renderCustomisationLayout() {
     </div>
     `;
 }
-
