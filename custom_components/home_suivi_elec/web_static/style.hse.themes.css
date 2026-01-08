@@ -1082,6 +1082,35 @@
   }
 }
 
+/* Effet de vague forest */
+@keyframes wave-forest {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(-1px) translateY(1px);
+  }
+  50% {
+    transform: translateX(1px) translateY(-1px);
+  }
+  75% {
+    transform: translateX(-1px) translateY(-1px);
+  }
+}
+
+[data-theme="hse_forest"] body,
+[data-theme="hse_forest"] .hse-bg {
+  background: linear-gradient(
+    180deg, 
+    #0f1f0f 0%, 
+    #1a2e1a 25%, 
+    #14532d 50%, 
+    #1a2e1a 75%, 
+    #0f1f0f 100%
+  );
+  background-size: 100% 300%;
+  animation: wave-forest 18s ease infinite;
+}
 
 /* ==========================================================================
    UTILITAIRES COMMUNS À TOUS LES THÈMES
