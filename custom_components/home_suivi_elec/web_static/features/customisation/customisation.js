@@ -43,27 +43,28 @@ export async function loadCustomisation() {
   selectEl.value = fallbackThemeId;
   applyThemeClass(fallbackThemeId);
 
-  // Réagir aux changements dans le dropdown
-  selectEl.addEventListener("change", (e) => {
-    const newThemeId = e.target.value;
-    setCurrentTheme(newThemeId);
-    applyThemeClass(newThemeId);
-    console.log("[customisation] Thème appliqué via select:", newThemeId);
+  // NOUVELLE GESTION : Clic direct sur les cartes compactes
+  container.addEventListener("click", (e) => {
+      const themeCard = e.target.closest(".theme-compact-card");
+      if (themeCard) {
+          const newThemeId = themeCard.dataset.theme;
+          if (newThemeId) {
+              // Retirer la classe active de toutes les cartes
+              document.querySelectorAll(".theme-compact-card").forEach(card => {
+                  card.classList.remove("is-active");
+              });
+              
+              // Ajouter la classe active à la carte cliquée
+              themeCard.classList.add("is-active");
+              
+              // Appliquer le thème
+              setCurrentTheme(newThemeId);
+              applyThemeClass(newThemeId);
+              console.log("[customisation] Thème appliqué via carte compacte:", newThemeId);
+          }
+      }
   });
 
-  // CORRECTION : Ajouter l'écouteur pour les boutons "Appliquer"
-  container.addEventListener("click", (e) => {
-    const applyBtn = e.target.closest(".apply-theme-btn");
-    if (applyBtn) {
-      const newThemeId = applyBtn.dataset.theme;
-      if (newThemeId) {
-        selectEl.value = newThemeId;
-        setCurrentTheme(newThemeId);
-        applyThemeClass(newThemeId);
-        console.log("[customisation] Thème appliqué via bouton:", newThemeId);
-      }
-    }
-  });
 
   // Regroupement des capteurs
   const groupsContainer = container.querySelector("#hse-groups-panel");
