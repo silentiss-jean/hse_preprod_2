@@ -61,6 +61,22 @@ export async function loadCustomisation() {
     console.log("[customisation] Thème appliqué:", newThemeId);
   });
 
+  // Réagir aux clics sur les boutons "Appliquer" des cartes de prévisualisation
+  container.addEventListener("click", (e) => {
+    const applyBtn = e.target.closest(".apply-theme-btn");
+    if (applyBtn) {
+      const newThemeId = applyBtn.dataset.theme;
+      if (newThemeId) {
+        // Mettre à jour le select
+        selectEl.value = newThemeId;
+        // Sauvegarder et appliquer
+        setCurrentTheme(newThemeId);
+        applyThemeClass(newThemeId);
+        console.log("[customisation] Thème appliqué via bouton:", newThemeId);
+      }
+    }
+  });
+
   // === Regroupement des capteurs ===
   const groupsContainer = container.querySelector("#hse-groups-panel");
   if (groupsContainer) {
