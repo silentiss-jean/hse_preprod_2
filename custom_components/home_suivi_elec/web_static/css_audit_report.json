@@ -1,0 +1,1569 @@
+{
+  "modules": {
+    "configuration": {
+      "path": "custom_components/home_suivi_elec/web_static/features/configuration",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/configuration/configuration.css"
+    },
+    "customisation": {
+      "path": "custom_components/home_suivi_elec/web_static/features/customisation",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/customisation/customisation.css"
+    },
+    "detection": {
+      "path": "custom_components/home_suivi_elec/web_static/features/detection",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/detection/detection.css"
+    },
+    "diagnostics": {
+      "path": "custom_components/home_suivi_elec/web_static/features/diagnostics",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/diagnostics/diagnostics.css"
+    },
+    "generation": {
+      "path": "custom_components/home_suivi_elec/web_static/features/generation",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/generation/generation.css"
+    },
+    "history": {
+      "path": "custom_components/home_suivi_elec/web_static/features/history",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/history/history.css"
+    },
+    "migration": {
+      "path": "custom_components/home_suivi_elec/web_static/features/migration",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/migration/migration.css"
+    },
+    "summary": {
+      "path": "custom_components/home_suivi_elec/web_static/features/summary",
+      "has_css": true,
+      "has_js": true,
+      "css_path": "custom_components/home_suivi_elec/web_static/features/summary/summary.css"
+    }
+  },
+  "css_files": [
+    "custom_components/home_suivi_elec/web_static/features/configuration/configuration.css",
+    "custom_components/home_suivi_elec/web_static/features/customisation/customisation.css",
+    "custom_components/home_suivi_elec/web_static/features/detection/detection.css",
+    "custom_components/home_suivi_elec/web_static/features/diagnostics/diagnostics.css",
+    "custom_components/home_suivi_elec/web_static/features/generation/generation.css",
+    "custom_components/home_suivi_elec/web_static/features/history/history.css",
+    "custom_components/home_suivi_elec/web_static/features/migration/migration.css",
+    "custom_components/home_suivi_elec/web_static/features/summary/summary.css"
+  ],
+  "missing_css": [],
+  "variable_usage": {
+    "--hse-container-max-width": 4,
+    "--hse-spacing-lg": 23,
+    "--hse-spacing-xl": 13,
+    "--hse-text-main": 47,
+    "--hse-font-weight-bold": 7,
+    "--hse-spacing-sm": 11,
+    "--hse-surface": 81,
+    "--hse-border": 38,
+    "--hse-radius-lg": 10,
+    "--hse-shadow-md": 8,
+    "--hse-font-size-xl": 2,
+    "--hse-spacing-md": 17,
+    "--hse-spacing-xs": 8,
+    "--hse-success": 29,
+    "--hse-font-size-sm": 7,
+    "--hse-font-weight-semibold": 7,
+    "--hse-spacing-2xl": 9,
+    "--hse-font-weight-black": 5,
+    "--hse-border-soft": 12,
+    "--hse-font-size-base": 2,
+    "--hse-text-muted": 35,
+    "--hse-surface-muted": 12,
+    "--hse-radius-md": 6,
+    "--hse-transition-base": 5,
+    "--hse-accent": 40,
+    "--hse-shadow-lg": 4,
+    "--hse-radius-sm": 2,
+    "--hse-warning": 23,
+    "--hse-error": 14,
+    "--hse-shadow-sm": 5,
+    "--hse-accent-soft": 16,
+    "--hse-font-size-lg": 3,
+    "--hse-gradient-header": 4,
+    "--hse-font-size-2xl": 2,
+    "--hse-font-size-xs": 3,
+    "--hse-surface-elevated": 7,
+    "--text-primary": 35,
+    "--warning-bg": 5,
+    "--warning-text": 3,
+    "--border-color": 24,
+    "--card-bg": 22,
+    "--surface-bg": 1,
+    "--surface-hover": 1,
+    "--text-secondary": 27,
+    "--code-bg": 3,
+    "--children-bg": 1,
+    "--warning-border": 2,
+    "--danger-text": 1,
+    "--success-bg": 2,
+    "--success-text": 2,
+    "--danger": 4,
+    "--danger-bg": 4,
+    "--warning": 3,
+    "--info": 1,
+    "--info-bg": 1,
+    "--primary": 1,
+    "--success": 2,
+    "--secondary": 1,
+    "--secondary-bg": 1,
+    "--hse-transition-fast": 4,
+    "--hse-error-soft": 4,
+    "--hse-warning-soft": 5,
+    "--hse-font-weight-medium": 1,
+    "--hse-font-size-3xl": 1,
+    "--hse-text-soft": 2,
+    "--hse-transition-slow": 1,
+    "--hse-accent-hover": 2,
+    "--hse-success-soft": 1,
+    "--hse-info": 9,
+    "--hse-gradient-primary": 3,
+    "--spacing-lg": 33,
+    "--spacing-xl": 10,
+    "--spacing-sm": 31,
+    "--spacing-md": 38,
+    "--bg-secondary": 11,
+    "--border-radius": 29,
+    "--transition-base": 30,
+    "--hse-primary": 21,
+    "--shadow-md": 9,
+    "--border-color-light": 10,
+    "--border-radius-sm": 4,
+    "--input-bg": 2,
+    "--hse-primary-alpha": 2,
+    "--shadow-lg": 9,
+    "--bg-hover": 2,
+    "--text-tertiary": 6,
+    "--hse-warning-light": 1,
+    "--bg-highlight": 1,
+    "--hse-danger": 10,
+    "--hse-danger-light": 1,
+    "--spacing-xs": 3,
+    "--hse-text": 4,
+    "--hse-bg-secondary": 1,
+    "--hse-primary-dark": 1,
+    "--hse-hover": 1,
+    "--card-background-color": 2,
+    "--primary-color": 3,
+    "--primary-text-color": 1,
+    "--secondary-text-color": 1
+  },
+  "selectors": {
+    "configuration-header": [
+      "configuration"
+    ],
+    "configuration-saved": [
+      "configuration"
+    ],
+    "configuration-module": [
+      "configuration"
+    ],
+    "configuration-section": [
+      "configuration"
+    ],
+    "configuration-form-grid": [
+      "configuration"
+    ],
+    "configuration-actions": [
+      "configuration"
+    ],
+    "customisation-preview-title": [
+      "customisation"
+    ],
+    "theme-compact-selector": [
+      "customisation"
+    ],
+    "theme-compact-colors": [
+      "customisation"
+    ],
+    "customisation-module": [
+      "customisation"
+    ],
+    "theme-preview-grid": [
+      "customisation"
+    ],
+    "apply-theme-btn": [
+      "customisation"
+    ],
+    "customisation-option-control": [
+      "customisation"
+    ],
+    "customisation-option-description": [
+      "customisation"
+    ],
+    "theme-compact-icon": [
+      "customisation"
+    ],
+    "theme-selector-panel": [
+      "customisation"
+    ],
+    "theme-hint": [
+      "customisation"
+    ],
+    "customisation-tabs": [
+      "customisation"
+    ],
+    "customisation-preview": [
+      "customisation"
+    ],
+    "theme-preview-header": [
+      "customisation"
+    ],
+    "theme-preview-description": [
+      "customisation"
+    ],
+    "theme-preview-colors": [
+      "customisation"
+    ],
+    "customisation-option-label": [
+      "customisation"
+    ],
+    "error": [
+      "customisation",
+      "diagnostics"
+    ],
+    "is-active": [
+      "customisation"
+    ],
+    "color-sample": [
+      "customisation"
+    ],
+    "theme-compact-info": [
+      "customisation"
+    ],
+    "customisation-panel": [
+      "customisation"
+    ],
+    "accent": [
+      "customisation"
+    ],
+    "customisation-option": [
+      "customisation"
+    ],
+    "customisation-header": [
+      "customisation"
+    ],
+    "theme-icon": [
+      "customisation"
+    ],
+    "warning": [
+      "customisation",
+      "diagnostics"
+    ],
+    "theme-compact-card": [
+      "customisation"
+    ],
+    "theme-compact-grid": [
+      "customisation"
+    ],
+    "theme-compact-desc": [
+      "customisation"
+    ],
+    "theme-preview-card": [
+      "customisation"
+    ],
+    "success": [
+      "customisation",
+      "diagnostics",
+      "history"
+    ],
+    "detection-scan-panel": [
+      "detection"
+    ],
+    "detection-header": [
+      "detection"
+    ],
+    "detection-module": [
+      "detection"
+    ],
+    "detection-sensor-card": [
+      "detection"
+    ],
+    "detection-scan-status": [
+      "detection"
+    ],
+    "detection-sensor-type": [
+      "detection"
+    ],
+    "detection-actions": [
+      "detection"
+    ],
+    "detection-results": [
+      "detection"
+    ],
+    "detection-sensor-meta": [
+      "detection"
+    ],
+    "detection-scan-progress": [
+      "detection"
+    ],
+    "selected": [
+      "detection",
+      "generation"
+    ],
+    "detection-sensor-name": [
+      "detection"
+    ],
+    "detection-sensor-header": [
+      "detection"
+    ],
+    "clickable": [
+      "diagnostics"
+    ],
+    "hse-score-card": [
+      "diagnostics"
+    ],
+    "alert-card": [
+      "diagnostics"
+    ],
+    "alert-icon": [
+      "diagnostics",
+      "migration"
+    ],
+    "cycles-container": [
+      "diagnostics"
+    ],
+    "component-clickable": [
+      "diagnostics"
+    ],
+    "grade-letter": [
+      "diagnostics"
+    ],
+    "component-details": [
+      "diagnostics"
+    ],
+    "parents-grid": [
+      "diagnostics"
+    ],
+    "capteurs-stats": [
+      "diagnostics"
+    ],
+    "sensor-available": [
+      "diagnostics"
+    ],
+    "sensor-summary": [
+      "diagnostics"
+    ],
+    "sensor-badges": [
+      "diagnostics"
+    ],
+    "parent-meta": [
+      "diagnostics"
+    ],
+    "group-name": [
+      "diagnostics"
+    ],
+    "sensor-entity-id": [
+      "diagnostics"
+    ],
+    "score-card-content": [
+      "diagnostics"
+    ],
+    "sensor-group": [
+      "diagnostics"
+    ],
+    "component-info": [
+      "diagnostics"
+    ],
+    "orphans-section": [
+      "diagnostics"
+    ],
+    "cycle-section": [
+      "diagnostics"
+    ],
+    "themes": [
+      "diagnostics",
+      "history"
+    ],
+    "group-summary": [
+      "diagnostics"
+    ],
+    "spinner": [
+      "diagnostics",
+      "history",
+      "migration"
+    ],
+    "child-info": [
+      "diagnostics"
+    ],
+    "score-total": [
+      "diagnostics"
+    ],
+    "expand-icon": [
+      "diagnostics"
+    ],
+    "detail-label": [
+      "diagnostics"
+    ],
+    "quick-filters": [
+      "diagnostics"
+    ],
+    "stat-badge": [
+      "diagnostics"
+    ],
+    "component-item": [
+      "diagnostics"
+    ],
+    "alerts-content": [
+      "diagnostics"
+    ],
+    "orphan-info": [
+      "diagnostics"
+    ],
+    "alert-details": [
+      "diagnostics"
+    ],
+    "orphans-list": [
+      "diagnostics"
+    ],
+    "no-results": [
+      "diagnostics"
+    ],
+    "alert-action-btn": [
+      "diagnostics"
+    ],
+    "selected-highlight": [
+      "diagnostics"
+    ],
+    "active": [
+      "diagnostics",
+      "generation",
+      "history"
+    ],
+    "alert-error": [
+      "diagnostics",
+      "migration"
+    ],
+    "score-description": [
+      "diagnostics"
+    ],
+    "hse-score-hero": [
+      "diagnostics"
+    ],
+    "sensor-card": [
+      "diagnostics",
+      "history"
+    ],
+    "sensors-groups": [
+      "diagnostics"
+    ],
+    "score-value": [
+      "diagnostics"
+    ],
+    "group-content": [
+      "diagnostics"
+    ],
+    "alerts-stats": [
+      "diagnostics"
+    ],
+    "no-alerts": [
+      "diagnostics"
+    ],
+    "filter-buttons": [
+      "diagnostics"
+    ],
+    "orphan-row": [
+      "diagnostics"
+    ],
+    "sensor-details": [
+      "diagnostics"
+    ],
+    "group-icon": [
+      "diagnostics"
+    ],
+    "cycle-header": [
+      "diagnostics"
+    ],
+    "recommendations-list": [
+      "diagnostics"
+    ],
+    "badge": [
+      "diagnostics"
+    ],
+    "entity-badge": [
+      "diagnostics"
+    ],
+    "alert-entities": [
+      "diagnostics"
+    ],
+    "parent-header": [
+      "diagnostics"
+    ],
+    "sensor-row": [
+      "diagnostics"
+    ],
+    "grade-emoji": [
+      "diagnostics"
+    ],
+    "filters": [
+      "diagnostics"
+    ],
+    "source-status": [
+      "diagnostics"
+    ],
+    "detail-value": [
+      "diagnostics"
+    ],
+    "diagnostics-content": [
+      "diagnostics"
+    ],
+    "no-parents": [
+      "diagnostics"
+    ],
+    "capteurs-filters": [
+      "diagnostics"
+    ],
+    "card": [
+      "diagnostics"
+    ],
+    "sensor-mini-value": [
+      "diagnostics"
+    ],
+    "sensor-info": [
+      "diagnostics",
+      "history"
+    ],
+    "alert-critical": [
+      "diagnostics"
+    ],
+    "alert-warning": [
+      "diagnostics",
+      "migration"
+    ],
+    "entity-id-small": [
+      "diagnostics",
+      "history"
+    ],
+    "relations-section": [
+      "diagnostics"
+    ],
+    "alert-info": [
+      "diagnostics"
+    ],
+    "overview-grid": [
+      "diagnostics"
+    ],
+    "hse-diagnostics-sensors-list": [
+      "diagnostics"
+    ],
+    "children-list": [
+      "diagnostics"
+    ],
+    "info": [
+      "diagnostics"
+    ],
+    "score-number": [
+      "diagnostics"
+    ],
+    "parent-details-scroll": [
+      "diagnostics"
+    ],
+    "card-body": [
+      "diagnostics"
+    ],
+    "secondary": [
+      "diagnostics"
+    ],
+    "alert-item-grouped": [
+      "diagnostics"
+    ],
+    "css": [
+      "diagnostics",
+      "history",
+      "migration"
+    ],
+    "alert-message": [
+      "diagnostics"
+    ],
+    "cost-entity": [
+      "diagnostics"
+    ],
+    "alert-description": [
+      "diagnostics"
+    ],
+    "sensor-unavailable": [
+      "diagnostics"
+    ],
+    "source-missing": [
+      "diagnostics"
+    ],
+    "orphans-actions": [
+      "diagnostics"
+    ],
+    "source-info": [
+      "diagnostics"
+    ],
+    "parent-group": [
+      "diagnostics"
+    ],
+    "capteurs-content": [
+      "diagnostics"
+    ],
+    "card-header": [
+      "diagnostics"
+    ],
+    "orphan-icon": [
+      "diagnostics"
+    ],
+    "sensor-disabled": [
+      "diagnostics"
+    ],
+    "score-grade": [
+      "diagnostics"
+    ],
+    "capteurs-list": [
+      "diagnostics"
+    ],
+    "child-icon": [
+      "diagnostics"
+    ],
+    "group-count": [
+      "diagnostics"
+    ],
+    "sensor-unknown": [
+      "diagnostics"
+    ],
+    "score-display": [
+      "diagnostics"
+    ],
+    "hse": [
+      "diagnostics",
+      "history"
+    ],
+    "loading-state": [
+      "diagnostics"
+    ],
+    "groups-stats": [
+      "diagnostics"
+    ],
+    "components-list": [
+      "diagnostics"
+    ],
+    "detail-row": [
+      "diagnostics",
+      "history"
+    ],
+    "alerts-list": [
+      "diagnostics"
+    ],
+    "child-row": [
+      "diagnostics"
+    ],
+    "sensor-body": [
+      "diagnostics"
+    ],
+    "alert-item": [
+      "diagnostics"
+    ],
+    "alert-header": [
+      "diagnostics"
+    ],
+    "groups-content": [
+      "diagnostics"
+    ],
+    "alerts-list-grouped": [
+      "diagnostics"
+    ],
+    "sensor-restored": [
+      "diagnostics"
+    ],
+    "no-children": [
+      "diagnostics"
+    ],
+    "success-icon": [
+      "diagnostics"
+    ],
+    "status-badge": [
+      "diagnostics"
+    ],
+    "parent-icon": [
+      "diagnostics"
+    ],
+    "source-ok": [
+      "diagnostics"
+    ],
+    "success-state": [
+      "diagnostics"
+    ],
+    "group-header": [
+      "diagnostics"
+    ],
+    "generation-sensor-name": [
+      "generation"
+    ],
+    "generation-summary-title": [
+      "generation"
+    ],
+    "generation-step-number": [
+      "generation"
+    ],
+    "generation-summary-label": [
+      "generation"
+    ],
+    "generation-actions": [
+      "generation"
+    ],
+    "generation-config-label": [
+      "generation"
+    ],
+    "generation-result-message": [
+      "generation"
+    ],
+    "generation-result-title": [
+      "generation"
+    ],
+    "generation-step-label": [
+      "generation"
+    ],
+    "generation-sensor-item": [
+      "generation"
+    ],
+    "generation-summary-value": [
+      "generation"
+    ],
+    "generation-wizard": [
+      "generation"
+    ],
+    "generation-config-grid": [
+      "generation"
+    ],
+    "generation-steps": [
+      "generation"
+    ],
+    "generation-result-stat": [
+      "generation"
+    ],
+    "generation-config-help": [
+      "generation"
+    ],
+    "generation-actions-left": [
+      "generation"
+    ],
+    "generation-sensor-id": [
+      "generation"
+    ],
+    "generation-module": [
+      "generation"
+    ],
+    "generation-result": [
+      "generation"
+    ],
+    "generation-result-stats": [
+      "generation"
+    ],
+    "generation-result-icon": [
+      "generation"
+    ],
+    "completed": [
+      "generation"
+    ],
+    "generation-header": [
+      "generation"
+    ],
+    "generation-config-item": [
+      "generation"
+    ],
+    "generation-step-content": [
+      "generation"
+    ],
+    "generation-summary": [
+      "generation"
+    ],
+    "generation-result-stat-value": [
+      "generation"
+    ],
+    "generation-step": [
+      "generation"
+    ],
+    "generation-summary-item": [
+      "generation"
+    ],
+    "generation-sensor-selector": [
+      "generation"
+    ],
+    "generation-result-stat-label": [
+      "generation"
+    ],
+    "generation-actions-right": [
+      "generation"
+    ],
+    "sensors-compact-list": [
+      "history"
+    ],
+    "comparison-panel": [
+      "history"
+    ],
+    "comparison-summary-card": [
+      "history"
+    ],
+    "view-switcher": [
+      "history"
+    ],
+    "focus-header": [
+      "history"
+    ],
+    "comparison-table": [
+      "history"
+    ],
+    "extreme-cards": [
+      "history"
+    ],
+    "negative": [
+      "history"
+    ],
+    "comparison-table-wrapper": [
+      "history"
+    ],
+    "delta-label": [
+      "history"
+    ],
+    "btn-retry": [
+      "history"
+    ],
+    "metric-value": [
+      "history"
+    ],
+    "comparison-card": [
+      "history"
+    ],
+    "baseline": [
+      "history"
+    ],
+    "date-input": [
+      "history"
+    ],
+    "summary-metrics": [
+      "history"
+    ],
+    "highlight": [
+      "history"
+    ],
+    "no-data": [
+      "history"
+    ],
+    "cost-secondary": [
+      "history"
+    ],
+    "btn-refresh": [
+      "history"
+    ],
+    "comparison-results": [
+      "history"
+    ],
+    "tab-content": [
+      "history"
+    ],
+    "extreme-panel": [
+      "history"
+    ],
+    "top-sensors-list": [
+      "history"
+    ],
+    "history-results": [
+      "history"
+    ],
+    "value": [
+      "history"
+    ],
+    "high-cost": [
+      "history"
+    ],
+    "comparison-col": [
+      "history"
+    ],
+    "history-feature": [
+      "history"
+    ],
+    "sensor-cell": [
+      "history"
+    ],
+    "peak": [
+      "history"
+    ],
+    "sensor-source": [
+      "history"
+    ],
+    "positive": [
+      "history"
+    ],
+    "extreme-date": [
+      "history"
+    ],
+    "extreme-card": [
+      "history"
+    ],
+    "low-cost": [
+      "history"
+    ],
+    "focus-selector-panel": [
+      "history"
+    ],
+    "cost-primary": [
+      "history"
+    ],
+    "sensor-name": [
+      "history"
+    ],
+    "danger": [
+      "history"
+    ],
+    "neutral": [
+      "history"
+    ],
+    "summary-grid": [
+      "history"
+    ],
+    "action-buttons": [
+      "history"
+    ],
+    "autocomplete-wrapper": [
+      "history"
+    ],
+    "sensors-grid": [
+      "history"
+    ],
+    "loading-indicator": [
+      "history"
+    ],
+    "custom-dates-container": [
+      "history"
+    ],
+    "error-message": [
+      "history"
+    ],
+    "meta-item": [
+      "history"
+    ],
+    "preset-btn": [
+      "history"
+    ],
+    "focus-chart-container": [
+      "history"
+    ],
+    "focus-metrics": [
+      "history"
+    ],
+    "event": [
+      "history"
+    ],
+    "label": [
+      "history"
+    ],
+    "medium-cost": [
+      "history"
+    ],
+    "comparison-header": [
+      "history"
+    ],
+    "comparison-grid": [
+      "history"
+    ],
+    "history-header": [
+      "history"
+    ],
+    "timestamp": [
+      "history"
+    ],
+    "focus-info": [
+      "history"
+    ],
+    "comparison-content": [
+      "history"
+    ],
+    "other-sensors-list": [
+      "history"
+    ],
+    "cost-cell": [
+      "history"
+    ],
+    "btn-analyze": [
+      "history"
+    ],
+    "meta-info": [
+      "history"
+    ],
+    "metric-label": [
+      "history"
+    ],
+    "btn-primary": [
+      "history",
+      "migration"
+    ],
+    "date-group": [
+      "history"
+    ],
+    "top-entities-table": [
+      "history"
+    ],
+    "focus-input": [
+      "history"
+    ],
+    "metric": [
+      "history"
+    ],
+    "empty-state": [
+      "history"
+    ],
+    "extreme-value": [
+      "history"
+    ],
+    "delta-cell": [
+      "history"
+    ],
+    "top-sensors-section": [
+      "history"
+    ],
+    "sensor-rank": [
+      "history"
+    ],
+    "summary-header": [
+      "history"
+    ],
+    "tab": [
+      "history"
+    ],
+    "metric-row": [
+      "history"
+    ],
+    "cost": [
+      "history"
+    ],
+    "delta-value": [
+      "history"
+    ],
+    "top-variations-section": [
+      "history"
+    ],
+    "section-separator": [
+      "history"
+    ],
+    "top-consumers-section": [
+      "history"
+    ],
+    "view-btn": [
+      "history"
+    ],
+    "other-sensors-section": [
+      "history"
+    ],
+    "empty": [
+      "history"
+    ],
+    "panel-header": [
+      "history"
+    ],
+    "lowest": [
+      "history"
+    ],
+    "entity-id": [
+      "history"
+    ],
+    "subtitle": [
+      "history"
+    ],
+    "autocomplete-dropdown": [
+      "history"
+    ],
+    "comparison-tabs-content": [
+      "history"
+    ],
+    "meta-warning": [
+      "history"
+    ],
+    "sensor-metrics": [
+      "history"
+    ],
+    "normalized": [
+      "history"
+    ],
+    "delta-box": [
+      "history"
+    ],
+    "top-entities-card": [
+      "history"
+    ],
+    "delta-pct": [
+      "history"
+    ],
+    "history-content": [
+      "history"
+    ],
+    "energy": [
+      "history"
+    ],
+    "comparison-tabs": [
+      "history"
+    ],
+    "extreme-details": [
+      "history"
+    ],
+    "text-right": [
+      "history"
+    ],
+    "focus-label": [
+      "history"
+    ],
+    "extreme-header": [
+      "history"
+    ],
+    "sensors-scrollable": [
+      "history"
+    ],
+    "extreme-content": [
+      "history"
+    ],
+    "today-panel": [
+      "history"
+    ],
+    "error-panel": [
+      "history"
+    ],
+    "summary-card": [
+      "history"
+    ],
+    "delta-row": [
+      "history"
+    ],
+    "dropdown-item": [
+      "history"
+    ],
+    "date-inputs-row": [
+      "history"
+    ],
+    "focus-panel": [
+      "history"
+    ],
+    "history-module": [
+      "history"
+    ],
+    "presets-row": [
+      "history"
+    ],
+    "history-period-selector": [
+      "history"
+    ],
+    "progress-fill": [
+      "migration"
+    ],
+    "progress-bar": [
+      "migration"
+    ],
+    "contrat-info": [
+      "migration"
+    ],
+    "hsecontrast": [
+      "migration"
+    ],
+    "migration-help": [
+      "migration"
+    ],
+    "yaml-toolbar": [
+      "migration"
+    ],
+    "alert-content": [
+      "migration"
+    ],
+    "form-group": [
+      "migration"
+    ],
+    "btn-accent": [
+      "migration"
+    ],
+    "btn-lg": [
+      "migration"
+    ],
+    "migration-option": [
+      "migration"
+    ],
+    "form-row": [
+      "migration"
+    ],
+    "form-control": [
+      "migration"
+    ],
+    "actions": [
+      "migration"
+    ],
+    "progress-label": [
+      "migration"
+    ],
+    "form-section": [
+      "migration"
+    ],
+    "export-card": [
+      "migration"
+    ],
+    "description": [
+      "migration"
+    ],
+    "result-container": [
+      "migration"
+    ],
+    "progress-percentage": [
+      "migration"
+    ],
+    "migration-page-title": [
+      "migration"
+    ],
+    "migration-container": [
+      "migration"
+    ],
+    "feature-list": [
+      "migration"
+    ],
+    "btn-secondary": [
+      "migration"
+    ],
+    "CSS": [
+      "migration"
+    ],
+    "migration-page-intro": [
+      "migration"
+    ],
+    "export-features": [
+      "migration"
+    ],
+    "alert": [
+      "migration"
+    ],
+    "migration-cards": [
+      "migration"
+    ],
+    "recommended": [
+      "migration"
+    ],
+    "help-text": [
+      "migration"
+    ],
+    "yaml-code": [
+      "migration"
+    ],
+    "alert-success": [
+      "migration"
+    ],
+    "result-details": [
+      "migration"
+    ],
+    "hsedark": [
+      "migration"
+    ],
+    "btn": [
+      "migration"
+    ],
+    "form-text": [
+      "migration"
+    ],
+    "btn-success": [
+      "migration"
+    ],
+    "export-actions": [
+      "migration"
+    ],
+    "complete": [
+      "migration"
+    ],
+    "progress-bar-container": [
+      "migration"
+    ],
+    "yaml-preview": [
+      "migration"
+    ],
+    "badge-new": [
+      "migration"
+    ],
+    "modal-close": [
+      "migration"
+    ],
+    "export-warnings": [
+      "migration"
+    ],
+    "export-description": [
+      "migration"
+    ],
+    "btn-info": [
+      "migration"
+    ],
+    "hse-costs-entity-meta": [
+      "summary"
+    ],
+    "hse-progress-fill": [
+      "summary"
+    ],
+    "hse-top-consumers-scrollable": [
+      "summary"
+    ],
+    "hse-costs-td": [
+      "summary"
+    ],
+    "hse-costs-total": [
+      "summary"
+    ],
+    "hse-top-consumers-line": [
+      "summary"
+    ],
+    "hse-top-consumers-column": [
+      "summary"
+    ],
+    "hse-progress-container": [
+      "summary"
+    ],
+    "summary-row-external": [
+      "summary"
+    ],
+    "hse-costs-header": [
+      "summary"
+    ],
+    "btn-cache-clear": [
+      "summary"
+    ],
+    "hse-costs-card-body": [
+      "summary"
+    ],
+    "hse-loader-text": [
+      "summary"
+    ],
+    "hse-error-container": [
+      "summary"
+    ],
+    "hse-costs-table": [
+      "summary"
+    ],
+    "summary-period": [
+      "summary"
+    ],
+    "hse-costs-th": [
+      "summary"
+    ],
+    "hse-costs-th-number": [
+      "summary"
+    ],
+    "hse-costs-entity-name": [
+      "summary"
+    ],
+    "level-high": [
+      "summary"
+    ],
+    "hse-costs-icon": [
+      "summary"
+    ],
+    "hse-costs-period": [
+      "summary"
+    ],
+    "hse-top-consumers-power": [
+      "summary"
+    ],
+    "hse-costs-tr": [
+      "summary"
+    ],
+    "hse-costs-row": [
+      "summary"
+    ],
+    "integration": [
+      "summary"
+    ],
+    "hse-top-consumers-row": [
+      "summary"
+    ],
+    "category": [
+      "summary"
+    ],
+    "summary-row-internal": [
+      "summary"
+    ],
+    "hse-loader-fade-out": [
+      "summary"
+    ],
+    "hse-top-consumers-badge": [
+      "summary"
+    ],
+    "hse-costs-search": [
+      "summary"
+    ],
+    "hse-cache-badge": [
+      "summary"
+    ],
+    "summary-total-highlight": [
+      "summary"
+    ],
+    "summary-energy": [
+      "summary"
+    ],
+    "hse-costs-table-wrapper": [
+      "summary"
+    ],
+    "hse-loader-spinner": [
+      "summary"
+    ],
+    "hse-progress-bar": [
+      "summary"
+    ],
+    "hse-costs-card": [
+      "summary"
+    ],
+    "hse-costs-highlight": [
+      "summary"
+    ],
+    "hse-progress-label": [
+      "summary"
+    ],
+    "hse-top-consumers-col-header": [
+      "summary"
+    ],
+    "hse-loader-container": [
+      "summary"
+    ],
+    "hse-costs-card-header": [
+      "summary"
+    ],
+    "hse-top-consumers-grid": [
+      "summary"
+    ],
+    "level-medium": [
+      "summary"
+    ],
+    "hse-costs-label": [
+      "summary"
+    ],
+    "summary-row": [
+      "summary"
+    ],
+    "btn-cache-stats": [
+      "summary"
+    ],
+    "hse-top-consumers-header": [
+      "summary"
+    ],
+    "summary-row-delta": [
+      "summary"
+    ],
+    "hse-costs-value": [
+      "summary"
+    ],
+    "hse-costs-search-input": [
+      "summary"
+    ],
+    "hse-costs-td-number": [
+      "summary"
+    ],
+    "hse-top-consumers-meta": [
+      "summary"
+    ],
+    "hse-error-retry": [
+      "summary"
+    ],
+    "hse-error-icon": [
+      "summary"
+    ],
+    "hse-top-consumers": [
+      "summary"
+    ],
+    "hse-costs-grid": [
+      "summary"
+    ],
+    "hse-loader-details": [
+      "summary"
+    ],
+    "hse-top-consumers-left": [
+      "summary"
+    ],
+    "hse-costs-per-entity": [
+      "summary"
+    ],
+    "hse-error-message": [
+      "summary"
+    ],
+    "hse-costs-global-panel": [
+      "summary"
+    ]
+  },
+  "inconsistencies": [
+    {
+      "module": "detection",
+      "type": "hardcoded_colors",
+      "count": 1,
+      "examples": [
+        "#ffffff"
+      ]
+    },
+    {
+      "module": "diagnostics",
+      "type": "hardcoded_colors",
+      "count": 48,
+      "examples": [
+        "rgb",
+        "#1e293b",
+        "rgb"
+      ]
+    },
+    {
+      "module": "generation",
+      "type": "hardcoded_colors",
+      "count": 2,
+      "examples": [
+        "#ffffff",
+        "#ffffff"
+      ]
+    },
+    {
+      "module": "migration",
+      "type": "hardcoded_colors",
+      "count": 6,
+      "examples": [
+        "rgb",
+        "#92400e",
+        "#1a1a1a"
+      ]
+    },
+    {
+      "module": "summary",
+      "type": "hardcoded_colors",
+      "count": 20,
+      "examples": [
+        "rgb",
+        "rgb",
+        "rgb"
+      ]
+    }
+  ],
+  "theme_analysis": {
+    "defined_variables": 63,
+    "used_variables": 99,
+    "unused_variables": [
+      "--hse-radius-full",
+      "--hse-table-text",
+      "--hse-animation-spin",
+      "--hse-animation-fade",
+      "--hse-table-header-bg",
+      "--hse-shadow-glow",
+      "--hse-info-soft",
+      "--hse-success-text-accessible",
+      "--hse-text-accessible",
+      "--hse-surface-hover"
+    ],
+    "undefined_variables": [
+      "--bg-hover",
+      "--shadow-lg",
+      "--hse-font-size-2xl",
+      "--surface-hover",
+      "--primary-color",
+      "--info-bg",
+      "--success-text",
+      "--card-background-color",
+      "--hse-font-weight-semibold",
+      "--danger"
+    ]
+  }
+}
