@@ -10,6 +10,7 @@ from typing import Dict, List, Tuple
 
 # Mapping des couleurs hardcodées vers variables HSE
 COLOR_MAPPING = {
+    # === EXISTANT (garde tout ça) ===
     # Blancs
     r'#ffffff': 'var(--hse-surface)',
     r'#fff': 'var(--hse-surface)',
@@ -30,29 +31,77 @@ COLOR_MAPPING = {
     # Bleus (accent)
     r'#3b82f6': 'var(--hse-accent)',
     r'#2563eb': 'var(--hse-accent-hover)',
-    r'rgba\(59,\s*130,\s*246': 'rgba(var(--hse-accent)',
+    r'rgba\(59,\s*130,\s*246,\s*0\.1\)': 'rgba(var(--hse-accent))',
     
     # Verts (success)
     r'#10b981': 'var(--hse-success)',
     r'#059669': 'var(--hse-success)',
-    r'#065f46': 'var(--hse-success)',
-    r'rgba\(16,\s*185,\s*129': 'rgba(var(--hse-success)',
+    r'#0b5f46': 'var(--hse-success)',
+    r'rgba\(16,\s*185,\s*129,\s*0\.1\)': 'rgba(var(--hse-success))',
     
     # Oranges (warning)
     r'#f59e0b': 'var(--hse-warning)',
     r'#d97706': 'var(--hse-warning)',
-    r'rgba\(245,\s*158,\s*11': 'rgba(var(--hse-warning)',
+    r'rgba\(245,\s*158,\s*11,\s*0\.1\)': 'rgba(var(--hse-warning))',
     
     # Rouges (error)
     r'#ef4444': 'var(--hse-error)',
     r'#dc2626': 'var(--hse-error)',
-    r'#7f1d1d': 'var(--hse-error)',
-    r'rgba\(239,\s*68,\s*68': 'rgba(var(--hse-error)',
+    r'rgba\(239,\s*68,\s*68,\s*0\.1\)': 'rgba(var(--hse-error))',
     
-    # Cyans (info)
-    r'#06b6d4': 'var(--hse-info)',
-    r'rgba\(6,\s*182,\s*212': 'rgba(var(--hse-info)',
+    # === NOUVEAUX AJOUTS ===
+    
+    # Couleurs pour thème dark
+    r'#e0e0e0': 'var(--hse-text-main)',
+    r'#2a2a2a': 'var(--hse-surface)',
+    r'#64b5f6': 'var(--hse-accent)',
+    r'#ff6b6b': 'var(--hse-error)',
+    r'#1a1a1a': 'var(--hse-surface)',
+    
+    # Bleu marine foncé
+    r'#1e293b': 'var(--hse-text-main)',
+    r'#212121': 'var(--hse-text-main)',
+    r'#757575': 'var(--hse-text-secondary)',
+    
+    # Brun/Orange foncé
+    r'#92400e': 'var(--hse-warning-dark)',
+    r'#e65100': 'var(--hse-warning-text)',
+    
+    # Badges - Info
+    r'#e3f2fd': 'var(--hse-info-soft)',
+    r'#1976d2': 'var(--hse-info)',
+    r'#bbdefb': 'var(--hse-info-soft)',
+    
+    # Badges - Success
+    r'#e8f5e9': 'var(--hse-success-soft)',
+    r'#2e7d32': 'var(--hse-success)',
+    r'#1b5e20': 'var(--hse-success-dark)',
+    r'#c8e6c9': 'var(--hse-success-soft)',
+    
+    # Badges - Warning
+    r'#fff3e0': 'var(--hse-warning-soft)',
+    
+    # Badges - Error
+    r'#ffebee': 'var(--hse-error-soft)',
+    r'#c62828': 'var(--hse-error)',
+    r'#ef5350': 'var(--hse-error)',
+    
+    # Badges - Secondary
+    r'#f5f5f5': 'var(--hse-surface-muted)',
+    r'#616161': 'var(--hse-text-muted)',
+    
+    # Couleurs vives
+    r'#00bfff': 'var(--hse-info)',
+    r'#00ff7f': 'var(--hse-success)',
+    
+    # Gradients
+    r'linear-gradient\(135deg,\s*#667eea\s+0%,\s*#764ba2\s+100%\)': 'var(--hse-gradient-header)',
+    r'linear-gradient\(135deg,\s*#5b7cfa\s+0%,\s*#7c3aed\s+55%,\s*#a855f7\s+100%\)': 'var(--hse-gradient-primary)',
+    r'linear-gradient\(135deg,\s*#e3f2fd\s+0%,\s*#bbdefb\s+100%\)': 'var(--hse-gradient-info)',
+    r'linear-gradient\(135deg,\s*#e8f5e9\s+0%,\s*#c8e6c9\s+100%\)': 'var(--hse-gradient-success)',
+    r'linear-gradient\(135deg,\s*#ff9800\s+0%,\s*#f57c00\s+100%\)': 'var(--hse-gradient-warning)',
 }
+
 
 class CSSColorCleaner:
     def __init__(self, css_file: Path):

@@ -60,7 +60,136 @@
   --hse-radius-md: 10px;
   --hse-radius-lg: 16px;
   --hse-radius-xl: 24px;
+
+  /* Textes (les plus utilisées) */
+  --text-primary: #0f172a;      /* 35 usages */
+  --text-secondary: #64748b;    /* 27 usages */
+  --text-tertiary: #94a3b8;     /* 6 usages */
+    
+  /* Fonds / Cards */
+  --card-bg: #ffffff;           /* 22 usages */
+  --bg-secondary: #f8fafc;      /* 11 usages */
+  --bg-hover: #f1f5f9;          /* 2 usages */
+    
+  /* Bordures */
+  --border-color: #e2e8f0;      /* 24 usages */
+  --border-color-light: #f1f5f9; /* 10 usages */
+  --border-radius: 10px;        /* 29 usages */
+  --border-radius-sm: 6px;      /* 4 usages */
+    
+  /* Espacement */
+  --spacing-xs: 4px;            /* 3 usages */
+  --spacing-sm: 8px;            /* 31 usages */
+  --spacing-md: 16px;           /* 38 usages */
+  --spacing-lg: 24px;           /* 33 usages */
+  --spacing-xl: 32px;           /* 10 usages */
+    
+  /* États (manquants) */
+  --warning-bg: rgba(245, 158, 11, 0.1);   /* 5 usages */
+  --warning-text: #f59e0b;                  /* 3 usages */
+  --danger-bg: rgba(239, 68, 68, 0.1);     /* 4 usages */
+  --danger-text: #ef4444;                   /* 1 usage */
+  --success-bg: rgba(16, 185, 129, 0.1);   /* 2 usages */
+  --success-text: #10b981;                  /* 2 usages */
+    
+  /* Ombres & Transitions */
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.05); /* 9 usages */
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1); /* 9 usages */
+  --transition-base: 0.2s ease;             /* 30 usages */
+  
+  /* Variables pour badges (manquantes) */
+  --hse-info-soft: rgba(33, 150, 243, 0.1);
+  --warning-text: #f59e0b;
+  --warning-dark: #92400e;
+
+  /* Textes secondaires */
+  --hse-text-secondary: #64748b;
+
+  /* Warning variants */
+  --hse-warning-dark: #92400e;
+  --hse-warning-text: #e65100;
+  
+  /* Success variants */
+  --hse-success-dark: #1b5e20;
+
+  /* Info soft backgrounds */
+  --hse-info-soft: rgba(33, 150, 243, 0.1);
+
+  /* Gradients supplémentaires */
+  --hse-gradient-info: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  --hse-gradient-warning: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  
+  /* Danger (utilisé 10 fois !) */
+  --hse-danger: #ef4444;
+  --hse-danger-soft: rgba(239, 68, 68, 0.1);
+  
+  /* Info générique */
+  --info: #2196f3;
+  
+  /* Backgrounds */
+  --hse-bg-secondary: #f1f5f9;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --secondary-bg: #f8f9fa;
+  
+  /* Hover state */
+  --hse-hover: rgba(59, 130, 246, 0.05);
+  
+  /* Warning light */
+  --hse-warning-light: #fff3e0;
+  
+  /* Success générique */
+  --success: #10b981;
+  
+  /* Warning générique */
+  --warning: #f59e0b;
+  
+  /* Shadow large (utilisé 9 fois) */
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Texte primaire (35 usages !) */
+  --text-primary: #0f172a;
+  
+  /* Bordures (24 usages) */
+  --border-color: #e2e8f0;
+  --border-color-light: #f1f5f9;
+  
+  /* Bordure radius (29 usages) */
+  --border-radius: 10px;
+  
+  /* Ombres (9 usages) */
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* Backgrounds */
+  --surface-bg: #f8f9fa;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  
+  /* Couleurs génériques */
+  --success: #10b981;
+  --primary-color: #3b82f6;
+  --primary-text-color: #0f172a;
+
+   /* Spacing (33 usages) */
+   --spacing-lg: 24px;
+   
+   /* Transition (30 usages) */
+   --transition-base: 0.2s ease;
+   
+   /* Texte secondaire (27 usages) */
+   --text-secondary: #64748b;
+   
+   /* Card background (22 usages) */
+   --card-bg: #ffffff;
+   
+   /* Autres (moins critiques) */
+   --warning-bg: rgba(245, 158, 11, 0.1);
+   --hse-primary-alpha: rgba(59, 130, 246, 0.1);
+   --border-radius-sm: 6px;
+   --input-bg: #ffffff;
+   --warning-border: #ffc107;
+   --success-text: #10b981;
 }
+
+
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 1 — LIGHT (Clair moderne)
