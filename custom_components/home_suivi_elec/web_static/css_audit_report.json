@@ -2,21 +2,21 @@
   "modules": {
     "configuration": {
       "path": "custom_components/home_suivi_elec/web_static/features/configuration",
-      "has_css": true,
+      "has_css": false,
       "has_js": true,
-      "css_path": "custom_components/home_suivi_elec/web_static/features/configuration/configuration.css"
+      "css_path": null
     },
     "customisation": {
       "path": "custom_components/home_suivi_elec/web_static/features/customisation",
-      "has_css": true,
+      "has_css": false,
       "has_js": true,
-      "css_path": "custom_components/home_suivi_elec/web_static/features/customisation/customisation.css"
+      "css_path": null
     },
     "detection": {
       "path": "custom_components/home_suivi_elec/web_static/features/detection",
-      "has_css": true,
+      "has_css": false,
       "has_js": true,
-      "css_path": "custom_components/home_suivi_elec/web_static/features/detection/detection.css"
+      "css_path": null
     },
     "diagnostics": {
       "path": "custom_components/home_suivi_elec/web_static/features/diagnostics",
@@ -26,9 +26,9 @@
     },
     "generation": {
       "path": "custom_components/home_suivi_elec/web_static/features/generation",
-      "has_css": true,
+      "has_css": false,
       "has_js": true,
-      "css_path": "custom_components/home_suivi_elec/web_static/features/generation/generation.css"
+      "css_path": null
     },
     "history": {
       "path": "custom_components/home_suivi_elec/web_static/features/history",
@@ -50,53 +50,28 @@
     }
   },
   "css_files": [
-    "custom_components/home_suivi_elec/web_static/features/configuration/configuration.css",
-    "custom_components/home_suivi_elec/web_static/features/customisation/customisation.css",
-    "custom_components/home_suivi_elec/web_static/features/detection/detection.css",
     "custom_components/home_suivi_elec/web_static/features/diagnostics/diagnostics.css",
-    "custom_components/home_suivi_elec/web_static/features/generation/generation.css",
     "custom_components/home_suivi_elec/web_static/features/history/history.css",
     "custom_components/home_suivi_elec/web_static/features/migration/migration.css",
     "custom_components/home_suivi_elec/web_static/features/summary/summary.css"
   ],
-  "missing_css": [],
+  "missing_css": [
+    "configuration",
+    "customisation",
+    "detection",
+    "generation"
+  ],
   "variable_usage": {
-    "--hse-container-max-width": 4,
-    "--hse-spacing-lg": 23,
-    "--hse-spacing-xl": 13,
-    "--hse-text-main": 47,
-    "--hse-font-weight-bold": 7,
-    "--hse-spacing-sm": 11,
-    "--hse-surface": 81,
-    "--hse-border": 38,
-    "--hse-radius-lg": 10,
-    "--hse-shadow-md": 8,
-    "--hse-font-size-xl": 2,
-    "--hse-spacing-md": 17,
-    "--hse-spacing-xs": 8,
-    "--hse-success": 29,
-    "--hse-font-size-sm": 7,
-    "--hse-font-weight-semibold": 7,
-    "--hse-spacing-2xl": 9,
-    "--hse-font-weight-black": 5,
-    "--hse-border-soft": 12,
-    "--hse-font-size-base": 2,
-    "--hse-text-muted": 35,
-    "--hse-surface-muted": 12,
-    "--hse-radius-md": 6,
-    "--hse-transition-base": 5,
-    "--hse-accent": 40,
-    "--hse-shadow-lg": 4,
-    "--hse-radius-sm": 2,
-    "--hse-warning": 23,
-    "--hse-error": 14,
-    "--hse-shadow-sm": 5,
-    "--hse-accent-soft": 16,
-    "--hse-font-size-lg": 3,
-    "--hse-gradient-header": 4,
-    "--hse-font-size-2xl": 2,
-    "--hse-font-size-xs": 3,
+    "--hse-border": 24,
+    "--hse-accent": 30,
+    "--hse-text-muted": 21,
+    "--hse-surface": 76,
+    "--hse-text-main": 42,
+    "--hse-accent-soft": 12,
+    "--hse-surface-muted": 10,
+    "--hse-border-soft": 10,
     "--hse-surface-elevated": 7,
+    "--hse-success": 26,
     "--text-primary": 35,
     "--warning-bg": 5,
     "--warning-text": 3,
@@ -120,17 +95,27 @@
     "--success": 2,
     "--secondary": 1,
     "--secondary-bg": 1,
+    "--hse-gradient-primary": 4,
+    "--hse-radius-lg": 3,
+    "--hse-shadow-md": 4,
+    "--hse-shadow-sm": 4,
     "--hse-transition-fast": 4,
-    "--hse-error-soft": 4,
+    "--hse-error-soft": 6,
+    "--hse-error": 16,
     "--hse-warning-soft": 5,
-    "--hse-font-weight-medium": 1,
-    "--hse-font-size-3xl": 1,
+    "--hse-warning": 22,
+    "--hse-warning-text": 4,
+    "--hse-info-soft": 3,
+    "--hse-info": 13,
+    "--hse-success-soft": 4,
+    "--hse-shadow-lg": 1,
     "--hse-text-soft": 2,
+    "--hse-radius-sm": 1,
+    "--hse-radius-md": 1,
+    "--hse-transition-base": 1,
     "--hse-transition-slow": 1,
     "--hse-accent-hover": 2,
-    "--hse-success-soft": 1,
-    "--hse-info": 9,
-    "--hse-gradient-primary": 3,
+    "--hse-gradient-header": 6,
     "--spacing-lg": 33,
     "--spacing-xl": 10,
     "--spacing-sm": 31,
@@ -152,254 +137,98 @@
     "--hse-danger": 10,
     "--hse-danger-light": 1,
     "--spacing-xs": 3,
+    "--hse-warning-dark": 1,
     "--hse-text": 4,
     "--hse-bg-secondary": 1,
     "--hse-primary-dark": 1,
     "--hse-hover": 1,
+    "--hse-success-dark": 1,
+    "--hse-gradient-warning": 1,
     "--card-background-color": 2,
     "--primary-color": 3,
     "--primary-text-color": 1,
-    "--secondary-text-color": 1
+    "--secondary-text-color": 1,
+    "--hse-text-secondary": 2
   },
   "selectors": {
-    "configuration-header": [
-      "configuration"
-    ],
-    "configuration-saved": [
-      "configuration"
-    ],
-    "configuration-module": [
-      "configuration"
-    ],
-    "configuration-section": [
-      "configuration"
-    ],
-    "configuration-form-grid": [
-      "configuration"
-    ],
-    "configuration-actions": [
-      "configuration"
-    ],
-    "customisation-preview-title": [
-      "customisation"
-    ],
-    "theme-compact-selector": [
-      "customisation"
-    ],
-    "theme-compact-colors": [
-      "customisation"
-    ],
-    "customisation-module": [
-      "customisation"
-    ],
-    "theme-preview-grid": [
-      "customisation"
-    ],
-    "apply-theme-btn": [
-      "customisation"
-    ],
-    "customisation-option-control": [
-      "customisation"
-    ],
-    "customisation-option-description": [
-      "customisation"
-    ],
-    "theme-compact-icon": [
-      "customisation"
-    ],
-    "theme-selector-panel": [
-      "customisation"
-    ],
-    "theme-hint": [
-      "customisation"
-    ],
-    "customisation-tabs": [
-      "customisation"
-    ],
-    "customisation-preview": [
-      "customisation"
-    ],
-    "theme-preview-header": [
-      "customisation"
-    ],
-    "theme-preview-description": [
-      "customisation"
-    ],
-    "theme-preview-colors": [
-      "customisation"
-    ],
-    "customisation-option-label": [
-      "customisation"
-    ],
-    "error": [
-      "customisation",
+    "stat-badge": [
       "diagnostics"
     ],
-    "is-active": [
-      "customisation"
-    ],
-    "color-sample": [
-      "customisation"
-    ],
-    "theme-compact-info": [
-      "customisation"
-    ],
-    "customisation-panel": [
-      "customisation"
-    ],
-    "accent": [
-      "customisation"
-    ],
-    "customisation-option": [
-      "customisation"
-    ],
-    "customisation-header": [
-      "customisation"
-    ],
-    "theme-icon": [
-      "customisation"
-    ],
-    "warning": [
-      "customisation",
-      "diagnostics"
-    ],
-    "theme-compact-card": [
-      "customisation"
-    ],
-    "theme-compact-grid": [
-      "customisation"
-    ],
-    "theme-compact-desc": [
-      "customisation"
-    ],
-    "theme-preview-card": [
-      "customisation"
-    ],
-    "success": [
-      "customisation",
+    "hse": [
       "diagnostics",
       "history"
     ],
-    "detection-scan-panel": [
-      "detection"
-    ],
-    "detection-header": [
-      "detection"
-    ],
-    "detection-module": [
-      "detection"
-    ],
-    "detection-sensor-card": [
-      "detection"
-    ],
-    "detection-scan-status": [
-      "detection"
-    ],
-    "detection-sensor-type": [
-      "detection"
-    ],
-    "detection-actions": [
-      "detection"
-    ],
-    "detection-results": [
-      "detection"
-    ],
-    "detection-sensor-meta": [
-      "detection"
-    ],
-    "detection-scan-progress": [
-      "detection"
-    ],
-    "selected": [
-      "detection",
-      "generation"
-    ],
-    "detection-sensor-name": [
-      "detection"
-    ],
-    "detection-sensor-header": [
-      "detection"
-    ],
-    "clickable": [
-      "diagnostics"
-    ],
-    "hse-score-card": [
-      "diagnostics"
-    ],
-    "alert-card": [
-      "diagnostics"
-    ],
-    "alert-icon": [
-      "diagnostics",
-      "migration"
-    ],
-    "cycles-container": [
-      "diagnostics"
-    ],
-    "component-clickable": [
+    "score-total": [
       "diagnostics"
     ],
     "grade-letter": [
       "diagnostics"
     ],
-    "component-details": [
-      "diagnostics"
-    ],
-    "parents-grid": [
-      "diagnostics"
-    ],
-    "capteurs-stats": [
-      "diagnostics"
-    ],
-    "sensor-available": [
-      "diagnostics"
-    ],
-    "sensor-summary": [
-      "diagnostics"
-    ],
-    "sensor-badges": [
-      "diagnostics"
-    ],
-    "parent-meta": [
-      "diagnostics"
-    ],
-    "group-name": [
-      "diagnostics"
-    ],
-    "sensor-entity-id": [
-      "diagnostics"
-    ],
-    "score-card-content": [
-      "diagnostics"
-    ],
-    "sensor-group": [
+    "overview-grid": [
       "diagnostics"
     ],
     "component-info": [
       "diagnostics"
     ],
-    "orphans-section": [
+    "hse-score-card": [
       "diagnostics"
     ],
-    "cycle-section": [
+    "capteurs-content": [
       "diagnostics"
     ],
-    "themes": [
+    "grade-emoji": [
+      "diagnostics"
+    ],
+    "alert-message": [
+      "diagnostics"
+    ],
+    "relations-section": [
+      "diagnostics"
+    ],
+    "alert-header": [
+      "diagnostics"
+    ],
+    "filters": [
+      "diagnostics"
+    ],
+    "sensor-card": [
       "diagnostics",
       "history"
     ],
-    "group-summary": [
+    "score-description": [
       "diagnostics"
     ],
-    "spinner": [
-      "diagnostics",
-      "history",
-      "migration"
-    ],
-    "child-info": [
+    "sensor-entity-id": [
       "diagnostics"
     ],
-    "score-total": [
+    "diagnostics-content": [
+      "diagnostics"
+    ],
+    "orphans-section": [
+      "diagnostics"
+    ],
+    "alert-card": [
+      "diagnostics"
+    ],
+    "parent-details-scroll": [
+      "diagnostics"
+    ],
+    "sensor-summary": [
+      "diagnostics"
+    ],
+    "child-row": [
+      "diagnostics"
+    ],
+    "component-item": [
+      "diagnostics"
+    ],
+    "sensor-row": [
+      "diagnostics"
+    ],
+    "parent-group": [
+      "diagnostics"
+    ],
+    "success-state": [
       "diagnostics"
     ],
     "expand-icon": [
@@ -408,176 +237,142 @@
     "detail-label": [
       "diagnostics"
     ],
-    "quick-filters": [
+    "capteurs-list": [
       "diagnostics"
     ],
-    "stat-badge": [
-      "diagnostics"
-    ],
-    "component-item": [
-      "diagnostics"
-    ],
-    "alerts-content": [
-      "diagnostics"
-    ],
-    "orphan-info": [
-      "diagnostics"
-    ],
-    "alert-details": [
-      "diagnostics"
-    ],
-    "orphans-list": [
-      "diagnostics"
-    ],
-    "no-results": [
-      "diagnostics"
-    ],
-    "alert-action-btn": [
-      "diagnostics"
-    ],
-    "selected-highlight": [
-      "diagnostics"
-    ],
-    "active": [
-      "diagnostics",
-      "generation",
-      "history"
-    ],
-    "alert-error": [
-      "diagnostics",
-      "migration"
-    ],
-    "score-description": [
-      "diagnostics"
-    ],
-    "hse-score-hero": [
-      "diagnostics"
-    ],
-    "sensor-card": [
-      "diagnostics",
-      "history"
-    ],
-    "sensors-groups": [
-      "diagnostics"
-    ],
-    "score-value": [
-      "diagnostics"
-    ],
-    "group-content": [
-      "diagnostics"
-    ],
-    "alerts-stats": [
-      "diagnostics"
-    ],
-    "no-alerts": [
-      "diagnostics"
-    ],
-    "filter-buttons": [
-      "diagnostics"
-    ],
-    "orphan-row": [
-      "diagnostics"
-    ],
-    "sensor-details": [
-      "diagnostics"
-    ],
-    "group-icon": [
-      "diagnostics"
-    ],
-    "cycle-header": [
-      "diagnostics"
-    ],
-    "recommendations-list": [
-      "diagnostics"
-    ],
-    "badge": [
-      "diagnostics"
-    ],
-    "entity-badge": [
-      "diagnostics"
-    ],
-    "alert-entities": [
-      "diagnostics"
-    ],
-    "parent-header": [
-      "diagnostics"
-    ],
-    "sensor-row": [
-      "diagnostics"
-    ],
-    "grade-emoji": [
-      "diagnostics"
-    ],
-    "filters": [
-      "diagnostics"
-    ],
-    "source-status": [
-      "diagnostics"
-    ],
-    "detail-value": [
-      "diagnostics"
-    ],
-    "diagnostics-content": [
-      "diagnostics"
-    ],
-    "no-parents": [
-      "diagnostics"
-    ],
-    "capteurs-filters": [
-      "diagnostics"
-    ],
-    "card": [
-      "diagnostics"
-    ],
-    "sensor-mini-value": [
-      "diagnostics"
-    ],
-    "sensor-info": [
-      "diagnostics",
-      "history"
-    ],
-    "alert-critical": [
-      "diagnostics"
-    ],
-    "alert-warning": [
-      "diagnostics",
-      "migration"
-    ],
-    "entity-id-small": [
-      "diagnostics",
-      "history"
-    ],
-    "relations-section": [
-      "diagnostics"
-    ],
-    "alert-info": [
-      "diagnostics"
-    ],
-    "overview-grid": [
+    "child-icon": [
       "diagnostics"
     ],
     "hse-diagnostics-sensors-list": [
       "diagnostics"
     ],
-    "children-list": [
+    "error": [
       "diagnostics"
     ],
-    "info": [
+    "cycle-section": [
       "diagnostics"
     ],
-    "score-number": [
+    "cost-entity": [
       "diagnostics"
     ],
-    "parent-details-scroll": [
+    "alert-icon": [
+      "diagnostics",
+      "migration"
+    ],
+    "alert-description": [
+      "diagnostics"
+    ],
+    "group-name": [
+      "diagnostics"
+    ],
+    "entity-id-small": [
+      "diagnostics",
+      "history"
+    ],
+    "sensor-disabled": [
+      "diagnostics"
+    ],
+    "orphan-icon": [
+      "diagnostics"
+    ],
+    "detail-value": [
+      "diagnostics"
+    ],
+    "alerts-list": [
+      "diagnostics"
+    ],
+    "group-summary": [
+      "diagnostics"
+    ],
+    "sensor-restored": [
+      "diagnostics"
+    ],
+    "score-grade": [
+      "diagnostics"
+    ],
+    "themes": [
+      "diagnostics",
+      "history"
+    ],
+    "badge": [
+      "diagnostics"
+    ],
+    "cycles-container": [
+      "diagnostics"
+    ],
+    "spinner": [
+      "diagnostics",
+      "history",
+      "migration"
+    ],
+    "source-status": [
+      "diagnostics"
+    ],
+    "no-children": [
+      "diagnostics"
+    ],
+    "alert-action-btn": [
+      "diagnostics"
+    ],
+    "orphan-info": [
+      "diagnostics"
+    ],
+    "no-parents": [
       "diagnostics"
     ],
     "card-body": [
       "diagnostics"
     ],
-    "secondary": [
+    "orphans-list": [
+      "diagnostics"
+    ],
+    "alert-item": [
+      "diagnostics"
+    ],
+    "child-info": [
+      "diagnostics"
+    ],
+    "parent-header": [
+      "diagnostics"
+    ],
+    "group-header": [
+      "diagnostics"
+    ],
+    "sensor-body": [
+      "diagnostics"
+    ],
+    "filter-buttons": [
+      "diagnostics"
+    ],
+    "component-details": [
+      "diagnostics"
+    ],
+    "score-card-content": [
+      "diagnostics"
+    ],
+    "source-info": [
+      "diagnostics"
+    ],
+    "score-display": [
+      "diagnostics"
+    ],
+    "recommendations-list": [
       "diagnostics"
     ],
     "alert-item-grouped": [
+      "diagnostics"
+    ],
+    "alert-info": [
+      "diagnostics"
+    ],
+    "success": [
+      "diagnostics",
+      "history"
+    ],
+    "orphans-actions": [
+      "diagnostics"
+    ],
+    "sensor-available": [
       "diagnostics"
     ],
     "css": [
@@ -585,105 +380,20 @@
       "history",
       "migration"
     ],
-    "alert-message": [
+    "hse-score-hero": [
       "diagnostics"
     ],
-    "cost-entity": [
-      "diagnostics"
-    ],
-    "alert-description": [
-      "diagnostics"
-    ],
-    "sensor-unavailable": [
-      "diagnostics"
-    ],
-    "source-missing": [
-      "diagnostics"
-    ],
-    "orphans-actions": [
-      "diagnostics"
-    ],
-    "source-info": [
-      "diagnostics"
-    ],
-    "parent-group": [
-      "diagnostics"
-    ],
-    "capteurs-content": [
-      "diagnostics"
-    ],
-    "card-header": [
-      "diagnostics"
-    ],
-    "orphan-icon": [
-      "diagnostics"
-    ],
-    "sensor-disabled": [
-      "diagnostics"
-    ],
-    "score-grade": [
-      "diagnostics"
-    ],
-    "capteurs-list": [
-      "diagnostics"
-    ],
-    "child-icon": [
-      "diagnostics"
-    ],
-    "group-count": [
-      "diagnostics"
-    ],
-    "sensor-unknown": [
-      "diagnostics"
-    ],
-    "score-display": [
-      "diagnostics"
-    ],
-    "hse": [
+    "alert-warning": [
       "diagnostics",
-      "history"
+      "migration"
     ],
-    "loading-state": [
+    "sensor-group": [
       "diagnostics"
     ],
-    "groups-stats": [
+    "parent-meta": [
       "diagnostics"
     ],
     "components-list": [
-      "diagnostics"
-    ],
-    "detail-row": [
-      "diagnostics",
-      "history"
-    ],
-    "alerts-list": [
-      "diagnostics"
-    ],
-    "child-row": [
-      "diagnostics"
-    ],
-    "sensor-body": [
-      "diagnostics"
-    ],
-    "alert-item": [
-      "diagnostics"
-    ],
-    "alert-header": [
-      "diagnostics"
-    ],
-    "groups-content": [
-      "diagnostics"
-    ],
-    "alerts-list-grouped": [
-      "diagnostics"
-    ],
-    "sensor-restored": [
-      "diagnostics"
-    ],
-    "no-children": [
-      "diagnostics"
-    ],
-    "success-icon": [
       "diagnostics"
     ],
     "status-badge": [
@@ -692,536 +402,501 @@
     "parent-icon": [
       "diagnostics"
     ],
+    "active": [
+      "diagnostics",
+      "history"
+    ],
+    "sensor-badges": [
+      "diagnostics"
+    ],
+    "alert-details": [
+      "diagnostics"
+    ],
+    "secondary": [
+      "diagnostics"
+    ],
+    "orphan-row": [
+      "diagnostics"
+    ],
+    "sensor-mini-value": [
+      "diagnostics"
+    ],
+    "source-missing": [
+      "diagnostics"
+    ],
+    "score-number": [
+      "diagnostics"
+    ],
+    "info": [
+      "diagnostics"
+    ],
+    "detail-row": [
+      "diagnostics",
+      "history"
+    ],
+    "entity-badge": [
+      "diagnostics"
+    ],
+    "groups-stats": [
+      "diagnostics"
+    ],
+    "capteurs-filters": [
+      "diagnostics"
+    ],
+    "cycle-header": [
+      "diagnostics"
+    ],
+    "no-alerts": [
+      "diagnostics"
+    ],
+    "card-header": [
+      "diagnostics"
+    ],
+    "groups-content": [
+      "diagnostics"
+    ],
+    "capteurs-stats": [
+      "diagnostics"
+    ],
+    "group-count": [
+      "diagnostics"
+    ],
+    "warning": [
+      "diagnostics"
+    ],
+    "alerts-content": [
+      "diagnostics"
+    ],
+    "loading-state": [
+      "diagnostics"
+    ],
+    "quick-filters": [
+      "diagnostics"
+    ],
+    "score-value": [
+      "diagnostics"
+    ],
+    "alert-critical": [
+      "diagnostics"
+    ],
+    "parents-grid": [
+      "diagnostics"
+    ],
+    "success-icon": [
+      "diagnostics"
+    ],
+    "selected-highlight": [
+      "diagnostics"
+    ],
+    "alert-error": [
+      "diagnostics",
+      "migration"
+    ],
+    "alerts-list-grouped": [
+      "diagnostics"
+    ],
+    "clickable": [
+      "diagnostics"
+    ],
+    "group-content": [
+      "diagnostics"
+    ],
+    "card": [
+      "diagnostics"
+    ],
+    "group-icon": [
+      "diagnostics"
+    ],
+    "sensor-unknown": [
+      "diagnostics"
+    ],
+    "component-clickable": [
+      "diagnostics"
+    ],
+    "children-list": [
+      "diagnostics"
+    ],
+    "alerts-stats": [
+      "diagnostics"
+    ],
+    "sensor-info": [
+      "diagnostics",
+      "history"
+    ],
     "source-ok": [
       "diagnostics"
     ],
-    "success-state": [
+    "no-results": [
       "diagnostics"
     ],
-    "group-header": [
+    "sensor-details": [
       "diagnostics"
     ],
-    "generation-sensor-name": [
-      "generation"
+    "sensors-groups": [
+      "diagnostics"
     ],
-    "generation-summary-title": [
-      "generation"
+    "alert-entities": [
+      "diagnostics"
     ],
-    "generation-step-number": [
-      "generation"
+    "sensor-unavailable": [
+      "diagnostics"
     ],
-    "generation-summary-label": [
-      "generation"
-    ],
-    "generation-actions": [
-      "generation"
-    ],
-    "generation-config-label": [
-      "generation"
-    ],
-    "generation-result-message": [
-      "generation"
-    ],
-    "generation-result-title": [
-      "generation"
-    ],
-    "generation-step-label": [
-      "generation"
-    ],
-    "generation-sensor-item": [
-      "generation"
-    ],
-    "generation-summary-value": [
-      "generation"
-    ],
-    "generation-wizard": [
-      "generation"
-    ],
-    "generation-config-grid": [
-      "generation"
-    ],
-    "generation-steps": [
-      "generation"
-    ],
-    "generation-result-stat": [
-      "generation"
-    ],
-    "generation-config-help": [
-      "generation"
-    ],
-    "generation-actions-left": [
-      "generation"
-    ],
-    "generation-sensor-id": [
-      "generation"
-    ],
-    "generation-module": [
-      "generation"
-    ],
-    "generation-result": [
-      "generation"
-    ],
-    "generation-result-stats": [
-      "generation"
-    ],
-    "generation-result-icon": [
-      "generation"
-    ],
-    "completed": [
-      "generation"
-    ],
-    "generation-header": [
-      "generation"
-    ],
-    "generation-config-item": [
-      "generation"
-    ],
-    "generation-step-content": [
-      "generation"
-    ],
-    "generation-summary": [
-      "generation"
-    ],
-    "generation-result-stat-value": [
-      "generation"
-    ],
-    "generation-step": [
-      "generation"
-    ],
-    "generation-summary-item": [
-      "generation"
-    ],
-    "generation-sensor-selector": [
-      "generation"
-    ],
-    "generation-result-stat-label": [
-      "generation"
-    ],
-    "generation-actions-right": [
-      "generation"
-    ],
-    "sensors-compact-list": [
+    "delta-box": [
       "history"
     ],
-    "comparison-panel": [
-      "history"
-    ],
-    "comparison-summary-card": [
-      "history"
-    ],
-    "view-switcher": [
-      "history"
-    ],
-    "focus-header": [
-      "history"
-    ],
-    "comparison-table": [
-      "history"
-    ],
-    "extreme-cards": [
-      "history"
-    ],
-    "negative": [
-      "history"
-    ],
-    "comparison-table-wrapper": [
-      "history"
-    ],
-    "delta-label": [
-      "history"
-    ],
-    "btn-retry": [
-      "history"
-    ],
-    "metric-value": [
-      "history"
-    ],
-    "comparison-card": [
-      "history"
-    ],
-    "baseline": [
-      "history"
-    ],
-    "date-input": [
-      "history"
-    ],
-    "summary-metrics": [
-      "history"
-    ],
-    "highlight": [
-      "history"
-    ],
-    "no-data": [
-      "history"
-    ],
-    "cost-secondary": [
-      "history"
-    ],
-    "btn-refresh": [
-      "history"
-    ],
-    "comparison-results": [
-      "history"
-    ],
-    "tab-content": [
-      "history"
-    ],
-    "extreme-panel": [
-      "history"
-    ],
-    "top-sensors-list": [
-      "history"
-    ],
-    "history-results": [
-      "history"
-    ],
-    "value": [
-      "history"
-    ],
-    "high-cost": [
-      "history"
-    ],
-    "comparison-col": [
-      "history"
-    ],
-    "history-feature": [
-      "history"
-    ],
-    "sensor-cell": [
-      "history"
-    ],
-    "peak": [
-      "history"
-    ],
-    "sensor-source": [
-      "history"
-    ],
-    "positive": [
-      "history"
-    ],
-    "extreme-date": [
-      "history"
-    ],
-    "extreme-card": [
-      "history"
-    ],
-    "low-cost": [
-      "history"
-    ],
-    "focus-selector-panel": [
-      "history"
-    ],
-    "cost-primary": [
-      "history"
-    ],
-    "sensor-name": [
-      "history"
-    ],
-    "danger": [
-      "history"
-    ],
-    "neutral": [
-      "history"
-    ],
-    "summary-grid": [
+    "text-right": [
       "history"
     ],
     "action-buttons": [
       "history"
     ],
-    "autocomplete-wrapper": [
+    "extreme-card": [
       "history"
     ],
-    "sensors-grid": [
+    "summary-card": [
       "history"
     ],
-    "loading-indicator": [
+    "history-content": [
       "history"
     ],
-    "custom-dates-container": [
+    "autocomplete-dropdown": [
       "history"
     ],
-    "error-message": [
+    "metric-value": [
       "history"
     ],
-    "meta-item": [
+    "history-feature": [
       "history"
     ],
-    "preset-btn": [
-      "history"
-    ],
-    "focus-chart-container": [
-      "history"
-    ],
-    "focus-metrics": [
-      "history"
-    ],
-    "event": [
-      "history"
-    ],
-    "label": [
-      "history"
-    ],
-    "medium-cost": [
-      "history"
-    ],
-    "comparison-header": [
-      "history"
-    ],
-    "comparison-grid": [
-      "history"
-    ],
-    "history-header": [
-      "history"
-    ],
-    "timestamp": [
-      "history"
-    ],
-    "focus-info": [
-      "history"
-    ],
-    "comparison-content": [
-      "history"
-    ],
-    "other-sensors-list": [
-      "history"
-    ],
-    "cost-cell": [
-      "history"
-    ],
-    "btn-analyze": [
-      "history"
-    ],
-    "meta-info": [
-      "history"
-    ],
-    "metric-label": [
+    "comparison-results": [
       "history"
     ],
     "btn-primary": [
       "history",
       "migration"
     ],
-    "date-group": [
-      "history"
-    ],
-    "top-entities-table": [
-      "history"
-    ],
-    "focus-input": [
-      "history"
-    ],
-    "metric": [
-      "history"
-    ],
-    "empty-state": [
-      "history"
-    ],
-    "extreme-value": [
-      "history"
-    ],
-    "delta-cell": [
-      "history"
-    ],
-    "top-sensors-section": [
-      "history"
-    ],
-    "sensor-rank": [
-      "history"
-    ],
-    "summary-header": [
-      "history"
-    ],
-    "tab": [
-      "history"
-    ],
-    "metric-row": [
-      "history"
-    ],
-    "cost": [
-      "history"
-    ],
-    "delta-value": [
-      "history"
-    ],
-    "top-variations-section": [
-      "history"
-    ],
-    "section-separator": [
-      "history"
-    ],
-    "top-consumers-section": [
-      "history"
-    ],
-    "view-btn": [
-      "history"
-    ],
-    "other-sensors-section": [
-      "history"
-    ],
-    "empty": [
+    "delta-pct": [
       "history"
     ],
     "panel-header": [
       "history"
     ],
-    "lowest": [
-      "history"
-    ],
-    "entity-id": [
-      "history"
-    ],
-    "subtitle": [
-      "history"
-    ],
-    "autocomplete-dropdown": [
-      "history"
-    ],
-    "comparison-tabs-content": [
-      "history"
-    ],
-    "meta-warning": [
-      "history"
-    ],
-    "sensor-metrics": [
-      "history"
-    ],
-    "normalized": [
-      "history"
-    ],
-    "delta-box": [
-      "history"
-    ],
-    "top-entities-card": [
-      "history"
-    ],
-    "delta-pct": [
-      "history"
-    ],
-    "history-content": [
-      "history"
-    ],
-    "energy": [
-      "history"
-    ],
-    "comparison-tabs": [
-      "history"
-    ],
-    "extreme-details": [
-      "history"
-    ],
-    "text-right": [
-      "history"
-    ],
-    "focus-label": [
-      "history"
-    ],
-    "extreme-header": [
-      "history"
-    ],
-    "sensors-scrollable": [
-      "history"
-    ],
-    "extreme-content": [
-      "history"
-    ],
-    "today-panel": [
-      "history"
-    ],
-    "error-panel": [
-      "history"
-    ],
-    "summary-card": [
-      "history"
-    ],
-    "delta-row": [
+    "cost-cell": [
       "history"
     ],
     "dropdown-item": [
       "history"
     ],
+    "extreme-cards": [
+      "history"
+    ],
+    "comparison-table": [
+      "history"
+    ],
+    "comparison-grid": [
+      "history"
+    ],
     "date-inputs-row": [
+      "history"
+    ],
+    "cost-primary": [
+      "history"
+    ],
+    "delta-label": [
+      "history"
+    ],
+    "comparison-tabs": [
       "history"
     ],
     "focus-panel": [
       "history"
     ],
-    "history-module": [
+    "extreme-content": [
       "history"
     ],
-    "presets-row": [
+    "section-separator": [
+      "history"
+    ],
+    "history-header": [
+      "history"
+    ],
+    "empty": [
+      "history"
+    ],
+    "btn-refresh": [
+      "history"
+    ],
+    "comparison-tabs-content": [
+      "history"
+    ],
+    "entity-id": [
+      "history"
+    ],
+    "comparison-content": [
+      "history"
+    ],
+    "metric": [
+      "history"
+    ],
+    "metric-row": [
+      "history"
+    ],
+    "comparison-header": [
       "history"
     ],
     "history-period-selector": [
       "history"
     ],
-    "progress-fill": [
-      "migration"
+    "comparison-summary-card": [
+      "history"
     ],
-    "progress-bar": [
-      "migration"
+    "error-panel": [
+      "history"
     ],
-    "contrat-info": [
-      "migration"
+    "focus-chart-container": [
+      "history"
     ],
-    "hsecontrast": [
-      "migration"
+    "extreme-value": [
+      "history"
     ],
-    "migration-help": [
-      "migration"
+    "cost-secondary": [
+      "history"
     ],
-    "yaml-toolbar": [
-      "migration"
+    "date-group": [
+      "history"
     ],
-    "alert-content": [
-      "migration"
+    "loading-indicator": [
+      "history"
     ],
-    "form-group": [
-      "migration"
+    "top-sensors-section": [
+      "history"
     ],
-    "btn-accent": [
-      "migration"
+    "meta-warning": [
+      "history"
     ],
-    "btn-lg": [
-      "migration"
+    "view-btn": [
+      "history"
     ],
-    "migration-option": [
-      "migration"
+    "high-cost": [
+      "history"
     ],
-    "form-row": [
-      "migration"
+    "positive": [
+      "history"
     ],
-    "form-control": [
-      "migration"
+    "normalized": [
+      "history"
     ],
-    "actions": [
-      "migration"
+    "other-sensors-section": [
+      "history"
     ],
-    "progress-label": [
-      "migration"
+    "tab-content": [
+      "history"
     ],
-    "form-section": [
-      "migration"
+    "no-data": [
+      "history"
     ],
-    "export-card": [
-      "migration"
+    "top-consumers-section": [
+      "history"
     ],
-    "description": [
-      "migration"
+    "delta-cell": [
+      "history"
     ],
-    "result-container": [
-      "migration"
+    "sensor-metrics": [
+      "history"
     ],
-    "progress-percentage": [
-      "migration"
+    "lowest": [
+      "history"
     ],
-    "migration-page-title": [
-      "migration"
+    "comparison-card": [
+      "history"
     ],
-    "migration-container": [
-      "migration"
+    "history-results": [
+      "history"
     ],
-    "feature-list": [
+    "meta-info": [
+      "history"
+    ],
+    "comparison-col": [
+      "history"
+    ],
+    "preset-btn": [
+      "history"
+    ],
+    "danger": [
+      "history"
+    ],
+    "extreme-panel": [
+      "history"
+    ],
+    "value": [
+      "history"
+    ],
+    "comparison-table-wrapper": [
+      "history"
+    ],
+    "summary-metrics": [
+      "history"
+    ],
+    "negative": [
+      "history"
+    ],
+    "extreme-details": [
+      "history"
+    ],
+    "top-entities-card": [
+      "history"
+    ],
+    "sensor-rank": [
+      "history"
+    ],
+    "delta-row": [
+      "history"
+    ],
+    "btn-analyze": [
+      "history"
+    ],
+    "subtitle": [
+      "history"
+    ],
+    "autocomplete-wrapper": [
+      "history"
+    ],
+    "sensors-compact-list": [
+      "history"
+    ],
+    "custom-dates-container": [
+      "history"
+    ],
+    "label": [
+      "history"
+    ],
+    "highlight": [
+      "history"
+    ],
+    "metric-label": [
+      "history"
+    ],
+    "comparison-panel": [
+      "history"
+    ],
+    "empty-state": [
+      "history"
+    ],
+    "btn-retry": [
+      "history"
+    ],
+    "focus-label": [
+      "history"
+    ],
+    "tab": [
+      "history"
+    ],
+    "cost": [
+      "history"
+    ],
+    "event": [
+      "history"
+    ],
+    "extreme-date": [
+      "history"
+    ],
+    "top-entities-table": [
+      "history"
+    ],
+    "baseline": [
+      "history"
+    ],
+    "sensor-name": [
+      "history"
+    ],
+    "top-sensors-list": [
+      "history"
+    ],
+    "timestamp": [
+      "history"
+    ],
+    "peak": [
+      "history"
+    ],
+    "sensors-scrollable": [
+      "history"
+    ],
+    "focus-metrics": [
+      "history"
+    ],
+    "presets-row": [
+      "history"
+    ],
+    "error-message": [
+      "history"
+    ],
+    "summary-header": [
+      "history"
+    ],
+    "low-cost": [
+      "history"
+    ],
+    "summary-grid": [
+      "history"
+    ],
+    "other-sensors-list": [
+      "history"
+    ],
+    "focus-input": [
+      "history"
+    ],
+    "focus-info": [
+      "history"
+    ],
+    "energy": [
+      "history"
+    ],
+    "medium-cost": [
+      "history"
+    ],
+    "focus-selector-panel": [
+      "history"
+    ],
+    "sensor-source": [
+      "history"
+    ],
+    "view-switcher": [
+      "history"
+    ],
+    "today-panel": [
+      "history"
+    ],
+    "meta-item": [
+      "history"
+    ],
+    "date-input": [
+      "history"
+    ],
+    "sensors-grid": [
+      "history"
+    ],
+    "delta-value": [
+      "history"
+    ],
+    "extreme-header": [
+      "history"
+    ],
+    "neutral": [
+      "history"
+    ],
+    "history-module": [
+      "history"
+    ],
+    "top-variations-section": [
+      "history"
+    ],
+    "focus-header": [
+      "history"
+    ],
+    "sensor-cell": [
+      "history"
+    ],
+    "badge-new": [
       "migration"
     ],
     "btn-secondary": [
@@ -1230,100 +905,175 @@
     "CSS": [
       "migration"
     ],
-    "migration-page-intro": [
-      "migration"
-    ],
-    "export-features": [
-      "migration"
-    ],
-    "alert": [
-      "migration"
-    ],
-    "migration-cards": [
-      "migration"
-    ],
-    "recommended": [
-      "migration"
-    ],
-    "help-text": [
-      "migration"
-    ],
-    "yaml-code": [
-      "migration"
-    ],
-    "alert-success": [
-      "migration"
-    ],
-    "result-details": [
-      "migration"
-    ],
-    "hsedark": [
-      "migration"
-    ],
-    "btn": [
-      "migration"
-    ],
     "form-text": [
-      "migration"
-    ],
-    "btn-success": [
-      "migration"
-    ],
-    "export-actions": [
-      "migration"
-    ],
-    "complete": [
-      "migration"
-    ],
-    "progress-bar-container": [
-      "migration"
-    ],
-    "yaml-preview": [
-      "migration"
-    ],
-    "badge-new": [
-      "migration"
-    ],
-    "modal-close": [
-      "migration"
-    ],
-    "export-warnings": [
-      "migration"
-    ],
-    "export-description": [
       "migration"
     ],
     "btn-info": [
       "migration"
     ],
-    "hse-costs-entity-meta": [
+    "help-text": [
+      "migration"
+    ],
+    "alert": [
+      "migration"
+    ],
+    "actions": [
+      "migration"
+    ],
+    "migration-page-intro": [
+      "migration"
+    ],
+    "recommended": [
+      "migration"
+    ],
+    "export-features": [
+      "migration"
+    ],
+    "yaml-preview": [
+      "migration"
+    ],
+    "result-details": [
+      "migration"
+    ],
+    "progress-bar": [
+      "migration"
+    ],
+    "export-card": [
+      "migration"
+    ],
+    "complete": [
+      "migration"
+    ],
+    "btn": [
+      "migration"
+    ],
+    "migration-container": [
+      "migration"
+    ],
+    "form-control": [
+      "migration"
+    ],
+    "hsedark": [
+      "migration"
+    ],
+    "description": [
+      "migration"
+    ],
+    "btn-lg": [
+      "migration"
+    ],
+    "progress-bar-container": [
+      "migration"
+    ],
+    "form-row": [
+      "migration"
+    ],
+    "alert-success": [
+      "migration"
+    ],
+    "contrat-info": [
+      "migration"
+    ],
+    "form-section": [
+      "migration"
+    ],
+    "btn-success": [
+      "migration"
+    ],
+    "progress-fill": [
+      "migration"
+    ],
+    "migration-help": [
+      "migration"
+    ],
+    "export-description": [
+      "migration"
+    ],
+    "alert-content": [
+      "migration"
+    ],
+    "yaml-toolbar": [
+      "migration"
+    ],
+    "modal-close": [
+      "migration"
+    ],
+    "progress-percentage": [
+      "migration"
+    ],
+    "migration-option": [
+      "migration"
+    ],
+    "migration-page-title": [
+      "migration"
+    ],
+    "hsecontrast": [
+      "migration"
+    ],
+    "progress-label": [
+      "migration"
+    ],
+    "feature-list": [
+      "migration"
+    ],
+    "export-actions": [
+      "migration"
+    ],
+    "export-warnings": [
+      "migration"
+    ],
+    "result-container": [
+      "migration"
+    ],
+    "yaml-code": [
+      "migration"
+    ],
+    "migration-cards": [
+      "migration"
+    ],
+    "btn-accent": [
+      "migration"
+    ],
+    "form-group": [
+      "migration"
+    ],
+    "hse-costs-tr": [
+      "summary"
+    ],
+    "hse-costs-card": [
       "summary"
     ],
     "hse-progress-fill": [
       "summary"
     ],
-    "hse-top-consumers-scrollable": [
+    "hse-top-consumers-power": [
+      "summary"
+    ],
+    "hse-costs-entity-meta": [
+      "summary"
+    ],
+    "hse-costs-td-number": [
+      "summary"
+    ],
+    "summary-total-highlight": [
       "summary"
     ],
     "hse-costs-td": [
       "summary"
     ],
-    "hse-costs-total": [
+    "hse-costs-per-entity": [
       "summary"
     ],
-    "hse-top-consumers-line": [
+    "level-high": [
       "summary"
     ],
-    "hse-top-consumers-column": [
+    "hse-costs-global-panel": [
       "summary"
     ],
-    "hse-progress-container": [
+    "level-medium": [
       "summary"
     ],
-    "summary-row-external": [
-      "summary"
-    ],
-    "hse-costs-header": [
+    "hse-costs-icon": [
       "summary"
     ],
     "btn-cache-clear": [
@@ -1332,73 +1082,121 @@
     "hse-costs-card-body": [
       "summary"
     ],
-    "hse-loader-text": [
+    "hse-top-consumers-col-header": [
       "summary"
     ],
-    "hse-error-container": [
-      "summary"
-    ],
-    "hse-costs-table": [
-      "summary"
-    ],
-    "summary-period": [
-      "summary"
-    ],
-    "hse-costs-th": [
-      "summary"
-    ],
-    "hse-costs-th-number": [
+    "summary-row-delta": [
       "summary"
     ],
     "hse-costs-entity-name": [
       "summary"
     ],
-    "level-high": [
-      "summary"
-    ],
-    "hse-costs-icon": [
-      "summary"
-    ],
-    "hse-costs-period": [
-      "summary"
-    ],
-    "hse-top-consumers-power": [
-      "summary"
-    ],
-    "hse-costs-tr": [
-      "summary"
-    ],
-    "hse-costs-row": [
-      "summary"
-    ],
-    "integration": [
-      "summary"
-    ],
-    "hse-top-consumers-row": [
+    "hse-top-consumers-column": [
       "summary"
     ],
     "category": [
       "summary"
     ],
-    "summary-row-internal": [
+    "hse-costs-card-header": [
       "summary"
     ],
-    "hse-loader-fade-out": [
+    "hse-loader-container": [
       "summary"
     ],
     "hse-top-consumers-badge": [
       "summary"
     ],
-    "hse-costs-search": [
+    "summary-row-internal": [
+      "summary"
+    ],
+    "hse-costs-search-input": [
+      "summary"
+    ],
+    "hse-progress-bar": [
+      "summary"
+    ],
+    "hse-error-retry": [
+      "summary"
+    ],
+    "hse-costs-th-number": [
+      "summary"
+    ],
+    "hse-top-consumers-row": [
+      "summary"
+    ],
+    "summary-energy": [
+      "summary"
+    ],
+    "hse-costs-row": [
+      "summary"
+    ],
+    "hse-top-consumers-header": [
+      "summary"
+    ],
+    "integration": [
+      "summary"
+    ],
+    "hse-top-consumers-meta": [
+      "summary"
+    ],
+    "hse-costs-label": [
+      "summary"
+    ],
+    "hse-loader-details": [
+      "summary"
+    ],
+    "hse-loader-text": [
+      "summary"
+    ],
+    "hse-loader-fade-out": [
+      "summary"
+    ],
+    "hse-costs-th": [
+      "summary"
+    ],
+    "summary-row": [
+      "summary"
+    ],
+    "hse-top-consumers-line": [
+      "summary"
+    ],
+    "hse-progress-label": [
+      "summary"
+    ],
+    "hse-error-icon": [
+      "summary"
+    ],
+    "hse-costs-period": [
+      "summary"
+    ],
+    "hse-error-message": [
+      "summary"
+    ],
+    "hse-top-consumers": [
       "summary"
     ],
     "hse-cache-badge": [
       "summary"
     ],
-    "summary-total-highlight": [
+    "hse-top-consumers-grid": [
       "summary"
     ],
-    "summary-energy": [
+    "hse-error-container": [
+      "summary"
+    ],
+    "summary-period": [
+      "summary"
+    ],
+    "hse-top-consumers-scrollable": [
+      "summary"
+    ],
+    "summary-row-external": [
+      "summary"
+    ],
+    "hse-costs-header": [
+      "summary"
+    ],
+    "hse-costs-search": [
       "summary"
     ],
     "hse-costs-table-wrapper": [
@@ -1407,130 +1205,54 @@
     "hse-loader-spinner": [
       "summary"
     ],
-    "hse-progress-bar": [
-      "summary"
-    ],
-    "hse-costs-card": [
-      "summary"
-    ],
-    "hse-costs-highlight": [
-      "summary"
-    ],
-    "hse-progress-label": [
-      "summary"
-    ],
-    "hse-top-consumers-col-header": [
-      "summary"
-    ],
-    "hse-loader-container": [
-      "summary"
-    ],
-    "hse-costs-card-header": [
-      "summary"
-    ],
-    "hse-top-consumers-grid": [
-      "summary"
-    ],
-    "level-medium": [
-      "summary"
-    ],
-    "hse-costs-label": [
-      "summary"
-    ],
-    "summary-row": [
+    "hse-costs-table": [
       "summary"
     ],
     "btn-cache-stats": [
       "summary"
     ],
-    "hse-top-consumers-header": [
+    "hse-costs-grid": [
       "summary"
     ],
-    "summary-row-delta": [
+    "hse-progress-container": [
+      "summary"
+    ],
+    "hse-costs-highlight": [
+      "summary"
+    ],
+    "hse-costs-total": [
       "summary"
     ],
     "hse-costs-value": [
       "summary"
     ],
-    "hse-costs-search-input": [
-      "summary"
-    ],
-    "hse-costs-td-number": [
-      "summary"
-    ],
-    "hse-top-consumers-meta": [
-      "summary"
-    ],
-    "hse-error-retry": [
-      "summary"
-    ],
-    "hse-error-icon": [
-      "summary"
-    ],
-    "hse-top-consumers": [
-      "summary"
-    ],
-    "hse-costs-grid": [
-      "summary"
-    ],
-    "hse-loader-details": [
-      "summary"
-    ],
     "hse-top-consumers-left": [
-      "summary"
-    ],
-    "hse-costs-per-entity": [
-      "summary"
-    ],
-    "hse-error-message": [
-      "summary"
-    ],
-    "hse-costs-global-panel": [
       "summary"
     ]
   },
   "inconsistencies": [
     {
-      "module": "detection",
-      "type": "hardcoded_colors",
-      "count": 1,
-      "examples": [
-        "#ffffff"
-      ]
-    },
-    {
       "module": "diagnostics",
       "type": "hardcoded_colors",
-      "count": 48,
+      "count": 35,
       "examples": [
         "rgb",
-        "#1e293b",
+        "rgb",
         "rgb"
-      ]
-    },
-    {
-      "module": "generation",
-      "type": "hardcoded_colors",
-      "count": 2,
-      "examples": [
-        "#ffffff",
-        "#ffffff"
       ]
     },
     {
       "module": "migration",
       "type": "hardcoded_colors",
-      "count": 6,
+      "count": 1,
       "examples": [
-        "rgb",
-        "#92400e",
-        "#1a1a1a"
+        "rgb"
       ]
     },
     {
       "module": "summary",
       "type": "hardcoded_colors",
-      "count": 20,
+      "count": 11,
       "examples": [
         "rgb",
         "rgb",
@@ -1539,31 +1261,29 @@
     }
   ],
   "theme_analysis": {
-    "defined_variables": 63,
-    "used_variables": 99,
+    "defined_variables": 48,
+    "used_variables": 87,
     "unused_variables": [
-      "--hse-radius-full",
-      "--hse-table-text",
-      "--hse-animation-spin",
-      "--hse-animation-fade",
-      "--hse-table-header-bg",
+      "--hse-accent-strong",
+      "--hse-danger-soft",
+      "--hse-radius-xl",
+      "--hse-gradient-info",
+      "--hse-bg",
+      "--hse-border-strong",
       "--hse-shadow-glow",
-      "--hse-info-soft",
-      "--hse-success-text-accessible",
-      "--hse-text-accessible",
-      "--hse-surface-hover"
+      "--hse-gradient-success"
     ],
     "undefined_variables": [
-      "--bg-hover",
-      "--shadow-lg",
-      "--hse-font-size-2xl",
-      "--surface-hover",
-      "--primary-color",
-      "--info-bg",
-      "--success-text",
       "--card-background-color",
-      "--hse-font-weight-semibold",
-      "--danger"
+      "--danger-bg",
+      "--shadow-md",
+      "--hse-primary-dark",
+      "--bg-secondary",
+      "--spacing-xl",
+      "--success-bg",
+      "--text-primary",
+      "--success",
+      "--children-bg"
     ]
   }
 }
