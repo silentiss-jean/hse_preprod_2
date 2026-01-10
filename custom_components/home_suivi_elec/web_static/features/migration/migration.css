@@ -75,9 +75,7 @@
   border-radius: 16px;
   padding: 20px;
   border: 1px solid var(--hse-border);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--hse-shadow-md);
   transition: 
     transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
@@ -90,9 +88,7 @@
 .migration-option:hover,
 .export-card:hover {
   transform: translateY(-2px);
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.05),
-    0 10px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--hse-shadow-lg);
   border-color: var(--hse-accent);
 }
 
@@ -100,10 +96,10 @@
 .migration-option.recommended,
 .export-card.recommended {
   border-color: var(--hse-accent);
-  background: linear-gradient(135deg, rgba(var(--hse-accent), 0.04) 0%, var(--hse-surface) 100%);
+  background: linear-gradient(135deg, var(--hse-accent-soft) 0%, var(--hse-surface) 100%);
   box-shadow: 
     0 0 0 2px var(--hse-accent-soft),
-    0 4px 12px rgba(var(--hse-accent), 0.15);
+    0 4px 12px var(--hse-accent-soft);
 }
 
 /* ============================================================================
@@ -129,11 +125,11 @@
   font-size: 0.65em;
   font-weight: 700;
   color: white;
-  background: linear-gradient(135deg, var(--hse-warning) 0%, #ea580c 100%);
+  background: var(--hse-gradient-warning);
   border-radius: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(var(--hse-warning), 0.3);
+  box-shadow: 0 2px 8px var(--hse-warning-soft);
 }
 
 /* ============================================================================
@@ -179,7 +175,7 @@
 
 .export-warnings {
   border-left: 3px solid var(--hse-warning);
-  background: rgba(217, 119, 6, 0.05);
+  background: var(--hse-warning-soft);
   padding: 10px 12px;
   border-radius: 6px;
   margin-top: 8px;
@@ -296,14 +292,14 @@ button:active:not(.modal-close) {
 /* Bouton primaire / accent */
 .btn-primary,
 .btn-accent {
-  background: linear-gradient(135deg, var(--hse-accent), #1d4ed8);
+  background: var(--hse-gradient-primary);
   color: white;
-  box-shadow: 0 4px 14px rgba(var(--hse-accent), 0.35);
+  box-shadow: 0 4px 14px var(--hse-accent-soft);
 }
 
 .btn-primary:hover,
 .btn-accent:hover {
-  box-shadow: 0 6px 20px rgba(var(--hse-accent), 0.45);
+  box-shadow: var(--hse-shadow-glow);
   transform: translateY(-2px);
 }
 
@@ -334,19 +330,19 @@ button:active:not(.modal-close) {
 
 /* Bouton succès */
 .btn-success {
-  background: linear-gradient(135deg, var(--hse-success), var(--hse-success));
+  background: var(--hse-gradient-success);
   color: white;
-  box-shadow: 0 4px 14px rgba(var(--hse-success), 0.35);
+  box-shadow: 0 4px 14px var(--hse-success-soft);
 }
 
 .btn-success:hover {
-  box-shadow: 0 6px 20px rgba(var(--hse-success), 0.45);
+  box-shadow: 0 0 20px var(--hse-success-soft);
   transform: translateY(-2px);
 }
 
 /* Bouton info */
 .btn-info {
-  background: linear-gradient(135deg, var(--hse-info), #1e40af);
+  background: var(--hse-gradient-info);
   color: white;
 }
 
@@ -392,7 +388,7 @@ button:active:not(.modal-close) {
 
 /* Alert succès */
 .alert-success {
-  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  background: var(--hse-success-soft);
   border-color: var(--hse-success);
   color: var(--hse-success);
 }
@@ -403,7 +399,7 @@ button:active:not(.modal-close) {
 
 /* Alert erreur */
 .alert-error {
-  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  background: var(--hse-error-soft);
   border-color: var(--hse-error);
   color: var(--hse-error);
 }
@@ -414,7 +410,7 @@ button:active:not(.modal-close) {
 
 /* Alert warning */
 .alert-warning {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  background: var(--hse-warning-soft);
   border-color: var(--hse-warning);
   color: var(--hse-warning-dark);
 }
@@ -440,7 +436,7 @@ button:active:not(.modal-close) {
 .help-text {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--hse-border-soft);
   font-size: 0.85em;
   color: var(--hse-text-muted);
 }
@@ -464,7 +460,7 @@ button:active:not(.modal-close) {
   width: 1em;
   height: 1em;
   border: 2px solid var(--hse-surface);
-  border-top-color: white;
+  border-top-color: var(--hse-text-main);
   border-radius: 50%;
   animation: hse-spin 0.6s linear infinite;
 }
@@ -539,7 +535,7 @@ button:active:not(.modal-close) {
   height: 100%;
   width: 0%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--hse-accent), #1d4ed8);
+  background: linear-gradient(90deg, var(--hse-accent), var(--hse-accent-hover));
   transition: width 0.3s ease;
 }
 
@@ -551,7 +547,7 @@ button:active:not(.modal-close) {
 }
 
 .progress-bar-container.complete .progress-fill {
-  background: linear-gradient(90deg, var(--hse-success), var(--hse-success));
+  background: linear-gradient(90deg, var(--hse-success), var(--hse-success-dark, var(--hse-success)));
 }
 
 /* ============================================================================
@@ -604,51 +600,6 @@ button:active:not(.modal-close) {
   }
 }
 
-/* ============================================================================
-   COMPATIBILITÉ THÈMES
-   ============================================================================ */
-
-/* Thème contraste élevé */
-body.hsecontrast .migration-option,
-body.hsecontrast .export-card,
-body.hsecontrast .form-section,
-body.hsecontrast .alert {
-  background: var(--hse-surface) !important;
-  border: 2px solid var(--hse-surface) !important;
-  color: var(--hse-surface) !important;
-}
-
-body.hsecontrast .form-control,
-body.hsecontrast .form-group input,
-body.hsecontrast .form-group select {
-  background: var(--hse-surface) !important;
-  color: var(--hse-surface) !important;
-  border: 2px solid var(--hse-surface) !important;
-}
-
-body.hsecontrast .btn-primary,
-body.hsecontrast .btn-accent {
-  background: var(--hse-info) !important;
-  color: var(--hse-text-main) !important;
-}
-
-body.hsecontrast .btn-success {
-  background: var(--hse-success) !important;
-  color: var(--hse-text-main) !important;
-}
-
-/* Thème sombre */
-body.hsedark .migration-option,
-body.hsedark .export-card {
-  border-color: var(--hse-border);
-}
-
-body.hsedark .yaml-code {
-  background: var(--hse-surface);
-  color: var(--hse-text-main);
-}
-
-/* FIN migration.css */
 
 /* ============================================================================
    AJOUT migration.css - Gestion contrat HP/HC
