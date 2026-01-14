@@ -161,11 +161,17 @@
   --hse-bg-secondary: var(--hse-surface-muted);
   --hse-hover: rgba(59, 130, 246, 0.08);
   --hse-text: var(--hse-text-main);
+   
   /* Aliases Phase1 */
   --hse-accent-alt: var(--hse-accent);
   --hse-grad-header-from: var(--hse-accent);
   --hse-grad-header-to: var(--hse-accent-hover);
 
+  /* alias pratique (évite --hse-primary dans les modules) */
+  --hse-primary: var(--hse-accent);
+   
+  /* couleur de texte lisible sur boutons/gradients */
+  --hse-on-accent: #ffffff;
   
 }
 
