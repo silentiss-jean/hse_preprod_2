@@ -1,0 +1,55 @@
+{
+  "version": "1.1",
+  "phase": "evolution_plan",
+  "generated_at": "2026-01-12T11:15:00.644328+00:00",
+  "root": "/config/custom_components/home_suivi_elec/web_static",
+  "actions": [
+    {
+      "id": "phase2-create-theme-manifest",
+      "type": "CREATE_FILE",
+      "target_path": "themes/themes.manifest.json",
+      "reason": "Centraliser la liste des thèmes (max 10) + metadata + effets signature.",
+      "risk": "high",
+      "depends_on": [],
+      "preconditions": [
+        {
+          "type": "NOT_EXISTS",
+          "path": "themes/themes.manifest.json"
+        }
+      ],
+      "payload": {
+        "content": "{\n  \"max_themes\": 10,\n  \"themes\": [],\n  \"notes\": \"Auto-generated stub by audit. Fill in during Phase 2.\"\n}\n"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "theme-mechanism",
+      "text": "Phase 2: mécanisme unique de thème (data-theme vs body class) ?",
+      "options": [
+        "data-theme",
+        "body-class"
+      ],
+      "default": "data-theme",
+      "blocking": false
+    },
+    {
+      "id": "theme-count",
+      "text": "Phase 2: confirmer le nombre max de thèmes = 10 (existants inclus).",
+      "options": [
+        "10"
+      ],
+      "default": "10",
+      "blocking": false
+    },
+    {
+      "id": "no-cost-mutation",
+      "text": "Phase 2: confirmer que tous les changements restent dans web_static (aucun Python/calcul).",
+      "options": [
+        "confirm"
+      ],
+      "default": "confirm",
+      "blocking": false
+    }
+  ]
+}

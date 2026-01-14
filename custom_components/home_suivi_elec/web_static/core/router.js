@@ -134,23 +134,32 @@ const router = new ModuleRouter();
 // Export pour debugging
 window.__router = router;
 
-/**
- * Intercepter showTab pour utiliser le router si nécessaire
- * ⚠️ Ne remplace PAS showTab, juste l'améliore
- */
-const originalShowTab = window.showTab;
-if (originalShowTab) {
-  window.showTab = async function(tab) {
+function hookShowTabWhenReady() {
+  if (typeof window.showTab !== "function") {
+    setTimeout(hookShowTabWhenReady, 0);
+    return;
+  }
+
+  const originalShowTab = window.showTab;
+
+  // évite double-hook si rechargement/hot reload
+  if (originalShowTab.__hseHooked) return;
+
+  const wrapped = async function(tab) {
     console.log(`📍 showTab intercepté: ${tab}`);
-    
-    // Appeler l'original (app.js)
     originalShowTab(tab);
-    
-    // Puis charger via router si migré
     await router.navigateTo(tab);
   };
-  console.log("✅ showTab amélioré avec router");
+  wrapped.__hseHooked = true;
+
+  window.showTab = wrapped;
+  console.log("✅ showTab amélioré avec router (hook tardif)");
 }
+
+hookShowTabWhenReady();
+document.addEventListener("DOMContentLoaded", hookShowTabWhenReady);
+
+
 
 /**
  * Auto-chargement au démarrage (seulement modules migrés)

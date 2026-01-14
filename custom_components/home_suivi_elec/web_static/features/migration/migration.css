@@ -6,13 +6,6 @@
  * Compatible avec tous les thèmes (light, dark, contrast, etc.)
  */
 
-/* ============================================================================
-   VARIABLES GLOBALES (déjà définies dans style.css)
-   ============================================================================
-   --hse-bg, --hse-surface, --hse-surface-muted, --hse-border
-   --hse-text-main, --hse-text-muted, --hse-accent, --hse-accent-soft
-   --hse-success, --hse-warning, --hse-error, --hse-info
-*/
 
 /* ============================================================================
    CONTENEUR PRINCIPAL MIGRATION
@@ -41,7 +34,7 @@
 .migration-help {
   margin-top: 16px;
   padding: 12px 16px;
-  background: linear-gradient(135deg, var(--hse-accent-soft) 0%, var(--hse-surface) 100%);
+  background: var(--hse-surface);
   border-left: 4px solid var(--hse-accent);
   border-radius: 8px;
   font-size: 0.85em;
@@ -71,7 +64,7 @@
 
 .migration-option,
 .export-card {
-  background: linear-gradient(135deg, var(--hse-surface) 0%, var(--hse-surface-muted) 100%);
+  background: var(--hse-surface);
   border-radius: 16px;
   padding: 20px;
   border: 1px solid var(--hse-border);
@@ -96,7 +89,7 @@
 .migration-option.recommended,
 .export-card.recommended {
   border-color: var(--hse-accent);
-  background: linear-gradient(135deg, var(--hse-accent-soft) 0%, var(--hse-surface) 100%);
+  background: var(--hse-surface);
   box-shadow: 
     0 0 0 2px var(--hse-accent-soft),
     0 4px 12px var(--hse-accent-soft);
@@ -535,7 +528,7 @@ button:active:not(.modal-close) {
   height: 100%;
   width: 0%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--hse-accent), var(--hse-accent-hover));
+  background: var(--hse-accent);
   transition: width 0.3s ease;
 }
 
@@ -547,7 +540,7 @@ button:active:not(.modal-close) {
 }
 
 .progress-bar-container.complete .progress-fill {
-  background: linear-gradient(90deg, var(--hse-success), var(--hse-success-dark, var(--hse-success)));
+  background: var(--hse-success);
 }
 
 /* ============================================================================
@@ -610,7 +603,7 @@ button:active:not(.modal-close) {
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  background: linear-gradient(135deg, var(--hse-accent-soft) 0%, var(--hse-surface) 100%);
+  background: var(--hse-surface);
   border-left: 4px solid var(--hse-accent);
   border-radius: 8px;
   margin: 16px 0;

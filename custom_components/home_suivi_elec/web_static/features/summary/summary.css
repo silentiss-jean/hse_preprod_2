@@ -2,7 +2,6 @@
    SUMMARY MODULE - STYLES COMPLETS
    ════════════════════════════════════════════════════════════════════════════ */
 
-
 /* ────────────────────────────────────────────────────────────────────────────
    LOADER & PROGRESSION
    ──────────────────────────────────────────────────────────────────────────── */
@@ -31,8 +30,8 @@
 .hse-loader-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid var(--hse-border, #e5e5e5);
-  border-top-color: var(--hse-primary, #0078d4);
+  border: 4px solid var(--hse-border);
+  border-top-color: var(--hse-primary);
   border-radius: 50%;
   animation: hse-spin 0.8s linear infinite;
 }
@@ -47,9 +46,8 @@
   margin-top: 20px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--hse-text, #222);
+  color: var(--hse-text);
 }
-
 
 /* ────────────────────────────────────────────────────────────────────────────
    BARRE DE PROGRESSION
@@ -64,20 +62,16 @@
 .hse-progress-bar {
   width: 100%;
   height: 8px;
-  background: var(--hse-bg-secondary, #f0f0f0);
+  background: var(--hse-bg-secondary);
   border-radius: 4px;
   overflow: hidden;
   position: relative;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 0 var(--hse-border-soft);
 }
 
 .hse-progress-fill {
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    var(--hse-primary, #0078d4),
-    var(--hse-primary-dark, #005fa3)
-  );
+  background: var(--hse-surface);
   transition: width 0.3s ease, background 0.5s ease;
   border-radius: 4px;
   position: relative;
@@ -92,12 +86,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--hse-surface),
-    transparent
-  );
+  background: var(--hse-surface);
   animation: hse-shine 2s infinite;
 }
 
@@ -111,14 +100,14 @@
   text-align: center;
   margin-top: 8px;
   font-size: 0.9rem;
-  color: var(--hse-text-muted, #666);
+  color: var(--hse-text-muted);
   font-weight: 600;
 }
 
 .hse-loader-details {
   margin-top: 12px;
   font-size: 0.85rem;
-  color: var(--hse-text-muted, #888);
+  color: var(--hse-text-muted);
   text-align: center;
   font-style: italic;
 }
@@ -134,7 +123,6 @@
   }
 }
 
-
 /* ────────────────────────────────────────────────────────────────────────────
    CACHE BADGE
    ──────────────────────────────────────────────────────────────────────────── */
@@ -142,14 +130,14 @@
 .hse-cache-badge {
   display: inline-block;
   background: var(--hse-gradient-header);
-  color: white;
+  color: var(--hse-tooltip-text);
   font-size: 0.7rem;
   font-weight: 600;
   padding: 2px 6px;
   border-radius: 10px;
   margin-left: 6px;
   vertical-align: middle;
-  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--hse-shadow-sm);
   animation: hse-pulse 2s infinite;
   cursor: help;
 }
@@ -170,9 +158,8 @@
   animation: none;
   opacity: 1;
   transform: scale(1.05);
-  box-shadow: 0 3px 6px rgba(102, 126, 234, 0.5);
+  box-shadow: var(--hse-shadow-md);
 }
-
 
 /* ────────────────────────────────────────────────────────────────────────────
    ERROR STATE
@@ -206,7 +193,7 @@
 }
 
 .hse-error-message {
-  color: var(--hse-error, #dc3545);
+  color: var(--hse-error);
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 20px;
@@ -221,19 +208,18 @@
   font-size: 1rem;
 }
 
-
 /* ────────────────────────────────────────────────────────────────────────────
    CACHE STATS PANEL
    ──────────────────────────────────────────────────────────────────────────── */
 
 #cacheStatsPanel {
-  background: linear-gradient(135deg, var(--hse-info-soft) 0%, var(--hse-info-soft) 100%);
+  background: var(--hse-gradient-info);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 12px;
   font-size: 0.9rem;
-  border-left: 4px solid var(--hse-info, #2196f3);
-  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.1);
+  border-left: 4px solid var(--hse-info);
+  box-shadow: var(--hse-shadow-sm);
   animation: hse-slide-down 0.3s ease;
 }
 
@@ -253,12 +239,12 @@
 #cacheStatsPanel strong {
   display: block;
   margin-bottom: 8px;
-  color: var(--hse-text, #222);
+  color: var(--hse-text);
   font-size: 1rem;
 }
 
 #cacheStatsContent {
-  color: var(--hse-text, #333);
+  color: var(--hse-text);
 }
 
 #cacheStatsContent > div {
@@ -268,10 +254,9 @@
 }
 
 #cacheStatsContent strong {
-  color: var(--hse-text-muted, #666);
+  color: var(--hse-text-muted);
   font-weight: 600;
 }
-
 
 /* ────────────────────────────────────────────────────────────────────────────
    SUMMARY TABLES
@@ -282,37 +267,36 @@
 }
 
 .summary-row:hover {
-  background-color: var(--hse-hover, rgba(0, 120, 212, 0.05));
+  background-color: var(--hse-hover);
 }
 
 .summary-row-internal {
-  border-left: 3px solid var(--hse-primary, #0078d4);
+  border-left: 3px solid var(--hse-primary);
 }
 
 .summary-row-external {
-  border-left: 3px solid var(--hse-warning, #ff9800);
+  border-left: 3px solid var(--hse-warning);
 }
 
 .summary-row-delta {
-  border-left: 3px solid var(--hse-success, #28a745);
+  border-left: 3px solid var(--hse-success);
 }
 
 .summary-period {
   font-weight: 600;
-  color: var(--hse-text, #222);
+  color: var(--hse-text);
 }
 
 .summary-energy {
-  color: var(--hse-primary, #0078d4);
+  color: var(--hse-primary);
   font-weight: 500;
 }
 
 .summary-total-highlight {
-  background: linear-gradient(135deg, var(--hse-success-soft) 0%, var(--hse-success-soft) 100%);
+  background: var(--hse-success-soft);
   font-weight: 700;
-  color: var(--hse-success, var(--hse-success-dark));
+  color: var(--hse-success);
 }
-
 
 /* ────────────────────────────────────────────────────────────────────────────
    BOUTONS ACTIONS
@@ -320,38 +304,37 @@
 
 .btn-cache-clear {
   background: var(--hse-gradient-warning);
-  color: white;
+  color: var(--hse-tooltip-text);
   border: none;
   padding: 8px 12px;
   border-radius: 5px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform var(--hse-transition-base), box-shadow var(--hse-transition-base);
   font-weight: 600;
 }
 
 .btn-cache-clear:hover {
-  background: linear-gradient(135deg, #f57c00 0%, var(--hse-warning-text) 100%);
-  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+  background: var(--hse-gradient-warning);
+  box-shadow: var(--hse-shadow-md);
   transform: translateY(-1px);
 }
 
 .btn-cache-stats {
-  background: linear-gradient(135deg, #2196f3 0%, var(--hse-info) 100%);
-  color: white;
+  background: var(--hse-gradient-info);
+  color: var(--hse-tooltip-text);
   border: none;
   padding: 8px 12px;
   border-radius: 5px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform var(--hse-transition-base), box-shadow var(--hse-transition-base);
   font-weight: 600;
 }
 
 .btn-cache-stats:hover {
-  background: linear-gradient(135deg, var(--hse-info) 0%, #1565c0 100%);
-  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+  background: var(--hse-gradient-info);
+  box-shadow: var(--hse-shadow-md);
   transform: translateY(-1px);
 }
-
 
 /* ────────────────────────────────────────────────────────────────────────────
    TOP CONSOMMATEURS (LIVE)
@@ -361,8 +344,8 @@
   margin-top: 16px;
   padding: 16px;
   border-radius: 12px;
-  background: var(--hse-surface, var(--hse-surface));
-  border: 1px solid var(--hse-border, #e5e7eb);
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
 }
 
 .hse-top-consumers-header h3 {
@@ -373,7 +356,7 @@
 .hse-top-consumers-header p {
   margin: 0 0 12px 0;
   font-size: 0.85rem;
-  color: var(--hse-text-muted, #6b7280);
+  color: var(--hse-text-muted);
 }
 
 .hse-top-consumers-grid {
@@ -394,18 +377,18 @@
   align-items: center;
   padding: 6px 8px;
   border-radius: 6px;
-  border: 1px solid var(--hse-border, #e5e7eb);
+  border: 1px solid var(--hse-border);
   margin-bottom: 4px;
   font-size: 0.85rem;
-  transition: background 0.15s ease;
+  transition: background var(--hse-transition-fast);
 }
 
 .hse-top-consumers-row.level-medium {
-  background: rgba(var(--hse-accent), 0.04);
+  background: var(--hse-accent-soft);
 }
 
 .hse-top-consumers-row.level-high {
-  background: rgba(220, 38, 38, 0.04);
+  background: var(--hse-danger-soft);
 }
 
 /* conteneur texte gauche : une seule ligne avec ellipsis */
@@ -429,7 +412,7 @@
 /* scroll interne des colonnes à partir de ~3 éléments */
 .hse-top-consumers-column.hse-top-consumers-scrollable {
   max-height: 210px;
-  overflow-y: auto; /* scroll vertical uniquement si nécessaire [web:45] */
+  overflow-y: auto; /* scroll vertical uniquement si nécessaire */
 }
 
 /* anciens badges (si tu les réutilises ailleurs) */
@@ -443,17 +426,16 @@
 .hse-top-consumers-badge {
   padding: 2px 6px;
   border-radius: 999px;
-  border: 1px solid var(--hse-border, #e5e7eb);
+  border: 1px solid var(--hse-border);
 }
 
 .hse-top-consumers-badge.integration {
-  background: rgba(var(--hse-accent), 0.08);
+  background: var(--hse-accent-soft);
 }
 
 .hse-top-consumers-badge.category {
-  background: rgba(var(--hse-success), 0.08);
+  background: var(--hse-success-soft);
 }
-
 
 /* ────────────────────────────────────────────────────────────────────────────
    RESPONSIVE
@@ -487,7 +469,6 @@
   }
 }
 
-
 /* ────────────────────────────────────────────────────────────────────────────
    MODE SOMBRE
    ──────────────────────────────────────────────────────────────────────────── */
@@ -498,7 +479,7 @@
   }
 
   .hse-loader-spinner {
-    border-color: #444;
+    border-color: var(--hse-border-strong);
     border-top-color: var(--hse-accent);
   }
 
@@ -507,7 +488,7 @@
   }
 
   #cacheStatsPanel {
-    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    background: var(--hse-gradient-info);
     border-left-color: var(--hse-accent);
     color: var(--hse-text-main);
   }
@@ -523,29 +504,30 @@
 
 /* Panel coûts globaux */
 .hse-costs-global-panel {
-  background: var(--card-background-color, var(--hse-surface));
+  background: var(--hse-surface);
   border-radius: 8px;
   padding: 20px;
   margin: 20px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--hse-shadow-md);
+  border: 1px solid var(--hse-border);
 }
 
 .hse-costs-header {
   margin-bottom: 16px;
-  border-bottom: 2px solid var(--primary-color, #03a9f4);
+  border-bottom: 2px solid var(--hse-primary);
   padding-bottom: 12px;
 }
 
 .hse-costs-header h3 {
   margin: 0 0 4px 0;
   font-size: 1.4rem;
-  color: var(--primary-text-color, var(--hse-text-main));
+  color: var(--hse-text-main);
 }
 
 .hse-costs-header p {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--secondary-text-color, var(--hse-text-secondary));
+  color: var(--hse-text-secondary);
 }
 
 /* Grid 4 colonnes */
@@ -557,16 +539,16 @@
 
 /* Carte période */
 .hse-costs-card {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: var(--hse-gradient-header);
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--hse-shadow-sm);
+  transition: transform var(--hse-transition-base), box-shadow var(--hse-transition-base);
 }
 
 .hse-costs-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--hse-shadow-md);
 }
 
 .hse-costs-card-header {
@@ -575,7 +557,7 @@
   gap: 8px;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--hse-border-soft);
 }
 
 .hse-costs-icon {
@@ -585,13 +567,13 @@
 .hse-costs-period {
   font-weight: 600;
   font-size: 1.1rem;
-  color: #333;
+  color: var(--hse-text);
   flex: 1;
 }
 
 .hse-cache-badge {
   font-size: 0.7rem;
-  background: rgba(255, 152, 0, 0.2);
+  background: var(--hse-warning-soft);
   color: var(--hse-warning-text);
   padding: 2px 6px;
   border-radius: 4px;
@@ -614,22 +596,22 @@
 .hse-costs-row.hse-costs-total {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 2px solid rgba(0, 0, 0, 0.2);
+  border-top: 2px solid var(--hse-border);
   font-weight: 600;
   font-size: 1rem;
 }
 
 .hse-costs-label {
-  color: #555;
+  color: var(--hse-text-muted);
 }
 
 .hse-costs-value {
   font-weight: 600;
-  color: #333;
+  color: var(--hse-text);
 }
 
 .hse-costs-highlight {
-  color: var(--primary-color, #03a9f4);
+  color: var(--hse-primary);
   font-size: 1.1rem;
 }
 
@@ -638,11 +620,12 @@
    ============================================ */
 
 .hse-costs-per-entity {
-  background: var(--card-background-color, var(--hse-surface));
+  background: var(--hse-surface);
   border-radius: 8px;
   padding: 20px;
   margin: 20px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--hse-shadow-md);
+  border: 1px solid var(--hse-border);
 }
 
 /* Barre de recherche */
@@ -654,14 +637,16 @@
   width: 100%;
   padding: 10px 12px;
   font-size: 0.95rem;
-  border: 2px solid var(--hse-text-main);
+  border: 2px solid var(--hse-border);
   border-radius: 6px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color var(--hse-transition-base);
+  background: var(--hse-surface);
+  color: var(--hse-text);
 }
 
 .hse-costs-search-input:focus {
-  border-color: var(--primary-color, #03a9f4);
+  border-color: var(--hse-primary);
 }
 
 /* Tableau */
@@ -670,7 +655,8 @@
   max-height: 500px;
   overflow-y: auto;
   border-radius: 6px;
-  border: 1px solid var(--hse-text-main);
+  border: 1px solid var(--hse-border);
+  background: var(--hse-surface);
 }
 
 .hse-costs-table {
@@ -681,7 +667,7 @@
 
 .hse-costs-th {
   background: var(--hse-gradient-header);
-  color: var(--hse-surface);
+  color: var(--hse-tooltip-text);
   padding: 12px;
   text-align: left;
   font-weight: 600;
@@ -695,23 +681,23 @@
 }
 
 .hse-costs-tr {
-  border-bottom: 1px solid var(--hse-text-main);
-  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--hse-border-soft);
+  transition: background-color var(--hse-transition-fast);
 }
 
 .hse-costs-tr:hover {
-  background-color: rgba(3, 169, 244, 0.05);
+  background-color: var(--hse-hover);
 }
 
 .hse-costs-td {
   padding: 12px;
-  color: #333;
+  color: var(--hse-text);
 }
 
 .hse-costs-td-number {
   text-align: right;
   font-weight: 600;
-  font-family: 'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .hse-costs-entity-name {
@@ -730,11 +716,11 @@
   .hse-costs-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .hse-costs-table {
     font-size: 0.8rem;
   }
-  
+
   .hse-costs-th,
   .hse-costs-td {
     padding: 8px;

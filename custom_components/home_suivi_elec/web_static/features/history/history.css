@@ -16,56 +16,63 @@
 .history-module,
 .history-feature {
   /* --- Surfaces / fond --- */
-  --card-bg: var(--hse-surface, var(--hse-surface));
-  --input-bg: var(--hse-surface, var(--hse-surface));
-  --bg-secondary: var(--hse-surface-muted, var(--hse-border-soft));
-  --bg-hover: var(--hse-accent-soft, rgba(var(--hse-accent), 0.1));
-  --bg-highlight: var(--hse-warning-soft, rgba(var(--hse-warning), 0.12));
+  --card-bg: var(--hse-surface);
+  --input-bg: var(--hse-surface);
+  --bg-secondary: var(--hse-surface-muted, var(--hse-surface));
+
+  /* Ces 2 là étaient les premières sources de rgba(...) dans ton grep */
+  --bg-hover: var(--hse-accent-soft);
+  --bg-highlight: var(--hse-warning-soft);
 
   /* --- Bordures / ombres --- */
-  --border-color: var(--hse-border, var(--hse-border));
-  --border-color-light: var(--hse-border-soft, var(--hse-border-soft));
-  --shadow-md: var(--hse-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.05));
-  --shadow-lg: var(--hse-shadow-lg, 0 10px 15px rgba(0, 0, 0, 0.1));
+  --border-color: var(--hse-border);
+  --border-color-light: var(--hse-border-soft);
+
+  /* Évite les fallback d’ombre avec rgba(0,0,0,...) */
+  --shadow-md: var(--hse-shadow-md, var(--hse-shadow-sm));
+  --shadow-lg: var(--hse-shadow-lg, var(--hse-shadow-md));
 
   /* --- Texte --- */
-  --text-primary: var(--hse-text-main, var(--hse-text-main));
-  --text-secondary: var(--hse-text-muted, var(--hse-text-muted));
-  --text-tertiary: var(--hse-text-soft, var(--hse-text-soft));
+  --text-primary: var(--hse-text-main);
+  --text-secondary: var(--hse-text-muted);
+  --text-tertiary: var(--hse-text-soft, var(--hse-text-muted));
 
   /* --- Rayons / transitions --- */
-  --border-radius-sm: var(--hse-radius-sm, 6px);
-  --border-radius: var(--hse-radius-md, 10px);
-  --border-radius-lg: var(--hse-radius-lg, 16px);
-  --transition-fast: var(--hse-transition-fast, 0.15s ease);
-  --transition-base: var(--hse-transition-base, 0.2s ease);
-  --transition-slow: var(--hse-transition-slow, 0.3s ease);
+  --border-radius-sm: var(--hse-radius-sm);
+  --border-radius: var(--hse-radius-md);
+  --border-radius-lg: var(--hse-radius-lg);
+
+  --transition-fast: var(--hse-transition-fast);
+  --transition-base: var(--hse-transition-base);
+  --transition-slow: var(--hse-transition-slow);
 
   /* --- Couleurs sémantiques (legacy => thème HSE) --- */
-  --hse-primary: var(--hse-accent, var(--hse-accent));
-  --hse-primary-dark: var(--hse-accent-hover, var(--hse-accent-hover));
-  --hse-primary-alpha: var(--hse-accent-soft, rgba(var(--hse-accent), 0.1));
+  --hse-primary: var(--hse-accent);
+  --hse-primary-dark: var(--hse-accent-hover);
 
-  --hse-success: var(--hse-success, var(--hse-success));
-  --hse-success-dark: var(--hse-success, var(--hse-success));
-  --hse-success-light: var(--hse-success-soft, rgba(var(--hse-success), 0.12));
+  /* Évite rgba(var(--hse-accent), 0.1) */
+  --hse-primary-alpha: var(--hse-accent-soft);
 
-  --hse-warning: var(--hse-warning, var(--hse-warning));
-  --hse-warning-dark: var(--hse-warning, var(--hse-warning));
-  --hse-warning-light: var(--hse-warning-soft, rgba(var(--hse-warning), 0.12));
+  --hse-success: var(--hse-success);
+  --hse-success-dark: var(--hse-success-dark, var(--hse-success));
+  --hse-success-light: var(--hse-success-soft);
 
-  --hse-danger: var(--hse-error, var(--hse-error));
-  --hse-danger-dark: var(--hse-error, var(--hse-error));
-  --hse-danger-light: var(--hse-error-soft, rgba(var(--hse-error), 0.12));
+  --hse-warning: var(--hse-warning);
+  --hse-warning-dark: var(--hse-warning-dark, var(--hse-warning));
+  --hse-warning-light: var(--hse-warning-soft);
 
-  --hse-info: var(--hse-info, var(--hse-info));
-  --hse-info-dark: var(--hse-info, var(--hse-info));
+  --hse-danger: var(--hse-error);
+  --hse-danger-dark: var(--hse-error-dark, var(--hse-error));
+  --hse-danger-light: var(--hse-error-soft);
+
+  --hse-info: var(--hse-info);
+  --hse-info-dark: var(--hse-info-dark, var(--hse-info));
 
   /* --- Gradients (thème) --- */
-  --hse-gradient-primary: var(--hse-gradient-primary, linear-gradient(135deg, var(--hse-accent) 0%, #8b5cf6 100%));
-  --hse-gradient-header: var(--hse-gradient-header, var(--hse-gradient-header));
+  /* Pour tomber à 0 côté audit: on supprime le fallback linear-gradient(...) */
+  --hse-gradient-primary: var(--hse-gradient-primary);
+  --hse-gradient-header: var(--hse-gradient-header);
 }
-
 /* Spacings (fallbacks) */
 .history-module,
 .history-feature {

@@ -23,13 +23,11 @@ window.showTab = function(tab) {
   const selected = document.getElementById(tab);
   if (selected) selected.classList.add('active');
 
-  // 2) Buttons (ajout)
-  const buttons = Array.from(document.querySelectorAll('#tabs button'));
+  // 2) Buttons (fiabilisé)
+  const buttons = Array.from(document.querySelectorAll('#tabs .subtab-btn'));
   buttons.forEach(b => b.classList.remove('active'));
 
-  const activeBtn = buttons.find(b => {
-    const oc = b.getAttribute('onclick') || '';
-    return oc.includes(`showTab('${tab}')`) || oc.includes(`showTab("${tab}")`);
-  });
+  const activeBtn = buttons.find(b => (b.dataset.tab || '') === tab);
   if (activeBtn) activeBtn.classList.add('active');
 };
+

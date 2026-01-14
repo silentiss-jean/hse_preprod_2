@@ -1,40 +1,47 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Home Suivi Élec</title>
 
-  <!-- Base + variables (legacy) -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Core tokens + composants (ne dépend pas du thème) -->
+  <link rel="stylesheet" href="style.hse.core.css">
+  <link rel="stylesheet" href="style.hse.components.css">
 
-  <!-- Thèmes HSE (hselight/hsedark/...) + composants globaux -->
-  <link rel="stylesheet" href="style.hse.themes.css">
+  <!-- Legacy / styles divers (peut contenir des règles "en dur") -->
+  <!--link rel="stylesheet" href="style.css"-->
+
+  <!-- Thèmes v3 (doit passer après pour imposer les variables selon data-theme) -->
+  <link rel="stylesheet" href="style.hse.themes.v3.css">
 
   <!-- Features -->
   <link rel="stylesheet" href="features/summary/summary.css">
   <link rel="stylesheet" href="features/diagnostics/diagnostics.css">
   <link rel="stylesheet" href="features/migration/migration.css">
   <link rel="stylesheet" href="features/history/history.css">
+  <link rel="stylesheet" href="features/generation/generation.css">
+  <link rel="stylesheet" href="features/detection/detection.css">
+  <link rel="stylesheet" href="features/customisation/customisation.css">
+  <link rel="stylesheet" href="features/configuration/configuration.css">
 </head>
 
-<!-- Thème par défaut -->
-<body class="hselight">
-
+<body>
   <header class="hse-header">
     <h1>⚡ Home Suivi Élec</h1>
 
     <!-- Tabs : on réutilise les styles existants .subtab-btn -->
     <nav id="tabs" class="hse-tabs">
-      <button type="button" class="subtab-btn active" onclick="showTab('home')">🏠 Accueil</button>
-      <button type="button" class="subtab-btn" onclick="showTab('diagnostics')">🔧 Diagnostic</button>
-      <button type="button" class="subtab-btn" onclick="showTab('detection')">🔍 Détection</button>
-      <button type="button" class="subtab-btn" onclick="showTab('configuration')">⚙️ Configuration</button>
-      <button type="button" class="subtab-btn" onclick="showTab('customisation')">🎨 Customisation</button>
-      <button type="button" class="subtab-btn" onclick="showTab('generation')">🧩 Génération cartes</button>
-      <button type="button" class="subtab-btn" onclick="showTab('migration')">🔄 Migration capteurs</button>
-      <button type="button" class="subtab-btn" onclick="showTab('history')">📊 Analyse de coûts</button>
+      <button type="button" class="subtab-btn active" data-tab="home" onclick="showTab('home')">🏠 Accueil</button>
+      <button type="button" class="subtab-btn" data-tab="diagnostics" onclick="showTab('diagnostics')">🔧 Diagnostic</button>
+      <button type="button" class="subtab-btn" data-tab="detection" onclick="showTab('detection')">🔍 Détection</button>
+      <button type="button" class="subtab-btn" data-tab="configuration" onclick="showTab('configuration')">⚙️ Configuration</button>
+      <button type="button" class="subtab-btn" data-tab="customisation" onclick="showTab('customisation')">🎨 Customisation</button>
+      <button type="button" class="subtab-btn" data-tab="generation" onclick="showTab('generation')">🧩 Génération cartes</button>
+      <button type="button" class="subtab-btn" data-tab="migration" onclick="showTab('migration')">🔄 Migration capteurs</button>
+      <button type="button" class="subtab-btn" data-tab="history" onclick="showTab('history')">📊 Analyse de coûts</button>
     </nav>
+
   </header>
 
   <!-- ════════════════════════════════════════════════════════════════════════════
@@ -173,6 +180,7 @@
   </div>
 
   <!-- SCRIPTS -->
+  <script src="core/theme-bridge.js"></script>
   <script type="module" src="core/app.js"></script>
   <script type="module" src="core/router.js"></script>
 </body>

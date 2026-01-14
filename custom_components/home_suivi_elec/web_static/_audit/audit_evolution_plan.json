@@ -1,0 +1,54 @@
+{
+  "version": "1.1",
+  "phase": "evolution_plan",
+  "generated_at": "2026-01-12T11:15:00.644323+00:00",
+  "root": "/config/custom_components/home_suivi_elec/web_static",
+  "constraints": {
+    "max_themes": 10,
+    "must_not_affect_costs": true,
+    "centralized_by_module": "customisation"
+  },
+  "facts": {
+    "missing_css_modules": [],
+    "undefined_css_variables_strict": [],
+    "undefined_css_variables_loose": [
+      "--hse-code-bg",
+      "--hse-code-text",
+      "--hse-scroll-thumb",
+      "--hse-scroll-thumb-hov",
+      "--hse-scroll-track",
+      "--hse-tooltip-bg",
+      "--hse-tooltip-text"
+    ]
+  },
+  "questions": [
+    {
+      "id": "theme-mechanism",
+      "text": "Phase 2: mécanisme unique de thème (data-theme vs body class) ?",
+      "options": [
+        "data-theme",
+        "body-class"
+      ],
+      "default": "data-theme",
+      "blocking": false
+    },
+    {
+      "id": "theme-count",
+      "text": "Phase 2: confirmer le nombre max de thèmes = 10 (existants inclus).",
+      "options": [
+        "10"
+      ],
+      "default": "10",
+      "blocking": false
+    },
+    {
+      "id": "no-cost-mutation",
+      "text": "Phase 2: confirmer que tous les changements restent dans web_static (aucun Python/calcul).",
+      "options": [
+        "confirm"
+      ],
+      "default": "confirm",
+      "blocking": false
+    }
+  ]
+}

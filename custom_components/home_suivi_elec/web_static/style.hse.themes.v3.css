@@ -1,0 +1,670 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   🎨 HOME SUIVI ÉLEC — THÈMES (DATA-THEME)
+   Version 3.0 — html[data-theme="..."]
+   7 thèmes existants + 3 supplémentaires
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE — Variables par défaut (fallback)
+   NB: on garde :root pour fallback si data-theme absent
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Fond & surfaces */
+  --hse-bg: #f8fafc;
+  --hse-surface: #ffffff;
+  --hse-surface-muted: #f1f5f9;
+  --hse-surface-elevated: #ffffff;
+
+  /* Bordures */
+  --hse-border: #e2e8f0;
+  --hse-border-soft: #f1f5f9;
+  --hse-border-strong: #cbd5e1;
+
+  /* Texte */
+  --hse-text-main: #0f172a;
+  --hse-text-muted: #64748b;
+  --hse-text-soft: #94a3b8;
+  --hse-text-secondary: #64748b;
+
+  /* Accent principal */
+  --hse-accent: #3b82f6;
+  --hse-accent-hover: #2563eb;
+  --hse-accent-soft: rgba(59, 130, 246, 0.1);
+  --hse-accent-strong: #1d4ed8;
+
+  /* Couleurs sémantiques */
+  --hse-success: #10b981;
+  --hse-success-soft: rgba(16, 185, 129, 0.1);
+  --hse-success-dark: #1b5e20;
+
+  --hse-warning: #f59e0b;
+  --hse-warning-soft: rgba(245, 158, 11, 0.1);
+  --hse-warning-text: #e65100;
+  --hse-warning-dark: #92400e;
+  --hse-warning-light: #fff3e0;
+
+  --hse-error: #ef4444;
+  --hse-error-soft: rgba(239, 68, 68, 0.1);
+  --hse-error-dark: var(--hse-error);
+
+  --hse-info: #06b6d4;
+  --hse-info-soft: rgba(6, 182, 212, 0.1);
+
+  /* Danger */
+  --hse-danger: #ef4444;
+  --hse-danger-soft: rgba(239, 68, 68, 0.1);
+
+  /* Gradients */
+  --hse-gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --hse-gradient-header: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --hse-gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --hse-gradient-info: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  --hse-gradient-warning: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+
+  /* Ombres */
+  --hse-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --hse-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --hse-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --hse-shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+
+  /* Transitions */
+  --hse-transition-fast: 0.15s ease;
+  --hse-transition-base: 0.2s ease;
+  --hse-transition-slow: 0.3s ease;
+
+  /* Rayons */
+  --hse-radius-sm: 6px;
+  --hse-radius-md: 10px;
+  --hse-radius-lg: 16px;
+  --hse-radius-xl: 24px;
+
+  /* Compat / variables “legacy” utilisées dans le projet */
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+
+  --card-bg: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+
+  --border-color: #e2e8f0;
+  --border-color-light: #f1f5f9;
+  --border-radius: 10px;
+  --border-radius-sm: 6px;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --transition-base: 0.2s ease;
+
+  --surface-bg: #f8f9fa;
+  --surface-hover: #e9ecef;
+
+  --children-bg: #f8fafc;
+  --code-bg: #1e1e1e;
+  --input-bg: #ffffff;
+
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --success-text: #10b981;
+
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --warning-text: #f59e0b;
+  --warning-border: #ffc107;
+  --warning-light: rgba(245, 158, 11, 0.15);
+
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --danger-text: #ef4444;
+
+  --info: #2196f3;
+  --info-bg: rgba(33, 150, 243, 0.1);
+
+  --primary: #3b82f6;
+  --primary-color: #3b82f6;
+  --primary-text-color: #0f172a;
+
+  --secondary: #64748b;
+  --secondary-bg: #f8f9fa;
+  --secondary-text-color: #64748b;
+
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+
+  /* Score hero */
+  --hse-hero-shadow-1: 0 18px 55px rgba(91, 124, 250, 0.30);
+  --hse-hero-shadow-2: 0 8px 18px rgba(15, 23, 42, 0.12);
+
+  --hse-hero-glow-a: var(--hse-surface);
+  --hse-hero-glow-b: var(--hse-surface);
+  --hse-hero-glow-ink: rgba(0, 0, 0, 0.15);
+
+  --hse-hero-overlay-top: var(--hse-surface);
+  --hse-hero-overlay-bottom: var(--hse-surface);
+  --hse-hero-divider: var(--hse-surface);
+
+  --hse-hero-circle-shadow: 0 20px 60px rgba(15, 23, 42, 0.25), inset 0 1px 0 var(--hse-surface);
+  --hse-hero-emoji-shadow: 0 10px 18px rgba(15, 23, 42, 0.25);
+
+  /* Variables manquantes identifiées par l’audit (v3) */
+  --hse-code-bg: var(--code-bg);
+  --hse-code-text: #d4d4d4;
+  --hse-scroll-thumb: var(--hse-border-strong);
+  --hse-scroll-thumb-hov: var(--hse-text-muted);
+  --hse-scroll-track: var(--hse-surface-muted);
+  --hse-tooltip-bg: var(--hse-text-main);
+  --hse-tooltip-text: var(--hse-surface);
+  --hse-bg-secondary: var(--hse-surface-muted);
+  --hse-hover: rgba(59, 130, 246, 0.08);
+  --hse-text: var(--hse-text-main);
+  /* Aliases Phase1 */
+  --hse-accent-alt: var(--hse-accent);
+  --hse-grad-header-from: var(--hse-accent);
+  --hse-grad-header-to: var(--hse-accent-hover);
+
+  
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 1 — LIGHT
+   (id: hse_light, key: light)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="light"] {
+  --hse-bg: #f8fafc;
+  --hse-surface: #ffffff;
+  --hse-surface-muted: #f1f5f9;
+  --hse-surface-elevated: #ffffff;
+  --hse-border: #e2e8f0;
+  --hse-border-soft: #f1f5f9;
+  --hse-border-strong: #cbd5e1;
+  --hse-text-main: #0f172a;
+  --hse-text-muted: #64748b;
+  --hse-text-soft: #94a3b8;
+  --hse-accent: #3b82f6;
+  --hse-accent-hover: #2563eb;
+  --hse-accent-soft: rgba(59, 130, 246, 0.08);
+  --hse-gradient-header: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  --hse-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 2 — DARK
+   (id: hse_dark, key: dark)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="dark"] {
+  --hse-bg: #0f172a;
+  --hse-surface: #1e293b;
+  --hse-surface-muted: #334155;
+  --hse-surface-elevated: #1e293b;
+
+  --hse-border: #475569;
+  --hse-border-soft: #64748b;
+  --hse-border-strong: #64748b;
+
+  --hse-text-main: #f1f5f9;
+  --hse-text-muted: #94a3b8;
+  --hse-text-soft: #64748b;
+  --hse-text-secondary: #cbd5e1;
+
+  --hse-accent: #60a5fa;
+  --hse-accent-hover: #3b82f6;
+  --hse-accent-soft: rgba(96, 165, 250, 0.22);
+
+  --hse-success: #34d399;
+  --hse-success-soft: rgba(52, 211, 153, 0.22);
+  --hse-success-dark: #059669;
+
+  --hse-warning: #fbbf24;
+  --hse-warning-soft: rgba(251, 191, 36, 0.22);
+  --hse-warning-text: #fbbf24;
+  --hse-warning-dark: #d97706;
+
+  --hse-error: #f87171;
+  --hse-error-soft: rgba(248, 113, 113, 0.22);
+
+  --hse-info: #22d3ee;
+  --hse-info-soft: rgba(34, 211, 238, 0.22);
+
+  --hse-danger: #f87171;
+  --hse-danger-soft: rgba(248, 113, 113, 0.22);
+
+  --hse-gradient-header: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  --hse-gradient-success: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --hse-gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --hse-gradient-info: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+
+  --hse-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --hse-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --hse-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.3);
+  --hse-shadow-glow: 0 0 20px rgba(96, 165, 250, 0.2);
+
+  /* Compat “legacy” (si tu veux qu’ils suivent le thème) */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+
+  --card-bg: #1e293b;
+  --card-background-color: #1e293b;
+
+  --border-color: #334155;
+  --border-color-light: #475569;
+
+  --bg-secondary: #334155;
+  --bg-hover: rgba(96, 165, 250, 0.08);
+
+  --surface-bg: #334155;
+  --surface-hover: #3f4f63;
+
+  --children-bg: #283548;
+  --code-bg: #1a2332;
+  --input-bg: #1a2332;
+
+  --success: #34d399;
+  --success-bg: rgba(52, 211, 153, 0.15);
+  --success-text: #34d399;
+
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.15);
+  --warning-border: #fbbf24;
+
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.15);
+  --danger-text: #f87171;
+
+  --info: #22d3ee;
+  --info-bg: rgba(34, 211, 238, 0.15);
+
+  --primary: #60a5fa;
+  --primary-color: #60a5fa;
+  --primary-text-color: #f1f5f9;
+
+  --secondary: #64748b;
+  --secondary-bg: #475569;
+  --secondary-text-color: #cbd5e1;
+
+  /* hero diag */
+
+  --hse-hero-shadow-1: 0 18px 55px rgba(0, 0, 0, 0.45);
+  --hse-hero-shadow-2: 0 8px 18px rgba(0, 0, 0, 0.35);
+
+  --hse-hero-glow-ink: rgba(0, 0, 0, 0.25);
+
+  --hse-hero-circle-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 var(--hse-surface);
+  --hse-hero-emoji-shadow: 0 10px 18px rgba(0, 0, 0, 0.45);
+
+  --hse-hero-divider: var(--hse-border-soft);
+
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 3 — OCEAN
+   (id: hse_ocean, key: ocean)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="ocean"] {
+  --hse-bg: #0c1929;
+  --hse-surface: #0f2744;
+  --hse-surface-muted: #163456;
+  --hse-surface-elevated: #1a3a5c;
+  --hse-border: #1e4976;
+  --hse-border-soft: #2563eb;
+  --hse-border-strong: #3b82f6;
+  --hse-text-main: #e0f2fe;
+  --hse-text-muted: #7dd3fc;
+  --hse-text-soft: #38bdf8;
+  --hse-accent: #0ea5e9;
+  --hse-accent-hover: #38bdf8;
+  --hse-accent-soft: rgba(14, 165, 233, 0.2);
+  --hse-success: #2dd4bf;
+  --hse-success-soft: rgba(45, 212, 191, 0.2);
+  --hse-warning: #fcd34d;
+  --hse-warning-soft: rgba(252, 211, 77, 0.2);
+  --hse-error: #fb7185;
+  --hse-error-soft: rgba(251, 113, 133, 0.2);
+  --hse-info: #67e8f9;
+  --hse-info-soft: rgba(103, 232, 249, 0.2);
+  --hse-gradient-header: linear-gradient(135deg, #0369a1 0%, #0891b2 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  --hse-shadow-md: 0 4px 20px rgba(14, 165, 233, 0.15);
+  --hse-shadow-glow: 0 0 30px rgba(14, 165, 233, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 4 — FOREST
+   (id: hse_forest, key: forest)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="forest"] {
+  --hse-bg: #022c22;
+  --hse-surface: #064e3b;
+  --hse-surface-muted: #065f46;
+  --hse-surface-elevated: #047857;
+  --hse-border: #059669;
+  --hse-border-soft: #10b981;
+  --hse-border-strong: #34d399;
+  --hse-text-main: #ecfdf5;
+  --hse-text-muted: #a7f3d0;
+  --hse-text-soft: #6ee7b7;
+  --hse-accent: #10b981;
+  --hse-accent-hover: #34d399;
+  --hse-accent-soft: rgba(16, 185, 129, 0.2);
+  --hse-success: #4ade80;
+  --hse-success-soft: rgba(74, 222, 128, 0.2);
+  --hse-warning: #fde047;
+  --hse-warning-soft: rgba(253, 224, 71, 0.2);
+  --hse-error: #fca5a5;
+  --hse-error-soft: rgba(252, 165, 165, 0.2);
+  --hse-info: #5eead4;
+  --hse-info-soft: rgba(94, 234, 212, 0.2);
+  --hse-gradient-header: linear-gradient(135deg, #047857 0%, #059669 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+  --hse-shadow-md: 0 4px 20px rgba(16, 185, 129, 0.15);
+  --hse-shadow-glow: 0 0 30px rgba(16, 185, 129, 0.25);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 5 — SUNSET
+   (id: hse_sunset, key: sunset)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="sunset"] {
+  --hse-bg: #1c1917;
+  --hse-surface: #292524;
+  --hse-surface-muted: #44403c;
+  --hse-surface-elevated: #57534e;
+  --hse-border: #78716c;
+  --hse-border-soft: #a8a29e;
+  --hse-border-strong: #d6d3d1;
+  --hse-text-main: #fef3c7;
+  --hse-text-muted: #fcd34d;
+  --hse-text-soft: #fbbf24;
+  --hse-accent: #f97316;
+  --hse-accent-hover: #fb923c;
+  --hse-accent-soft: rgba(249, 115, 22, 0.2);
+  --hse-success: #a3e635;
+  --hse-success-soft: rgba(163, 230, 53, 0.2);
+  --hse-warning: #fbbf24;
+  --hse-warning-soft: rgba(251, 191, 36, 0.2);
+  --hse-error: #f87171;
+  --hse-error-soft: rgba(248, 113, 113, 0.2);
+  --hse-info: #38bdf8;
+  --hse-info-soft: rgba(56, 189, 248, 0.2);
+  --hse-gradient-header: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+  --hse-shadow-md: 0 4px 20px rgba(249, 115, 22, 0.2);
+  --hse-shadow-glow: 0 0 30px rgba(249, 115, 22, 0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 6 — MINIMAL
+   (id: hse_minimal, key: minimal)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="minimal"] {
+  --hse-bg: #fafafa;
+  --hse-surface: #ffffff;
+  --hse-surface-muted: #f5f5f5;
+  --hse-surface-elevated: #ffffff;
+  --hse-border: #e5e5e5;
+  --hse-border-soft: #f5f5f5;
+  --hse-border-strong: #d4d4d4;
+  --hse-text-main: #171717;
+  --hse-text-muted: #525252;
+  --hse-text-soft: #737373;
+  --hse-accent: #171717;
+  --hse-accent-hover: #404040;
+  --hse-accent-soft: rgba(23, 23, 23, 0.08);
+  --hse-success: #22c55e;
+  --hse-success-soft: rgba(34, 197, 94, 0.1);
+  --hse-warning: #eab308;
+  --hse-warning-soft: rgba(234, 179, 8, 0.1);
+  --hse-error: #ef4444;
+  --hse-error-soft: rgba(239, 68, 68, 0.1);
+  --hse-info: #3b82f6;
+  --hse-info-soft: rgba(59, 130, 246, 0.1);
+  --hse-gradient-header: linear-gradient(135deg, #171717 0%, #404040 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #171717 0%, #525252 100%);
+  --hse-shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --hse-shadow-glow: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 7 — NEON
+   (id: hse_neon, key: neon)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="neon"] {
+  --hse-bg: #09090b;
+  --hse-surface: #18181b;
+  --hse-surface-muted: #27272a;
+  --hse-surface-elevated: #3f3f46;
+  --hse-border: #a855f7;
+  --hse-border-soft: #c084fc;
+  --hse-border-strong: #e879f9;
+  --hse-text-main: #faf5ff;
+  --hse-text-muted: #e9d5ff;
+  --hse-text-soft: #d8b4fe;
+  --hse-accent: #a855f7;
+  --hse-accent-hover: #c084fc;
+  --hse-accent-soft: rgba(168, 85, 247, 0.2);
+  --hse-success: #4ade80;
+  --hse-success-soft: rgba(74, 222, 128, 0.2);
+  --hse-warning: #facc15;
+  --hse-warning-soft: rgba(250, 204, 21, 0.2);
+  --hse-error: #f43f5e;
+  --hse-error-soft: rgba(244, 63, 94, 0.2);
+  --hse-info: #22d3ee;
+  --hse-info-soft: rgba(34, 211, 238, 0.2);
+  --hse-gradient-header: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  --hse-shadow-md: 0 4px 20px rgba(168, 85, 247, 0.25);
+  --hse-shadow-glow: 0 0 40px rgba(168, 85, 247, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈMES SUPPLÉMENTAIRES (nouveaux)
+   (tu peux les ajouter plus tard au manifest si tu veux les exposer)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 8 — CONTRAST (ultra lisible) */
+html[data-theme="contrast"] {
+  --hse-bg: #000000;
+  --hse-surface: #0b0b0b;
+  --hse-surface-muted: #111111;
+  --hse-surface-elevated: #0b0b0b;
+
+  --hse-border: #ffffff;
+  --hse-border-soft: #ffffff;
+  --hse-border-strong: #ffffff;
+
+  --hse-text-main: #ffffff;
+  --hse-text-muted: #ffeb3b;
+  --hse-text-soft: #ffeb3b;
+
+  --hse-accent: #ffeb3b;
+  --hse-accent-hover: #ffffff;
+  --hse-accent-soft: rgba(255, 235, 59, 0.2);
+
+  --hse-success: #00ff7f;
+  --hse-success-soft: rgba(0, 255, 127, 0.18);
+
+  --hse-warning: #ffeb3b;
+  --hse-warning-soft: rgba(255, 235, 59, 0.22);
+
+  --hse-error: #ff5555;
+  --hse-error-soft: rgba(255, 85, 85, 0.22);
+
+  --hse-info: #00bfff;
+  --hse-info-soft: rgba(0, 191, 255, 0.18);
+
+  --hse-gradient-header: linear-gradient(135deg, #000000 0%, #111111 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #ffeb3b 0%, #00bfff 100%);
+
+  --hse-shadow-md: 0 0 0 rgba(0,0,0,0);
+  --hse-shadow-glow: 0 0 0 rgba(0,0,0,0);
+}
+
+/* 9 — GRAPE (violet pro, moins “neon”) */
+html[data-theme="grape"] {
+  --hse-bg: #0b0614;
+  --hse-surface: #140b22;
+  --hse-surface-muted: #1a1030;
+  --hse-surface-elevated: #1b1033;
+
+  --hse-border: #3b1a6b;
+  --hse-border-soft: #50208f;
+  --hse-border-strong: #7c3aed;
+
+  --hse-text-main: #f5f3ff;
+  --hse-text-muted: #ddd6fe;
+  --hse-text-soft: #c4b5fd;
+
+  --hse-accent: #8b5cf6;
+  --hse-accent-hover: #a78bfa;
+  --hse-accent-soft: rgba(139, 92, 246, 0.18);
+
+  --hse-success: #34d399;
+  --hse-success-soft: rgba(52, 211, 153, 0.18);
+
+  --hse-warning: #fbbf24;
+  --hse-warning-soft: rgba(251, 191, 36, 0.18);
+
+  --hse-error: #fb7185;
+  --hse-error-soft: rgba(251, 113, 133, 0.18);
+
+  --hse-info: #60a5fa;
+  --hse-info-soft: rgba(96, 165, 250, 0.18);
+
+  --hse-gradient-header: linear-gradient(135deg, #7c3aed 0%, #312e81 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+
+  --hse-shadow-glow: 0 0 30px rgba(139, 92, 246, 0.25);
+}
+
+/* 10 — SOLARIZED (inspiré, doux) */
+html[data-theme="solarized"] {
+  --hse-bg: #fdf6e3;
+  --hse-surface: #fffaf0;
+  --hse-surface-muted: #f5efdc;
+  --hse-surface-elevated: #fffaf0;
+
+  --hse-border: #e2d9c3;
+  --hse-border-soft: #eee6d1;
+  --hse-border-strong: #d6c9ae;
+
+  --hse-text-main: #073642;
+  --hse-text-muted: #586e75;
+  --hse-text-soft: #657b83;
+
+  --hse-accent: #268bd2;
+  --hse-accent-hover: #1d4ed8;
+  --hse-accent-soft: rgba(38, 139, 210, 0.14);
+
+  --hse-success: #2aa198;
+  --hse-success-soft: rgba(42, 161, 152, 0.14);
+
+  --hse-warning: #b58900;
+  --hse-warning-soft: rgba(181, 137, 0, 0.14);
+
+  --hse-error: #dc322f;
+  --hse-error-soft: rgba(220, 50, 47, 0.14);
+
+  --hse-info: #268bd2;
+  --hse-info-soft: rgba(38, 139, 210, 0.14);
+
+  --hse-gradient-header: linear-gradient(135deg, #268bd2 0%, #2aa198 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #268bd2 0%, #6c71c4 100%);
+
+  --hse-shadow-md: 0 4px 16px rgba(7, 54, 66, 0.08);
+  --hse-shadow-glow: 0 0 24px rgba(38, 139, 210, 0.18);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Effets spéciaux Neon (version data-theme)
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-theme="neon"] .card,
+html[data-theme="neon"] .config-section,
+html[data-theme="neon"] .hse-card {
+  box-shadow:
+    0 0 1px var(--hse-accent),
+    0 0 10px rgba(168, 85, 247, 0.2),
+    inset 0 0 20px rgba(168, 85, 247, 0.05);
+}
+
+html[data-theme="neon"] .btn-primary,
+html[data-theme="neon"] .btn-success {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPLICATION GLOBALE DES VARIABLES (inchangé)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Page de base */
+body {
+  background-color: var(--hse-bg);
+  color: var(--hse-text-main);
+  transition: background-color var(--hse-transition-slow), color var(--hse-transition-slow);
+}
+
+/* === CONTAINERS & CARDS === */
+.container,
+.card,
+.hse-card,
+.config-section,
+.config-grid,
+.reference-panel,
+.preview-card,
+.stats-card,
+.dup-entity,
+.ignored-entity {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-shadow-md);
+  transition:
+    background var(--hse-transition-base),
+    border-color var(--hse-transition-base),
+    box-shadow var(--hse-transition-base),
+    transform var(--hse-transition-base);
+}
+
+.card:hover,
+.hse-card:hover,
+.config-section:hover,
+.dup-entity:hover {
+  border-color: var(--hse-accent);
+  box-shadow: var(--hse-shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* === HEADERS === */
+.header-section,
+.customisation-header,
+.detection-header,
+.diagnostics-header {
+  background: var(--hse-gradient-header);
+  color: #ffffff;
+  padding: 16px 20px;
+  border-radius: var(--hse-radius-lg) var(--hse-radius-lg) 0 0;
+  margin: -1px -1px 0 -1px;
+}
+
+.header-section h1,
+.customisation-header h2,
+.detection-header h2,
+.diagnostics-header h2 {
+  color: #ffffff !important;
+  margin: 0;
+}
+
+/* ... le reste de tes règles globales peut rester identique ... */
+
+/* HSE_AUDIT_PHASE1_ALIASES_START */
+:root {
+  --hse-accent-alt: var(--hse-accent);
+  --hse-error-dark: var(--hse-error);
+  --hse-grad-header-from: var(--hse-accent);
+  --hse-grad-header-to: var(--hse-accent-hover);
+}
+/* HSE_AUDIT_PHASE1_ALIASES_END */

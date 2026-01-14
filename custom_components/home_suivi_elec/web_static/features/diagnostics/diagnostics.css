@@ -1,6 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════════════
 🔧 DIAGNOSTICS - STYLES DÉDIÉS
-Compatible avec style.css et style.hse.themes.css (NE PAS MODIFIER)
 Refactor/cleanup + Score Hero isolé
 ════════════════════════════════════════════════════════════════════════════ */
 
@@ -106,7 +105,7 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .sensor-group:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--hse-shadow-md);
 }
 
 /* Header groupe */
@@ -193,7 +192,7 @@ Refactor/cleanup + Score Hero isolé
 .sensor-row:hover {
   background: var(--hse-surface-elevated);
   border-color: var(--hse-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--hse-shadow-sm);
 }
 
 .sensor-info {
@@ -253,7 +252,7 @@ Refactor/cleanup + Score Hero isolé
 }
 
 /* ==========================================================================
-   GROUPS PANEL - Groupes & Relations
+   GROUPS PANEL - Groupes & Relations (Option A: HSE vars only)
    ========================================================================== */
 
 .groups-stats {
@@ -271,27 +270,28 @@ Refactor/cleanup + Score Hero isolé
 
 .relations-section h3 {
   margin-bottom: 1rem;
-  color: var(--text-primary);
+  color: var(--hse-text-main);
 }
 
 .no-parents {
   padding: 2rem;
   text-align: center;
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  background: var(--hse-warning-soft);
+  border: 1px dashed var(--hse-warning);
   border-radius: 8px;
-  color: var(--warning-text, #856404);
+  color: var(--hse-warning-text);
 }
 
 /* Parent cards */
 .parent-group {
-  border: 1px solid var(--border-color, var(--hse-text-main));
+  border: 1px solid var(--hse-border);
   border-radius: 8px;
   margin-bottom: 1rem;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--hse-surface);
 }
 
 .parent-group[open] {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--hse-shadow-md);
 }
 
 .parent-header {
@@ -300,13 +300,13 @@ Refactor/cleanup + Score Hero isolé
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: var(--surface-bg, #f8f9fa);
+  background: var(--hse-surface-elevated);
   border-radius: 8px;
-  transition: background 0.2s;
+  transition: background var(--hse-transition-base);
 }
 
 .parent-header:hover {
-  background: var(--surface-hover, #e9ecef);
+  background: var(--hse-hover);
 }
 
 .parent-icon {
@@ -315,8 +315,8 @@ Refactor/cleanup + Score Hero isolé
 
 .entity-id-small {
   font-size: 0.85rem;
-  color: var(--text-secondary, #6c757d);
-  background: var(--code-bg, #f1f3f5);
+  color: var(--hse-text-muted);
+  background: var(--hse-code-bg);
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
 }
@@ -324,7 +324,7 @@ Refactor/cleanup + Score Hero isolé
 .no-children {
   padding: 1rem;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--hse-text-muted);
   font-style: italic;
 }
 
@@ -334,7 +334,9 @@ Refactor/cleanup + Score Hero isolé
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: var(--children-bg, #f8f9fa);
+  background: var(--hse-surface-muted);
+  border-radius: 8px;
+  border: 1px dashed var(--hse-border-soft);
 }
 
 .child-row {
@@ -342,9 +344,9 @@ Refactor/cleanup + Score Hero isolé
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--hse-surface);
   border-radius: 6px;
-  border: 1px solid var(--border-color, var(--hse-text-main));
+  border: 1px solid var(--hse-border-soft);
 }
 
 .child-icon {
@@ -356,30 +358,33 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .child-info strong {
-  color: var(--text-primary);
+  color: var(--hse-text-main);
 }
 
 .child-info code {
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--hse-code-text);
+  background: var(--hse-code-bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
 }
 
 /* Orphans section */
 .orphans-section {
   padding: 1.5rem;
-  background: var(--warning-bg, var(--hse-surface)3cd);
-  border: 2px solid var(--warning-border, #ffc107);
+  background: var(--hse-warning-soft);
+  border: 2px solid var(--hse-warning);
   border-radius: 8px;
 }
 
 .orphans-section h3 {
   margin-bottom: 0.5rem;
-  color: var(--warning-text, #856404);
+  color: var(--hse-warning-text);
 }
 
 .orphans-section p {
   margin-bottom: 1rem;
-  color: var(--warning-text);
+  color: var(--hse-text-main);
 }
 
 .orphans-list {
@@ -394,9 +399,9 @@ Refactor/cleanup + Score Hero isolé
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: var(--card-bg, var(--hse-surface));
+  background: var(--hse-surface);
   border-radius: 6px;
-  border: 1px solid var(--warning-border, #ffc107);
+  border: 1px solid var(--hse-warning);
 }
 
 .orphan-icon {
@@ -409,24 +414,29 @@ Refactor/cleanup + Score Hero isolé
 
 .orphan-info code {
   font-weight: 600;
-  color: var(--danger-text, #dc3545);
+  color: var(--hse-danger);
+  background: var(--hse-code-bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
 }
 
 .orphan-info small {
-  color: var(--text-secondary);
+  color: var(--hse-text-muted);
 }
 
 /* ==========================================================================
-   ALERTS PANEL - Alertes & Recommandations
+   ALERTS PANEL - Alertes & Recommandations (Option A: HSE vars only)
    ========================================================================== */
 
 .no-alerts {
   padding: 3rem;
   text-align: center;
+  color: var(--hse-text-main);
 }
 
 .success-state {
-  background: var(--success-bg, #d4edda);
+  background: var(--hse-success-soft);
+  border: 1px solid var(--hse-success);
   border-radius: 8px;
 }
 
@@ -436,12 +446,12 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .no-alerts h3 {
-  color: var(--success-text, #155724);
+  color: var(--hse-success);
   margin-bottom: 0.5rem;
 }
 
 .no-alerts p {
-  color: var(--success-text);
+  color: var(--hse-text-main);
 }
 
 .alerts-stats {
@@ -467,29 +477,28 @@ Refactor/cleanup + Score Hero isolé
 .alert-card {
   padding: 1.25rem;
   border-radius: 8px;
-  border-left: 4px solid;
-  background: var(--card-bg, var(--hse-surface));
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--hse-border-strong);
+  background: var(--hse-surface);
+  box-shadow: var(--hse-shadow-sm);
 }
 
-.alert-critical {
-  border-left-color: var(--danger, #dc3545);
-  background: var(--danger-bg, #f8d7da);
-}
-
+.alert-critical,
 .alert-error {
-  border-left-color: var(--danger, #dc3545);
-  background: var(--danger-bg, #f8d7da);
+  border-left-color: var(--hse-danger);
+  background: var(--hse-danger-soft);
+  color: var(--hse-text-main);
 }
 
 .alert-warning {
-  border-left-color: var(--warning, #ffc107);
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  border-left-color: var(--hse-warning);
+  background: var(--hse-warning-soft);
+  color: var(--hse-text-main);
 }
 
 .alert-info {
-  border-left-color: var(--info, #17a2b8);
-  background: var(--info-bg, #d1ecf1);
+  border-left-color: var(--hse-info);
+  background: var(--hse-info-soft);
+  color: var(--hse-text-main);
 }
 
 .alert-header {
@@ -510,48 +519,28 @@ Refactor/cleanup + Score Hero isolé
 
 .alert-description {
   margin-bottom: 0.5rem;
-  color: var(--text-primary);
+  color: var(--hse-text-main);
   line-height: 1.5;
 }
 
 .alert-details {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+  background: var(--hse-surface-elevated);
+  border: 1px solid var(--hse-border-soft);
+  border-radius: 6px;
 }
 
 .alert-details small {
-  color: var(--text-secondary);
+  color: var(--hse-text-muted);
   line-height: 1.4;
 }
 
 .alert-card button {
   margin-top: 0.75rem;
 }
-
-/* Responsive (groups + alerts) */
-@media (max-width: 768px) {
-  .parent-header,
-  .child-row,
-  .orphan-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .groups-stats,
-  .alerts-stats {
-    flex-direction: column;
-  }
-
-  .entity-id-small {
-    display: block;
-    margin-top: 0.5rem;
-  }
-}
-
 /* ==========================================================================
-   CAPTEURS PANEL ENRICHI (cartes) - GRID + DETAILS/SUMMARY
+   CAPTEURS PANEL ENRICHI (cartes) - GRID + DETAILS/SUMMARY (Option A)
    ========================================================================== */
 
 .capteurs-filters {
@@ -562,8 +551,8 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .capteurs-filters button.active {
-  background: var(--primary);
-  color: var(--hse-surface);
+  background: var(--hse-accent);
+  color: var(--hse-tooltip-text);
   font-weight: 600;
 }
 
@@ -589,45 +578,48 @@ Refactor/cleanup + Score Hero isolé
 .no-results {
   padding: 2rem;
   text-align: center;
-  color: var(--text-secondary);
+  color: var(--hse-text-muted);
   font-style: italic;
 }
 
 /* Carte capteur (details) */
 .sensor-card {
   padding: 1rem;
-  border-radius: 8px;
-  background: var(--card-bg, var(--hse-surface));
-  border: 2px solid;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s;
+  border-radius: var(--hse-radius-lg);
+  background: var(--hse-surface);
+  border: 2px solid var(--hse-border);
+  box-shadow: var(--hse-shadow-sm);
+  transition: box-shadow var(--hse-transition-base), transform var(--hse-transition-base);
 }
 
 .sensor-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--hse-shadow-md);
 }
 
-.sensor-available { border-color: var(--success, #28a745); }
+/* États */
+.sensor-available {
+  border-color: var(--hse-success);
+}
 
 .sensor-unavailable {
-  border-color: var(--danger, #dc3545);
-  background: var(--danger-bg, #f8d7da);
+  border-color: var(--hse-danger);
+  background: var(--hse-danger-soft);
 }
 
 .sensor-unknown {
-  border-color: var(--warning, #ffc107);
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  border-color: var(--hse-warning);
+  background: var(--hse-warning-soft);
 }
 
 .sensor-disabled {
-  border-color: var(--secondary, #6c757d);
-  background: var(--secondary-bg, #f8f9fa);
+  border-color: var(--hse-border-strong);
+  background: var(--hse-surface-elevated);
   opacity: 0.7;
 }
 
 .sensor-restored {
-  border-color: var(--warning, #ffc107);
-  background: var(--warning-bg, var(--hse-surface)3cd);
+  border-color: var(--hse-warning);
+  background: var(--hse-warning-soft);
 }
 
 /* Summary compact */
@@ -650,16 +642,17 @@ Refactor/cleanup + Score Hero isolé
   flex: 1 1 auto;
   min-width: 140px;
   font-size: 1rem;
-  color: var(--text-primary);
+  color: var(--hse-text-main);
 }
 
 /* Mini valeur (optionnel) */
 .sensor-mini-value {
-  color: var(--text-secondary);
+  color: var(--hse-text-muted);
   font-size: 0.9rem;
-  background: var(--code-bg, #f1f3f5);
+  background: var(--hse-code-bg);
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
+  border: 1px solid var(--hse-border-soft);
 }
 
 .sensor-body {
@@ -677,10 +670,11 @@ Refactor/cleanup + Score Hero isolé
 
 .sensor-entity-id code {
   font-size: 0.9rem;
-  color: var(--text-secondary);
-  background: var(--code-bg, #f1f3f5);
+  color: var(--hse-code-text);
+  background: var(--hse-code-bg);
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--hse-border-soft);
 }
 
 /* Détails */
@@ -698,33 +692,36 @@ Refactor/cleanup + Score Hero isolé
 
 .detail-label {
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--hse-text-muted);
   min-width: 120px;
 }
 
 .detail-value {
-  color: var(--text-primary);
+  color: var(--hse-text-main);
 }
 
 /* Source */
 .source-info {
   padding: 0.75rem;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
+  border: 1px solid var(--hse-border-soft);
+  background: var(--hse-surface-elevated);
+  color: var(--hse-text-main);
 }
 
 .source-ok {
-  background: var(--success-bg, #d4edda);
-  border: 1px solid var(--success, #28a745);
+  background: var(--hse-success-soft);
+  border-color: var(--hse-success);
 }
 
 .source-missing {
-  background: var(--danger-bg, #f8d7da);
-  border: 1px solid var(--danger, #dc3545);
+  background: var(--hse-danger-soft);
+  border-color: var(--hse-danger);
 }
 
 .source-status {
@@ -776,8 +773,7 @@ Refactor/cleanup + Score Hero isolé
 }
 
 /* ==========================================================================
-   VUE D'ENSEMBLE - SCORE HERO
-   Dépend du wrapper interne : .hse-score-hero
+   VUE D'ENSEMBLE - SCORE HERO (Option A: HSE vars only)
    ========================================================================== */
 
 /* Reset local (pas global) */
@@ -797,15 +793,14 @@ Refactor/cleanup + Score Hero isolé
 /* HERO */
 .hse-score-hero {
   position: relative;
-  border-radius: 18px;
+  border-radius: var(--hse-radius-xl);
   padding: 2.2rem;
   overflow: hidden;
-  color: var(--hse-surface);
+
+  color: var(--hse-tooltip-text);
 
   background: var(--hse-gradient-primary) !important;
-  box-shadow:
-    0 18px 55px rgba(91, 124, 250, 0.30),
-    0 8px 18px rgba(15, 23, 42, 0.12) !important;
+  box-shadow: var(--hse-hero-shadow-1), var(--hse-hero-shadow-2) !important;
 }
 
 /* Glow/texture */
@@ -814,9 +809,9 @@ Refactor/cleanup + Score Hero isolé
   position: absolute;
   inset: -40%;
   background:
-    radial-gradient(circle at 20% 20%, var(--hse-surface), transparent 45%),
-    radial-gradient(circle at 80% 30%, var(--hse-surface), transparent 50%),
-    radial-gradient(circle at 40% 90%, rgba(0,0,0,0.15), transparent 55%);
+    radial-gradient(circle at 20% 20%, var(--hse-hero-glow-a), transparent 45%),
+    radial-gradient(circle at 80% 30%, var(--hse-hero-glow-b), transparent 50%),
+    radial-gradient(circle at 40% 90%, var(--hse-hero-glow-ink), transparent 55%);
   pointer-events: none;
   transform: rotate(8deg);
 }
@@ -825,7 +820,7 @@ Refactor/cleanup + Score Hero isolé
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--hse-surface), var(--hse-surface));
+  background: var(--hse-surface);
   pointer-events: none;
 }
 
@@ -858,9 +853,7 @@ Refactor/cleanup + Score Hero isolé
   border-radius: 50%;
   background: var(--hse-surface);
   border: 6px solid var(--hse-surface);
-  box-shadow:
-    0 20px 60px rgba(15, 23, 42, 0.25),
-    inset 0 1px 0 var(--hse-surface);
+  box-shadow: var(--hse-hero-circle-shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -895,7 +888,7 @@ Refactor/cleanup + Score Hero isolé
 .hse-score-hero .grade-emoji {
   font-size: 3.2rem;
   line-height: 1;
-  filter: drop-shadow(0 10px 18px rgba(15,23,42,0.25));
+  filter: drop-shadow(var(--hse-hero-emoji-shadow));
   transform: translateY(-4px);
 }
 
@@ -903,7 +896,7 @@ Refactor/cleanup + Score Hero isolé
   font-size: 1.15rem;
   font-weight: 600;
   opacity: 0.95;
-  color: var(--hse-surface) !important;
+  color: var(--hse-tooltip-text) !important;
 }
 
 /* Description */
@@ -915,8 +908,8 @@ Refactor/cleanup + Score Hero isolé
   font-size: 1rem;
   line-height: 1.6;
   opacity: 0.95;
-  color: var(--hse-surface) !important;
-  border-top: 1px solid var(--hse-surface);
+  color: var(--hse-tooltip-text) !important;
+  border-top: 1px solid var(--hse-hero-divider);
 }
 
 @media (max-width: 768px) {
@@ -1038,7 +1031,7 @@ Refactor/cleanup + Score Hero isolé
 }
 
 /* --------------------------------------------------------------------------
-   Alertes : plus modernes, cohérentes avec les variables HSE
+   Alertes : modernes, cohérentes avec les variables HSE (Option A)
    -------------------------------------------------------------------------- */
 
 .alerts-list {
@@ -1060,31 +1053,35 @@ Refactor/cleanup + Score Hero isolé
   background: var(--hse-surface-elevated);
   border: 1px solid var(--hse-border-soft);
   box-shadow: var(--hse-shadow-sm);
+
+  /* base neutre, puis surchargé par type */
+  border-left: 4px solid var(--hse-border-strong);
+  color: var(--hse-text-main);
 }
 
-/* On garde vos classes existantes mais en basant sur var HSE */
+/* Types (on garde les classes existantes) */
 .alert-critical {
   background: var(--hse-error-soft);
-  border-color: rgba(var(--hse-error), 0.35);
-  color: var(--hse-text-main);
+  border-color: var(--hse-error);
+  border-left-color: var(--hse-error);
 }
 
 .alert-error {
-  background: var(--hse-error-soft);
-  border-color: rgba(var(--hse-error), 0.25);
-  color: var(--hse-text-main);
+  background: var(--hse-danger-soft);
+  border-color: var(--hse-danger);
+  border-left-color: var(--hse-danger);
 }
 
 .alert-warning {
   background: var(--hse-warning-soft);
-  border-color: rgba(var(--hse-warning), 0.30);
-  color: var(--hse-text-main);
+  border-color: var(--hse-warning);
+  border-left-color: var(--hse-warning);
 }
 
 .alert-info {
-  background: var(--hse-accent-soft);
-  border-color: rgba(var(--hse-accent), 0.28);
-  color: var(--hse-text-main);
+  background: var(--hse-info-soft);
+  border-color: var(--hse-info);
+  border-left-color: var(--hse-info);
 }
 
 .alert-icon {
@@ -1110,95 +1107,98 @@ Refactor/cleanup + Score Hero isolé
 }
 
 /* ==========================================================================
-   HSE FINAL POLISH (à mettre en TOUT fin de fichier)
+   HSE FINAL POLISH (à mettre en TOUT fin de fichier) — Option A strict
    ========================================================================== */
 
 .overview-grid .card {
-  border-radius: var(--hse-radius-lg, 14px);
-  border: 1px solid var(--hse-border, rgba(148,163,184,0.35));
-  box-shadow: var(--hse-shadow-md, 0 10px 25px rgba(15,23,42,0.08));
-  background: var(--hse-surface, var(--hse-surface));
-  color: var(--hse-text-main, var(--hse-text-main));
+  border-radius: var(--hse-radius-lg);
+  border: 1px solid var(--hse-border);
+  box-shadow: var(--hse-shadow-md);
+  background: var(--hse-surface);
+  color: var(--hse-text-main);
 }
 
 .relations-section h3 {
-  color: var(--hse-text-main, var(--hse-text-main));
+  color: var(--hse-text-main);
 }
 
 .parent-group,
 .child-row,
 .orphan-row {
-  background: var(--hse-surface, var(--hse-surface));
-  border: 1px solid var(--hse-border, rgba(148,163,184,0.35));
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
   border-radius: 12px;
-  box-shadow: var(--hse-shadow-sm, 0 6px 16px rgba(15,23,42,0.06));
+  box-shadow: var(--hse-shadow-sm);
 }
 
 .parent-header {
-  background: var(--hse-surface-elevated, rgba(148,163,184,0.10));
+  background: var(--hse-surface-elevated);
   border-radius: 12px;
+  transition: background var(--hse-transition-fast);
 }
 
 .parent-header:hover {
-  background: var(--hse-accent-soft, rgba(var(--hse-accent),0.12));
+  background: var(--hse-hover);
 }
 
 .entity-id-small {
-  color: var(--hse-text-muted, var(--hse-text-muted));
-  background: var(--hse-surface-elevated, rgba(148,163,184,0.10));
-  border: 1px solid var(--hse-border-soft, rgba(148,163,184,0.25));
+  color: var(--hse-text-muted);
+  background: var(--hse-code-bg);
+  border: 1px solid var(--hse-border-soft);
 }
 
 .children-list {
-  background: var(--hse-surface-muted, rgba(148,163,184,0.08));
+  background: var(--hse-surface-muted);
   border-radius: 12px;
-  border: 1px dashed var(--hse-border-soft, rgba(148,163,184,0.25));
+  border: 1px dashed var(--hse-border-soft);
 }
 
 .no-parents,
 .orphans-section {
-  background: var(--hse-warning-soft, rgba(var(--hse-warning),0.12));
-  border: 1px solid rgba(var(--hse-warning),0.35);
-  color: var(--hse-text-main, var(--hse-text-main));
+  background: var(--hse-warning-soft);
+  border: 1px solid var(--hse-warning);
+  color: var(--hse-text-main);
   border-radius: 12px;
 }
 
+/* Harmonisation alertes (reprend le bloc au-dessus, sans rgba/fallback) */
 .alert-card,
 .alert-item {
-  background: var(--hse-surface-elevated, rgba(148,163,184,0.10));
-  border: 1px solid var(--hse-border-soft, rgba(148,163,184,0.25));
-  box-shadow: var(--hse-shadow-sm, 0 6px 16px rgba(15,23,42,0.06));
+  background: var(--hse-surface-elevated);
+  border: 1px solid var(--hse-border-soft);
+  box-shadow: var(--hse-shadow-sm);
   border-radius: 12px;
-  border-left: 4px solid rgba(148,163,184,0.35);
+  border-left: 4px solid var(--hse-border-strong);
 }
 
 .alert-critical,
 .alert-error {
-  background: var(--hse-error-soft, rgba(var(--hse-error),0.12));
-  border-left-color: rgba(var(--hse-error),0.65);
+  background: var(--hse-error-soft);
+  border-left-color: var(--hse-error);
 }
 
 .alert-warning {
-  background: var(--hse-warning-soft, rgba(var(--hse-warning),0.12));
-  border-left-color: rgba(var(--hse-warning),0.65);
+  background: var(--hse-warning-soft);
+  border-left-color: var(--hse-warning);
 }
 
 .alert-info {
-  background: var(--hse-accent-soft, rgba(var(--hse-accent),0.12));
-  border-left-color: rgba(var(--hse-accent),0.65);
+  background: var(--hse-accent-soft);
+  border-left-color: var(--hse-accent);
 }
 
 .alert-description,
 .alert-details small {
-  color: var(--hse-text-main, var(--hse-text-main));
+  color: var(--hse-text-main);
 }
 
 .hse-score-card .card-body {
   padding: 0 !important;
 }
 
+
 /* ========================================
-   Groups Panel - Vue compacte + scroll
+   Groups Panel - Vue compacte + scroll (Option A: HSE vars only)
    ======================================== */
 
 .groups-stats.clickable {
@@ -1211,13 +1211,13 @@ Refactor/cleanup + Score Hero isolé
 .groups-stats.clickable .stat-badge {
   cursor: pointer;
   user-select: none;
-  transition: all 0.2s ease;
+  transition: transform var(--hse-transition-fast), box-shadow var(--hse-transition-fast), filter var(--hse-transition-fast);
 }
 
 .groups-stats.clickable .stat-badge:hover {
-  filter: brightness(0.92);
+  filter: brightness(0.96);
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  box-shadow: var(--hse-shadow-sm);
 }
 
 .groups-stats.clickable .stat-badge:active {
@@ -1232,45 +1232,21 @@ Refactor/cleanup + Score Hero isolé
   margin-top: 16px;
 }
 
-@media (min-width: 1600px) {
-  .parents-grid {
-    grid-template-columns: repeat(4, minmax(280px, 1fr));
-  }
-}
-
-@media (min-width: 1200px) and (max-width: 1599px) {
-  .parents-grid {
-    grid-template-columns: repeat(3, minmax(280px, 1fr));
-  }
-}
-
-@media (min-width: 800px) and (max-width: 1199px) {
-  .parents-grid {
-    grid-template-columns: repeat(2, minmax(280px, 1fr));
-  }
-}
-
-@media (max-width: 799px) {
-  .parents-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .parent-group {
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid var(--hse-border-soft);
   border-radius: 8px;
   padding: 0;
   background: var(--hse-surface);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  transition: all 0.2s ease;
+  box-shadow: var(--hse-shadow-sm);
+  transition: box-shadow var(--hse-transition-fast), border-color var(--hse-transition-fast), transform var(--hse-transition-fast);
 }
 
 .parent-group:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: var(--hse-shadow-md);
 }
 
 .parent-group[open] {
-  border-color: rgba(0,0,0,0.15);
+  border-color: var(--hse-border);
 }
 
 .parent-group summary.parent-header {
@@ -1280,14 +1256,14 @@ Refactor/cleanup + Score Hero isolé
   align-items: center;
   padding: 12px;
   cursor: pointer;
-  background: rgba(0,0,0,0.02);
+  background: var(--hse-surface-elevated);
   border-radius: 7px 7px 0 0;
-  transition: background 0.15s ease;
+  transition: background var(--hse-transition-fast);
   font-size: 14px;
 }
 
 .parent-group summary.parent-header:hover {
-  background: rgba(0,0,0,0.04);
+  background: var(--hse-hover);
 }
 
 .parent-group summary.parent-header .parent-icon {
@@ -1299,11 +1275,16 @@ Refactor/cleanup + Score Hero isolé
   min-width: 140px;
   font-weight: 600;
   font-size: 14px;
+  color: var(--hse-text-main);
 }
 
 .parent-group summary.parent-header .entity-id-small {
   font-size: 11px;
-  color: #666;
+  color: var(--hse-text-muted);
+  background: var(--hse-code-bg);
+  border: 1px solid var(--hse-border-soft);
+  padding: 2px 6px;
+  border-radius: 999px;
   flex: 0 0 auto;
 }
 
@@ -1312,8 +1293,8 @@ Refactor/cleanup + Score Hero isolé
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
   padding: 10px 12px;
-  background: rgba(0,0,0,0.015);
-  border-top: 1px solid rgba(0,0,0,0.06);
+  background: var(--hse-surface-muted);
+  border-top: 1px solid var(--hse-border-soft);
   font-size: 13px;
 }
 
@@ -1325,13 +1306,13 @@ Refactor/cleanup + Score Hero isolé
 
 .parent-meta strong {
   font-weight: 600;
-  color: #333;
+  color: var(--hse-text-main);
 }
 
 .parent-meta span,
 .parent-meta code {
   font-size: 12px;
-  color: #555;
+  color: var(--hse-text-muted);
 }
 
 .parent-details-scroll {
@@ -1339,25 +1320,23 @@ Refactor/cleanup + Score Hero isolé
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px 12px;
-  border-top: 1px solid rgba(0,0,0,0.06);
+  border-top: 1px solid var(--hse-border-soft);
 }
 
+/* Scrollbars (si tu veux strict A, il faut des tokens dédiés, sinon tu peux supprimer ce bloc) */
 .parent-details-scroll::-webkit-scrollbar {
   width: 8px;
 }
-
 .parent-details-scroll::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.03);
+  background: var(--hse-scroll-track);
   border-radius: 4px;
 }
-
 .parent-details-scroll::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.15);
+  background: var(--hse-scroll-thumb);
   border-radius: 4px;
 }
-
 .parent-details-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,0.25);
+  background: var(--hse-scroll-thumb-hov);
 }
 
 .cycles-container {
@@ -1367,14 +1346,14 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .cycle-section {
-  border-left: 3px solid rgba(0,150,255,0.3);
+  border-left: 3px solid var(--hse-accent);
   padding-left: 10px;
 }
 
 .cycle-section h4.cycle-header {
   font-size: 13px;
   font-weight: 600;
-  color: #333;
+  color: var(--hse-text-main);
   margin: 0 0 8px 0;
   display: flex;
   align-items: center;
@@ -1393,14 +1372,15 @@ Refactor/cleanup + Score Hero isolé
   gap: 6px;
   align-items: center;
   padding: 8px;
-  background: rgba(0,0,0,0.02);
-  border-radius: 5px;
+  background: var(--hse-surface-elevated);
+  border-radius: 6px;
   font-size: 13px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid var(--hse-border-soft);
+  transition: background var(--hse-transition-fast);
 }
 
 .child-row:hover {
-  background: rgba(0,0,0,0.04);
+  background: var(--hse-hover);
 }
 
 .child-row .child-icon {
@@ -1415,37 +1395,42 @@ Refactor/cleanup + Score Hero isolé
 .child-row .child-info strong {
   font-size: 13px;
   font-weight: 500;
+  color: var(--hse-text-main);
 }
 
 .child-row .child-info code {
   font-size: 11px;
-  color: #666;
+  color: var(--hse-code-text);
+  background: var(--hse-code-bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
 }
 
 .child-row .cost-entity {
   font-size: 11px;
-  color: #555;
-  background: rgba(0,0,0,0.05);
+  color: var(--hse-text-muted);
+  background: var(--hse-surface-muted);
+  border: 1px solid var(--hse-border-soft);
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: 999px;
 }
 
 .no-children,
 .no-parents {
   padding: 20px;
   text-align: center;
-  color: #666;
+  color: var(--hse-text-muted);
   font-size: 14px;
-  background: rgba(255,193,7,0.08);
+  background: var(--hse-warning-soft);
   border-radius: 6px;
-  border: 1px dashed rgba(255,193,7,0.3);
+  border: 1px dashed var(--hse-warning);
 }
 
 .orphans-section {
   margin-top: 24px;
   padding: 16px;
-  background: rgba(255,152,0,0.08);
-  border: 1px solid rgba(255,152,0,0.2);
+  background: var(--hse-warning-soft);
+  border: 1px solid var(--hse-warning);
   border-radius: 8px;
 }
 
@@ -1470,7 +1455,7 @@ Refactor/cleanup + Score Hero isolé
   padding: 10px;
   background: var(--hse-surface);
   border-radius: 6px;
-  border: 1px solid rgba(255,152,0,0.15);
+  border: 1px solid var(--hse-warning);
   font-size: 13px;
 }
 
@@ -1484,12 +1469,15 @@ Refactor/cleanup + Score Hero isolé
 
 .orphan-row code {
   font-size: 12px;
-  color: #444;
+  color: var(--hse-danger);
+  background: var(--hse-code-bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
 }
 
 .orphan-row small {
   font-size: 11px;
-  color: #777;
+  color: var(--hse-text-muted);
 }
 
 .filter-buttons {
@@ -1510,10 +1498,11 @@ Refactor/cleanup + Score Hero isolé
 
 .badge.info { background: var(--hse-info-soft); color: var(--hse-info); }
 .badge.success { background: var(--hse-success-soft); color: var(--hse-success); }
-.badge.warning { background: var(--hse-surface)3e0; color: var(--hse-warning-text); }
+.badge.warning { background: var(--hse-warning-soft); color: var(--hse-warning-text); }
 .badge.error { background: var(--hse-error-soft); color: var(--hse-error); }
 .badge.secondary { background: var(--hse-surface-muted); color: var(--hse-text-muted); }
 
+/* Grouped alerts in compact view */
 .alerts-list-grouped {
   display: flex;
   flex-direction: column;
@@ -1522,11 +1511,13 @@ Refactor/cleanup + Score Hero isolé
 
 .alert-item-grouped {
   padding: 12px;
-  border-radius: 6px;
-  border: 1px solid;
+  border-radius: 8px;
+  border: 1px solid var(--hse-border-soft);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background: var(--hse-surface);
+  box-shadow: var(--hse-shadow-sm);
 }
 
 .alert-item-grouped.alert-critical {
@@ -1535,13 +1526,13 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .alert-item-grouped.alert-error {
-  background: var(--hse-surface)3e0;
-  border-color: #ff9800;
+  background: var(--hse-danger-soft);
+  border-color: var(--hse-danger);
 }
 
 .alert-item-grouped.alert-warning {
-  background: var(--hse-surface)8e1;
-  border-color: #ffc107;
+  background: var(--hse-warning-soft);
+  border-color: var(--hse-warning);
 }
 
 .alert-header {
@@ -1558,6 +1549,7 @@ Refactor/cleanup + Score Hero isolé
   flex: 1;
   font-weight: 500;
   font-size: 14px;
+  color: var(--hse-text-main);
 }
 
 .alert-entities {
@@ -1570,9 +1562,10 @@ Refactor/cleanup + Score Hero isolé
 .entity-badge {
   font-size: 11px;
   padding: 3px 8px;
-  background: rgba(0,0,0,0.08);
-  border-radius: 4px;
-  color: #444;
+  background: var(--hse-surface-muted);
+  border: 1px solid var(--hse-border-soft);
+  border-radius: 999px;
+  color: var(--hse-text-muted);
 }
 
 .alert-action-btn {
@@ -1582,7 +1575,7 @@ Refactor/cleanup + Score Hero isolé
 }
 
 .component-clickable:hover {
-  background: rgba(0,0,0,0.03);
+  background: var(--hse-hover);
   border-radius: 6px;
 }
 
@@ -1592,7 +1585,8 @@ Refactor/cleanup + Score Hero isolé
   flex-wrap: wrap;
   margin: 12px 0;
   padding: 10px;
-  background: rgba(0,0,0,0.02);
+  background: var(--hse-surface-elevated);
+  border: 1px solid var(--hse-border-soft);
   border-radius: 6px;
 }
 
