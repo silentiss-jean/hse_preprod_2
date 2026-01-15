@@ -634,6 +634,7 @@ html[data-theme="aurora"] {
   --hse-text-main: rgba(245,248,255,0.96);
   --hse-text-muted: rgba(245,248,255,0.72);
   --hse-text-soft: rgba(245,248,255,0.55);
+
   --hse-text-secondary: rgba(245,248,255,0.72);
   --hse-text: var(--hse-text-main);
   --hse-text-muted: var(--hse-text-muted); /* OK déjà */
