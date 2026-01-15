@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════════════════════════════════════
    🎨 HOME SUIVI ÉLEC — THÈMES (DATA-THEME)
-   Version 3.0 — html[data-theme="..."]
-   7 thèmes existants + 3 supplémentaires
+   Version 3.1 — html[data-theme="..."]
+   Ajout: Aurora Glass + couche aurora animée + glass tokens (sans hardcode modules)
    ════════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -161,17 +161,41 @@
   --hse-bg-secondary: var(--hse-surface-muted);
   --hse-hover: rgba(59, 130, 246, 0.08);
   --hse-text: var(--hse-text-main);
+
   /* Aliases Phase1 */
   --hse-accent-alt: var(--hse-accent);
   --hse-grad-header-from: var(--hse-accent);
   --hse-grad-header-to: var(--hse-accent-hover);
 
-  
+  /* alias pratique (évite --hse-primary dans les modules) */
+  --hse-primary: var(--hse-accent);
+
+  /* couleur de texte lisible sur boutons/gradients */
+  --hse-on-accent: #ffffff;
+
+  /* header text */
+  --hse-on-header: #ffffff;
+
+  /* ════════════════════════════════════════════════════════════════════════
+     TOKENS D’EFFETS (glass/aurora)
+     -> aucun module ne hardcode : ils consomment seulement des variables
+     ════════════════════════════════════════════════════════════════════════ */
+  --hse-bg-anim: none;                 /* ex: linear-gradient(...) */
+  --hse-bg-speed: 18s;                 /* animation duration */
+  --hse-bg-opacity: 0;                 /* 0..1 */
+  --hse-bg-blur: 60px;                 /* blur aurora */
+  --hse-grain-opacity: 0;              /* 0..1 (grain overlay) */
+
+  --hse-glass-blur: 0px;               /* blur sur les cartes */
+  --hse-surface-glass: var(--hse-surface);
+
+  /* hover tuning */
+  --hse-card-hover-translateY: -2px;
+  --hse-card-hover-shadow: var(--hse-shadow-lg);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 1 — LIGHT
-   (id: hse_light, key: light)
    ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="light"] {
   --hse-bg: #f8fafc;
@@ -189,11 +213,11 @@ html[data-theme="light"] {
   --hse-accent-soft: rgba(59, 130, 246, 0.08);
   --hse-gradient-header: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
   --hse-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 2 — DARK
-   (id: hse_dark, key: dark)
    ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="dark"] {
   --hse-bg: #0f172a;
@@ -243,7 +267,7 @@ html[data-theme="dark"] {
   --hse-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.3);
   --hse-shadow-glow: 0 0 20px rgba(96, 165, 250, 0.2);
 
-  /* Compat “legacy” (si tu veux qu’ils suivent le thème) */
+  /* Compat “legacy” */
   --text-primary: #f1f5f9;
   --text-secondary: #cbd5e1;
   --text-tertiary: #94a3b8;
@@ -288,7 +312,6 @@ html[data-theme="dark"] {
   --secondary-text-color: #cbd5e1;
 
   /* hero diag */
-
   --hse-hero-shadow-1: 0 18px 55px rgba(0, 0, 0, 0.45);
   --hse-hero-shadow-2: 0 8px 18px rgba(0, 0, 0, 0.35);
 
@@ -299,11 +322,11 @@ html[data-theme="dark"] {
 
   --hse-hero-divider: var(--hse-border-soft);
 
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 3 — OCEAN
-   (id: hse_ocean, key: ocean)
    ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="ocean"] {
   --hse-bg: #0c1929;
@@ -331,11 +354,11 @@ html[data-theme="ocean"] {
   --hse-gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
   --hse-shadow-md: 0 4px 20px rgba(14, 165, 233, 0.15);
   --hse-shadow-glow: 0 0 30px rgba(14, 165, 233, 0.3);
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 4 — FOREST
-   (id: hse_forest, key: forest)
    ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="forest"] {
   --hse-bg: #022c22;
@@ -363,11 +386,11 @@ html[data-theme="forest"] {
   --hse-gradient-primary: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
   --hse-shadow-md: 0 4px 20px rgba(16, 185, 129, 0.15);
   --hse-shadow-glow: 0 0 30px rgba(16, 185, 129, 0.25);
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 5 — SUNSET
-   (id: hse_sunset, key: sunset)
    ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="sunset"] {
   --hse-bg: #1c1917;
@@ -395,11 +418,11 @@ html[data-theme="sunset"] {
   --hse-gradient-primary: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
   --hse-shadow-md: 0 4px 20px rgba(249, 115, 22, 0.2);
   --hse-shadow-glow: 0 0 30px rgba(249, 115, 22, 0.35);
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 6 — MINIMAL
-   (id: hse_minimal, key: minimal)
    ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="minimal"] {
   --hse-bg: #fafafa;
@@ -427,11 +450,11 @@ html[data-theme="minimal"] {
   --hse-gradient-primary: linear-gradient(135deg, #171717 0%, #525252 100%);
   --hse-shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08);
   --hse-shadow-glow: none;
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THÈME 7 — NEON
-   (id: hse_neon, key: neon)
    ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="neon"] {
   --hse-bg: #09090b;
@@ -459,14 +482,12 @@ html[data-theme="neon"] {
   --hse-gradient-primary: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
   --hse-shadow-md: 0 4px 20px rgba(168, 85, 247, 0.25);
   --hse-shadow-glow: 0 0 40px rgba(168, 85, 247, 0.4);
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   THÈMES SUPPLÉMENTAIRES (nouveaux)
-   (tu peux les ajouter plus tard au manifest si tu veux les exposer)
+   THÈME 8 — CONTRAST
    ═══════════════════════════════════════════════════════════════════════════ */
-
-/* 8 — CONTRAST (ultra lisible) */
 html[data-theme="contrast"] {
   --hse-bg: #000000;
   --hse-surface: #0b0b0b;
@@ -502,9 +523,13 @@ html[data-theme="contrast"] {
 
   --hse-shadow-md: 0 0 0 rgba(0,0,0,0);
   --hse-shadow-glow: 0 0 0 rgba(0,0,0,0);
+
+  --hse-on-header: #ffffff;
 }
 
-/* 9 — GRAPE (violet pro, moins “neon”) */
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 9 — GRAPE
+   ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="grape"] {
   --hse-bg: #0b0614;
   --hse-surface: #140b22;
@@ -539,9 +564,12 @@ html[data-theme="grape"] {
   --hse-gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
 
   --hse-shadow-glow: 0 0 30px rgba(139, 92, 246, 0.25);
+  --hse-on-header: #ffffff;
 }
 
-/* 10 — SOLARIZED (inspiré, doux) */
+/* ═══════════════════════════════════════════════════════════════════════════
+   THÈME 10 — SOLARIZED
+   ═══════════════════════════════════════════════════════════════════════════ */
 html[data-theme="solarized"] {
   --hse-bg: #fdf6e3;
   --hse-surface: #fffaf0;
@@ -577,37 +605,207 @@ html[data-theme="solarized"] {
 
   --hse-shadow-md: 0 4px 16px rgba(7, 54, 66, 0.08);
   --hse-shadow-glow: 0 0 24px rgba(38, 139, 210, 0.18);
+
+  --hse-on-header: #ffffff;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Effets spéciaux Neon (version data-theme)
+   THÈME 11 — AURORA GLASS (PREMIUM)
+   (key: aurora)
    ═══════════════════════════════════════════════════════════════════════════ */
-html[data-theme="neon"] .card,
-html[data-theme="neon"] .config-section,
-html[data-theme="neon"] .hse-card {
-  box-shadow:
-    0 0 1px var(--hse-accent),
-    0 0 10px rgba(168, 85, 247, 0.2),
-    inset 0 0 20px rgba(168, 85, 247, 0.05);
-}
+html[data-theme="aurora"] {
+  --hse-bg: #070812;
 
-html[data-theme="neon"] .btn-primary,
-html[data-theme="neon"] .btn-success {
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  /* glass surfaces */
+  --hse-surface: rgba(255,255,255,0.06);
+  --hse-surface-muted: rgba(255,255,255,0.045);
+  --hse-surface-elevated: rgba(255,255,255,0.08);
+  --hse-surface-glass: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.045) 40%,
+    rgba(255,255,255,0.06) 100%
+  );
+
+  --hse-border: rgba(255,255,255,0.12);
+  --hse-border-soft: rgba(255,255,255,0.08);
+  --hse-border-strong: rgba(255,255,255,0.18);
+
+  --hse-text-main: rgba(245,248,255,0.96);
+  --hse-text-muted: rgba(245,248,255,0.72);
+  --hse-text-soft: rgba(245,248,255,0.55);
+  --hse-text-secondary: rgba(245,248,255,0.72);
+  --hse-text: var(--hse-text-main);
+  --hse-text-muted: var(--hse-text-muted); /* OK déjà */
+  --hse-primary: var(--hse-accent);
+  --hse-bg-secondary: var(--hse-surface-muted);
+  --hse-hover: rgba(124, 58, 237, 0.10);
+  --hse-tooltip-text: var(--hse-on-header);
+
+
+  /* accent (violet/aurora) */
+  --hse-accent: #7c3aed;
+  --hse-accent-hover: #a78bfa;
+  --hse-accent-soft: rgba(124, 58, 237, 0.18);
+  --hse-accent-strong: #5b21b6;
+
+  /* sémantiques (douces, lisibles sur fond sombre) */
+  --hse-success: #34d399;
+  --hse-success-soft: rgba(52, 211, 153, 0.16);
+  --hse-success-dark: #059669;
+
+  --hse-warning: #fbbf24;
+  --hse-warning-soft: rgba(251, 191, 36, 0.16);
+  --hse-warning-text: #fbbf24;
+  --hse-warning-dark: #d97706;
+  --hse-warning-light: rgba(251, 191, 36, 0.12);
+
+  --hse-error: #fb7185;
+  --hse-error-soft: rgba(251, 113, 133, 0.16);
+  --hse-error-dark: #fb7185;
+
+  --hse-info: #22d3ee;
+  --hse-info-soft: rgba(34, 211, 238, 0.16);
+
+  --hse-danger: #fb7185;
+  --hse-danger-soft: rgba(251, 113, 133, 0.16);
+
+  /* gradients (premium, modernes) */
+  --hse-gradient-header: linear-gradient(135deg, rgba(124, 58, 237, 0.95) 0%, rgba(34, 211, 238, 0.80) 100%);
+  --hse-gradient-primary: linear-gradient(135deg, #7c3aed 0%, #22d3ee 55%, #34d399 100%);
+  --hse-gradient-success: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --hse-gradient-info: linear-gradient(135deg, #22d3ee 0%, #60a5fa 100%);
+  --hse-gradient-warning: linear-gradient(135deg, #fbbf24 0%, #fb923c 100%);
+
+  /* ombres (plus profondes) */
+  --hse-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --hse-shadow-md: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --hse-shadow-lg: 0 18px 55px rgba(0, 0, 0, 0.42);
+  --hse-shadow-glow: 0 0 45px rgba(124, 58, 237, 0.22);
+
+  /* tokens d’effets (aurora) */
+  --hse-bg-anim: linear-gradient(
+    120deg,
+    rgba(124, 58, 237, 0.40) 0%,
+    rgba(34, 211, 238, 0.26) 30%,
+    rgba(52, 211, 153, 0.20) 55%,
+    rgba(236, 72, 153, 0.16) 78%,
+    rgba(124, 58, 237, 0.40) 100%
+  );
+  --hse-bg-speed: 20s;
+  --hse-bg-opacity: 0.90;
+  --hse-bg-blur: 80px;
+  --hse-grain-opacity: 0.08;
+
+  --hse-glass-blur: 14px;
+
+  /* header text */
+  --hse-on-header: rgba(255,255,255,0.95);
+
+  /* hover tuning */
+  --hse-card-hover-translateY: -2px;
+  --hse-card-hover-shadow: var(--hse-shadow-lg);
+
+  /* legacy sync (au cas où certaines zones utilisent encore ces vars) */
+  --text-primary: var(--hse-text-main);
+  --text-secondary: var(--hse-text-muted);
+  --text-tertiary: var(--hse-text-soft);
+
+  --card-bg: rgba(255,255,255,0.06);
+  --border-color: rgba(255,255,255,0.12);
+  --border-color-light: rgba(255,255,255,0.08);
+
+  --bg-secondary: rgba(255,255,255,0.045);
+  --bg-hover: rgba(124, 58, 237, 0.10);
+
+  --surface-bg: rgba(255,255,255,0.045);
+  --surface-hover: rgba(255,255,255,0.07);
+
+  --children-bg: rgba(255,255,255,0.04);
+  --input-bg: rgba(255,255,255,0.06);
+
+  --primary: var(--hse-accent);
+  --primary-color: var(--hse-accent);
+  --primary-text-color: var(--hse-text-main);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   APPLICATION GLOBALE DES VARIABLES (inchangé)
+   Effets Aurora (fond animé + grain) — tokens only
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Page de base */
 body {
-  background-color: var(--hse-bg);
-  color: var(--hse-text-main);
-  transition: background-color var(--hse-transition-slow), color var(--hse-transition-slow);
+  position: relative;
 }
 
-/* === CONTAINERS & CARDS === */
+/* Couche aurora animée */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -30%;
+  z-index: -2;
+  pointer-events: none;
+
+  background: var(--hse-bg-anim);
+  opacity: var(--hse-bg-opacity);
+  filter: blur(var(--hse-bg-blur));
+  transform: translate3d(0, 0, 0);
+
+  animation: hse-aurora-shift var(--hse-bg-speed) ease-in-out infinite;
+}
+
+/* Grain léger (sans image externe) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  opacity: var(--hse-grain-opacity);
+  mix-blend-mode: overlay;
+
+  /* “grain” simple via superposition de patterns */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.06) 0 1px, transparent 2px),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.05) 0 1px, transparent 2px),
+    radial-gradient(circle at 40% 70%, rgba(255,255,255,0.04) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 85%, rgba(255,255,255,0.05) 0 1px, transparent 2px);
+  background-size: 180px 180px, 220px 220px, 260px 260px, 200px 200px;
+  background-position: 0 0, 40px 20px, 10px 60px, 70px 40px;
+
+  animation: hse-grain-shift 6s steps(2, end) infinite;
+}
+
+/* Accessibilité: réduit l’animation */
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
+  }
+}
+
+/* Animation fond aurora */
+@keyframes hse-aurora-shift {
+  0%   { transform: translate3d(-2%, -2%, 0) rotate(0deg) scale(1.05); }
+  50%  { transform: translate3d( 2%,  2%, 0) rotate(8deg) scale(1.10); }
+  100% { transform: translate3d(-2%, -2%, 0) rotate(0deg) scale(1.05); }
+}
+
+/* Animation “grain” */
+@keyframes hse-grain-shift {
+  0%   { transform: translate3d(0, 0, 0); }
+  25%  { transform: translate3d(-2px, 1px, 0); }
+  50%  { transform: translate3d(1px, -2px, 0); }
+  75%  { transform: translate3d(2px, 1px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Glass override (cartes/containers)
+   -> override simple de la règle globale existante pour activer le glass
+   -> sans casser les autres thèmes (fallback sur --hse-surface)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .container,
 .card,
 .hse-card,
@@ -618,53 +816,29 @@ body {
 .stats-card,
 .dup-entity,
 .ignored-entity {
-  background: var(--hse-surface);
-  border: 1px solid var(--hse-border);
-  border-radius: var(--hse-radius-lg);
-  box-shadow: var(--hse-shadow-md);
-  transition:
-    background var(--hse-transition-base),
-    border-color var(--hse-transition-base),
-    box-shadow var(--hse-transition-base),
-    transform var(--hse-transition-base);
+  background: var(--hse-surface-glass, var(--hse-surface));
+  -webkit-backdrop-filter: blur(var(--hse-glass-blur));
+  backdrop-filter: blur(var(--hse-glass-blur));
 }
 
 .card:hover,
 .hse-card:hover,
 .config-section:hover,
 .dup-entity:hover {
-  border-color: var(--hse-accent);
-  box-shadow: var(--hse-shadow-lg);
-  transform: translateY(-2px);
+  box-shadow: var(--hse-card-hover-shadow, var(--hse-shadow-lg));
+  transform: translateY(var(--hse-card-hover-translateY, -2px));
 }
 
-/* === HEADERS === */
+/* Header text override (au cas où) */
 .header-section,
 .customisation-header,
 .detection-header,
 .diagnostics-header {
-  background: var(--hse-gradient-header);
-  color: #ffffff;
-  padding: 16px 20px;
-  border-radius: var(--hse-radius-lg) var(--hse-radius-lg) 0 0;
-  margin: -1px -1px 0 -1px;
+  color: var(--hse-on-header, #ffffff);
 }
-
 .header-section h1,
 .customisation-header h2,
 .detection-header h2,
 .diagnostics-header h2 {
-  color: #ffffff !important;
-  margin: 0;
+  color: var(--hse-on-header, #ffffff) !important;
 }
-
-/* ... le reste de tes règles globales peut rester identique ... */
-
-/* HSE_AUDIT_PHASE1_ALIASES_START */
-:root {
-  --hse-accent-alt: var(--hse-accent);
-  --hse-error-dark: var(--hse-error);
-  --hse-grad-header-from: var(--hse-accent);
-  --hse-grad-header-to: var(--hse-accent-hover);
-}
-/* HSE_AUDIT_PHASE1_ALIASES_END */

@@ -65,8 +65,8 @@
     <h2>Résumé général</h2>
 
     <div id="summaryCard" class="card">
-      <div id="topBlocks" class="hse-split">
-        <div id="instantaneBlock" class="hse-panel hse-panel-accent hse-flex-1">
+      <div id="topBlocks" class="hse-summary-top-grid">
+        <div id="instantaneBlock" class="hse-panel hse-panel-accent hse-flex-1 hse-summary-card">
           <h3>Capteurs</h3>
           <p><strong>Total capteurs détectés :</strong> <span id="totalCapteurs">-</span></p>
           <p><strong>Capteurs sélectionnés :</strong> <span id="actifsCapteurs">-</span></p>
@@ -75,7 +75,7 @@
           <p><strong>Consommation actuelle non mesurée (Delta) :</strong> <span id="deltaPuissance">- W</span></p>
         </div>
 
-        <div id="resumeGeneral" class="hse-panel hse-panel-muted hse-flex-1">
+        <div id="resumeGeneral" class="hse-panel hse-panel-muted hse-flex-1 hse-summary-card">
           <h3>Résumé général</h3>
           <p><strong>Type contrat :</strong> <span id="typeContratSummary">-</span></p>
           <p><strong>Abonnement HT :</strong> <span id="abonnementHTSummary">-</span> €</p>
@@ -105,66 +105,11 @@
 
       <!-- Tables Résumé -->
       <section id="summaryData" hidden>
-        <div id="tablesDetail" class="hse-mt-10">
-          <h3>Capteurs détectés – Puissance cumulée</h3>
-
-          <table id="summaryInternalSensors">
-            <thead>
-              <tr>
-                <th>Période</th>
-                <th>kWh</th>
-                <th>Coût consommation HT (€)</th>
-                <th>Coût consommation TTC (€)</th>
-                <th>Total HT (€)</th>
-                <th>Total TTC (€)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="6" class="hse-center hse-text-muted hse-p-20">
-                  Sélectionnez et configurez vos capteurs pour que le résumé affiche des estimations
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3 id="externalSummaryTitle" class="hse-mt-30">Capteur externe de référence</h3>
-          <table id="summaryExternalSensors">
-            <thead>
-              <tr>
-                <th>Période</th>
-                <th>kWh</th>
-                <th>Coût consommation HT (€)</th>
-                <th>Coût consommation TTC (€)</th>
-                <th>Total HT (€)</th>
-                <th>Total TTC (€)</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-
-          <h3 id="deltaSummaryTitle" class="hse-mt-30">Delta (externe - interne)</h3>
-          <table id="summaryDeltaSensors">
-            <thead>
-              <tr>
-                <th>Période</th>
-                <th>kWh</th>
-                <th>Coût consommation HT (€)</th>
-                <th>Coût consommation TTC (€)</th>
-                <th>Total HT (€)</th>
-                <th>Total TTC (€)</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-
-          <p id="summaryMessage" class="hse-text-muted hse-small hse-mt-10">
-            Sélectionnez et configurez vos capteurs pour que le résumé affiche des estimations
-          </p>
-        </div>
+        ...
       </section>
     </div>
-  </div>
+  </div>   <!-- /#home -->
+
 
   <!-- AUTRES ONGLETS -->
   <div id="diagnostics" class="tab-content"></div>

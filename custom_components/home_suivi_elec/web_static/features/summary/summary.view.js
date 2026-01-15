@@ -355,20 +355,25 @@ export function renderSummaryView(container, summaryData) {
   // BLOC CAPTEUR DE RÉFÉRENCE
   if (reference_sensor && reference_sensor.entity_id) {
     const refBanner = document.createElement("div");
-    refBanner.className = "hse-reference-banner";
-    refBanner.style.cssText =
-      "background:#e3f2fd; border-left:4px solid #2196f3; padding:12px; margin-bottom:16px; border-radius:4px;";
+    refBanner.className = "hse-banner hse-banner-info";
+
     refBanner.innerHTML = `
-      <strong style="color:#1976d2;">⭐ Capteur de référence :</strong> 
-      <span style="font-weight:500;">${
-        reference_sensor.friendly_name || reference_sensor.entity_id
-      }</span>
-      <span style="color:#666; font-size:12px; margin-left:8px;">${
-        reference_sensor.integration || "N/A"
-      }</span>
+      <div class="hse-banner-title">⭐ Capteur de référence :</div>
+      <div class="hse-banner-body">
+        <span class="hse-banner-strong">${reference_sensor.friendly_name || reference_sensor.entity_id}</span>
+        <span class="hse-banner-meta">${reference_sensor.integration || "N/A"}</span>
+      </div>
     `;
     container.appendChild(refBanner);
   }
+
+  if (!reference_sensor || !reference_sensor.entity_id) {
+    const warn = document.createElement("div");
+    warn.className = "hse-banner hse-banner-warn";
+    warn.textContent = "⚠️ Aucun capteur de référence défini. Les calculs de consommation sont inactifs.";
+    container.appendChild(warn);
+  }
+
 
   // WARNING SI PAS DE RÉFÉRENCE (on n'interrompt plus le rendu)
   if (!reference_sensor || !reference_sensor.entity_id) {

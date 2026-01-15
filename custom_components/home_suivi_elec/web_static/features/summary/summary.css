@@ -71,12 +71,48 @@
 
 .hse-progress-fill {
   height: 100%;
-  background: var(--hse-surface);
+  background: var(--hse-surface); /* sera surchargé par JS (var(--hse-gradient-...)) */
   transition: width 0.3s ease, background 0.5s ease;
   border-radius: 4px;
   position: relative;
   overflow: hidden;
+
+  /* Aurora/glass polish — glow */
+  box-shadow:
+    0 0 0 1px var(--hse-border-soft),
+    var(--hse-shadow-glow);
+  filter: saturate(1.05) contrast(1.02);
 }
+
+/* Shine plus “premium” (plus doux, moins blanc) */
+.hse-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.10) 40%,
+    rgba(255,255,255,0.22) 50%,
+    rgba(255,255,255,0.10) 60%,
+    transparent 100%
+  );
+  opacity: 0.9;
+
+  animation: hse-shine 2s infinite;
+}
+
+/* Accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .hse-progress-fill::after {
+    animation: none !important;
+  }
+}
+
 
 /* Animation de brillance sur la barre */
 .hse-progress-fill::after {
@@ -726,3 +762,53 @@
     padding: 8px;
   }
 }
+/* 2 panneaux du haut */
+.hse-summary-top-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  margin:12px 0 16px;
+  align-items:start;
+}
+@media (max-width: 900px){
+  .hse-summary-top-grid{ grid-template-columns:1fr; }
+}
+
+/* Layout 2 colonnes du haut */
+.hse-summary-top-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  align-items:start;
+  margin:12px 0 16px;
+}
+@media (max-width: 900px){
+  .hse-summary-top-grid{ grid-template-columns:1fr; }
+}
+
+/* Cartes lisibles sur tous thèmes */
+.hse-summary-card{
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: 10px;
+  box-shadow: var(--hse-shadow-sm);
+  padding: 14px 16px;
+}
+.hse-summary-card h3{ margin:0 0 10px 0; }
+
+.hse-banner{
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-left-width: 4px;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  color: var(--hse-text);
+}
+
+.hse-banner-info{ border-left-color: var(--hse-info); }
+.hse-banner-warn{ border-left-color: var(--hse-warning); }
+
+.hse-banner-title{ font-weight: 700; margin-bottom: 6px; }
+.hse-banner-strong{ font-weight: 600; }
+.hse-banner-meta{ color: var(--hse-text-muted); font-size: 12px; margin-left: 8px; }
