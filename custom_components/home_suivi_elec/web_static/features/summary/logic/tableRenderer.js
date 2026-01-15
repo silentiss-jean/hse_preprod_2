@@ -51,7 +51,7 @@ function buildTableHTML(tableId, title, kwhMap, userData, metaMap = null) {
   });
 
   return `
-    <h3 style="margin-top: 30px;">${title}</h3>
+    <h3 class="hse-summary-table-title">${title}</h3>
     <div class="integrations-table-container">
       <table id="${tableId}" class="integrations-table">
         <thead>
@@ -128,11 +128,11 @@ export function renderSummaryTables(
   );
 
   return `
-    <div id="tablesDetail" style="margin-top: 20px;">
+    <div id="tablesDetail" class="hse-summary-tables-detail">
       ${table1}
       ${table2}
       ${table3}
-      <p id="summaryMessage" style="font-size: 0.85em; color: var(--hse-text-muted); margin-top: 16px;">
+      <p id="summaryMessage" class="hse-summary-message">
         Les totaux incluent l'abonnement mensuel proratisé sur chaque période.
       </p>
     </div>

@@ -334,6 +334,21 @@
   color: var(--hse-success);
 }
 
+/* Remplace les anciens styles inline (tableRenderer.js) */
+.hse-summary-tables-detail {
+  margin-top: 20px;
+}
+
+.hse-summary-table-title {
+  margin-top: 30px;
+}
+
+.hse-summary-message {
+  font-size: 0.85em;
+  color: var(--hse-text-muted);
+  margin-top: 16px;
+}
+
 /* ────────────────────────────────────────────────────────────────────────────
    BOUTONS ACTIONS
    ──────────────────────────────────────────────────────────────────────────── */
@@ -607,7 +622,8 @@
   flex: 1;
 }
 
-.hse-cache-badge {
+/* badge cache spécifique aux cartes "coûts" (évite d'écraser le badge global) */
+.hse-costs-card .hse-cache-badge {
   font-size: 0.7rem;
   background: var(--hse-warning-soft);
   color: var(--hse-warning-text);
