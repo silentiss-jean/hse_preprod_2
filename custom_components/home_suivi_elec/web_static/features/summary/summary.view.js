@@ -351,9 +351,10 @@ export function renderSummaryView(container, summaryData) {
   container.innerHTML = "";
 
   const { reference_sensor } = summaryData || {};
+  const hasRef = !!(reference_sensor && reference_sensor.entity_id);
 
   // BLOC CAPTEUR DE RÉFÉRENCE
-  if (reference_sensor && reference_sensor.entity_id) {
+  if (hasRef) {
     const refBanner = document.createElement("div");
     refBanner.className = "hse-banner hse-banner-info";
 
@@ -365,25 +366,15 @@ export function renderSummaryView(container, summaryData) {
       </div>
     `;
     container.appendChild(refBanner);
+    return;
   }
 
-  if (!reference_sensor || !reference_sensor.entity_id) {
-    const warn = document.createElement("div");
-    warn.className = "hse-banner hse-banner-warn";
-    warn.textContent = "⚠️ Aucun capteur de référence défini. Les calculs de consommation sont inactifs.";
-    container.appendChild(warn);
-  }
-
-
-  // WARNING SI PAS DE RÉFÉRENCE (on n'interrompt plus le rendu)
-  if (!reference_sensor || !reference_sensor.entity_id) {
-    const warn = document.createElement("div");
-    warn.style.cssText =
-      "background:#fff3cd; border-left:4px solid #ffb300; padding:12px; margin-bottom:16px; border-radius:4px; color:#856404;";
-    warn.textContent =
-      "⚠️ Aucun capteur de référence défini. Les calculs de consommation sont inactifs.";
-    container.appendChild(warn);
-  }
+  // WARNING unique (pas de style inline)
+  const warn = document.createElement("div");
+  warn.className = "hse-banner hse-banner-warn";
+  warn.textContent =
+    "⚠️ Aucun capteur de référence défini. Les calculs de consommation sont inactifs.";
+  container.appendChild(warn);
 }
 
 /**
@@ -395,45 +386,45 @@ export function renderCostsGlobalPanel(container, globalData) {
   if (!container || !globalData) return;
 
   // Nettoyer ancien bloc
-  const existing = container.querySelector('.hse-costs-global-panel');
+  const existing = container.querySelector(".hse-costs-global-panel");
   if (existing) existing.remove();
 
-  const panel = document.createElement('div');
-  panel.className = 'hse-costs-global-panel';
+  const panel = document.createElement("div");
+  panel.className = "hse-costs-global-panel";
 
   // Header
-  const header = document.createElement('div');
-  header.className = 'hse-costs-header';
-  const title = document.createElement('h3');
-  title.textContent = 'Coûts globaux';
-  const subtitle = document.createElement('p');
-  subtitle.textContent = 'Consommation + Abonnement (tous capteurs sélectionnés)';
+  const header = document.createElement("div");
+  header.className = "hse-costs-header";
+  const title = document.createElement("h3");
+  title.textContent = "Coûts globaux";
+  const subtitle = document.createElement("p");
+  subtitle.textContent = "Consommation + Abonnement (tous capteurs sélectionnés)";
   header.appendChild(title);
   header.appendChild(subtitle);
   panel.appendChild(header);
 
   // Grid 4 colonnes
-  const grid = document.createElement('div');
-  grid.className = 'hse-costs-grid';
+  const grid = document.createElement("div");
+  grid.className = "hse-costs-grid";
 
   const periods = [
-    { key: 'day', label: 'Jour', icon: '📅' },
-    { key: 'week', label: 'Semaine', icon: '📆' },
-    { key: 'month', label: 'Mois', icon: '📊' },
-    { key: 'year', label: 'Année', icon: '📈' }
+    { key: "day", label: "Jour", icon: "📅" },
+    { key: "week", label: "Semaine", icon: "📆" },
+    { key: "month", label: "Mois", icon: "📊" },
+    { key: "year", label: "Année", icon: "📈" },
   ];
 
   periods.forEach(({ key, label, icon }) => {
     const data = globalData[key];
     if (!data) return;
 
-    const card = document.createElement('div');
-    card.className = 'hse-costs-card';
+    const card = document.createElement("div");
+    card.className = "hse-costs-card";
 
     // Badge cache si applicable
-    const cacheBadge = data.from_cache 
-      ? `<span class="hse-cache-badge">Cache (${Math.round(data.cached_age)}s)</span>` 
-      : '';
+    const cacheBadge = data.from_cache
+      ? `<span class="hse-cache-badge">Cache (${Math.round(data.cached_age)}s)</span>`
+      : "";
 
     card.innerHTML = `
       <div class="hse-costs-card-header">
@@ -477,26 +468,26 @@ export function renderCostsPerEntityTable(container, entities) {
   if (!container || !entities || !entities.length) return;
 
   // Nettoyer ancien bloc
-  const existing = container.querySelector('.hse-costs-per-entity');
+  const existing = container.querySelector(".hse-costs-per-entity");
   if (existing) existing.remove();
 
-  const panel = document.createElement('div');
-  panel.className = 'hse-costs-per-entity';
+  const panel = document.createElement("div");
+  panel.className = "hse-costs-per-entity";
 
   // Header
-  const header = document.createElement('div');
-  header.className = 'hse-costs-header';
-  const title = document.createElement('h3');
-  title.textContent = 'Coûts par capteur';
-  const subtitle = document.createElement('p');
+  const header = document.createElement("div");
+  header.className = "hse-costs-header";
+  const title = document.createElement("h3");
+  title.textContent = "Coûts par capteur";
+  const subtitle = document.createElement("p");
   subtitle.textContent = `${entities.length} capteurs · Triés par coût journalier décroissant`;
   header.appendChild(title);
   header.appendChild(subtitle);
   panel.appendChild(header);
 
   // Barre de recherche
-  const searchBar = document.createElement('div');
-  searchBar.className = 'hse-costs-search';
+  const searchBar = document.createElement("div");
+  searchBar.className = "hse-costs-search";
   searchBar.innerHTML = `
     <input 
       type="text" 
@@ -508,12 +499,12 @@ export function renderCostsPerEntityTable(container, entities) {
   panel.appendChild(searchBar);
 
   // Tableau
-  const tableWrapper = document.createElement('div');
-  tableWrapper.className = 'hse-costs-table-wrapper';
+  const tableWrapper = document.createElement("div");
+  tableWrapper.className = "hse-costs-table-wrapper";
 
-  const table = document.createElement('table');
-  table.className = 'hse-costs-table';
-  table.id = 'costsPerEntityTable';
+  const table = document.createElement("table");
+  table.className = "hse-costs-table";
+  table.id = "costsPerEntityTable";
 
   // Header tableau
   table.innerHTML = `
@@ -530,14 +521,14 @@ export function renderCostsPerEntityTable(container, entities) {
     </tbody>
   `;
 
-  const tbody = table.querySelector('#costsPerEntityTableBody');
+  const tbody = table.querySelector("#costsPerEntityTableBody");
 
   // Remplir lignes
-  entities.forEach(entity => {
-    const row = document.createElement('tr');
-    row.className = 'hse-costs-tr';
-    row.setAttribute('data-entity-id', entity.entity_id);
-    row.setAttribute('data-display-name', entity.display_name.toLowerCase());
+  entities.forEach((entity) => {
+    const row = document.createElement("tr");
+    row.className = "hse-costs-tr";
+    row.setAttribute("data-entity-id", entity.entity_id);
+    row.setAttribute("data-display-name", entity.display_name.toLowerCase());
 
     row.innerHTML = `
       <td class="hse-costs-td">
@@ -559,20 +550,20 @@ export function renderCostsPerEntityTable(container, entities) {
   container.appendChild(panel);
 
   // Event listener recherche
-  const searchInput = document.getElementById('costsSearchInput');
+  const searchInput = document.getElementById("costsSearchInput");
   if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
+    searchInput.addEventListener("input", (e) => {
       const query = e.target.value.toLowerCase().trim();
-      const rows = tbody.querySelectorAll('.hse-costs-tr');
+      const rows = tbody.querySelectorAll(".hse-costs-tr");
 
-      rows.forEach(row => {
-        const name = row.getAttribute('data-display-name') || '';
-        const entityId = row.getAttribute('data-entity-id') || '';
+      rows.forEach((row) => {
+        const name = row.getAttribute("data-display-name") || "";
+        const entityId = row.getAttribute("data-entity-id") || "";
 
         if (name.includes(query) || entityId.includes(query)) {
-          row.style.display = '';
+          row.style.display = "";
         } else {
-          row.style.display = 'none';
+          row.style.display = "none";
         }
       });
     });
