@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════════════════════════════
    HSE — AURORA THEME OVERRIDES (UI TOKENS)
-   Objectif: pousser Aurora « au max » tout en gardant une excellente lisibilité.
+   Objectif: pousser le thème Aurora « au max » uniquement via tokens.
    IMPORTANT: aucun style module ici — uniquement des overrides de variables.
    ════════════════════════════════════════════════════════════════════════════ */
 
@@ -24,51 +24,17 @@ html[data-theme="aurora"] {
   --hse-value-accent-color: #22d3ee;
 
   /* ───────────────────────────────────────────────────────────────────────
-     Lisibilité (contraste)
-     -> Aurora de base est très lumineux + glass très transparent.
-     -> Ici on assombrit les surfaces et on calme le fond animé.
-     ─────────────────────────────────────────────────────────────────────── */
-
-  /* 1) Calmer l'aurora derrière le contenu */
-  --hse-bg-opacity: 0.55;
-  --hse-bg-blur: 90px;
-  --hse-grain-opacity: 0.06;
-
-  /* 2) Glass plus sombre (contraste ++ avec texte clair) */
-  --hse-surface: rgba(8, 10, 22, 0.55);
-  --hse-surface-muted: rgba(8, 10, 22, 0.42);
-  --hse-surface-elevated: rgba(8, 10, 22, 0.62);
-
-  --hse-surface-glass: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.10) 0%,
-    rgba(8,10,22,0.48) 45%,
-    rgba(8,10,22,0.62) 100%
-  );
-
-  /* 3) Texte : un poil plus "ink" */
-  --hse-text-main: rgba(245,248,255,0.98);
-  --hse-text-muted: rgba(245,248,255,0.78);
-  --hse-text-soft: rgba(245,248,255,0.62);
-  --hse-text: var(--hse-text-main);
-
-  /* 4) Bordures un peu plus présentes */
-  --hse-border: rgba(255,255,255,0.16);
-  --hse-border-soft: rgba(255,255,255,0.12);
-  --hse-border-strong: rgba(255,255,255,0.22);
-
-  /* ───────────────────────────────────────────────────────────────────────
      Panels : glass + profondeur + spacing
      ─────────────────────────────────────────────────────────────────────── */
   --hse-panel-radius: var(--hse-radius-xl);
   --hse-panel-padding: 18px;
   --hse-panel-shadow: var(--hse-shadow-lg);
 
-  /* Bordure panel (style "verre") */
-  --hse-panel-border: 1px solid rgba(255,255,255,0.14);
+  /* Bordure plus fine (style "verre") */
+  --hse-panel-border: 1px solid rgba(255,255,255,0.12);
 
   /* Hover un peu plus magique (utilisé par Summary) */
-  --hse-hover: rgba(124, 58, 237, 0.16);
+  --hse-hover: rgba(124, 58, 237, 0.14);
 
   /* ───────────────────────────────────────────────────────────────────────
      Tables : header gradient + texte lisible
@@ -76,4 +42,8 @@ html[data-theme="aurora"] {
   --hse-table-header-bg: var(--hse-gradient-header);
   --hse-table-header-color: var(--hse-on-header);
   --hse-table-header-weight: 900;
+
+  /* Fix ciblé: texte du tableau "Coûts par capteur" (tbody) */
+  --hse-table-body-color: rgba(15, 23, 42, 0.92);
+  --hse-table-body-muted-color: rgba(15, 23, 42, 0.65);
 }

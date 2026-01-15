@@ -52,7 +52,6 @@
   font-weight: var(--hse-font-weight-title, 700);
 }
 
-.hse-costs-value,
 .hse-top-consumers-power {
   font-weight: var(--hse-font-weight-strong, 600);
 }
@@ -71,6 +70,17 @@
   background: var(--hse-table-header-bg, var(--hse-surface));
   color: var(--hse-table-header-color, var(--hse-text));
   font-weight: var(--hse-table-header-weight, 700);
+}
+
+/* Table body tokens (uniquement le tableau "Coûts par capteur") */
+.hse-costs-table .hse-costs-td,
+.hse-costs-table .hse-costs-entity-name,
+.hse-costs-table .hse-costs-td-number {
+  color: var(--hse-table-body-color, var(--hse-text));
+}
+
+.hse-costs-table .hse-costs-entity-meta {
+  color: var(--hse-table-body-muted-color, var(--hse-text-muted));
 }
 
 /* Nombres : font-family contrôlé par thème */

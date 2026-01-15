@@ -29,6 +29,10 @@
   --hse-table-header-color: var(--hse-text);
   --hse-table-header-weight: var(--hse-font-weight-title);
 
+  /* Table body (cells) */
+  --hse-table-body-color: var(--hse-text);
+  --hse-table-body-muted-color: var(--hse-text-muted);
+
   /* Accent valeurs */
   --hse-value-accent-color: var(--hse-primary);
 }
