@@ -1,0 +1,19 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   HSE — AURORA THEME OVERRIDES (UI TOKENS)
+   Objectif: prouver que la "magie" vient du thème via les tokens UI/typo.
+   Ce fichier ne contient que des overrides de variables.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+html[data-theme="aurora"] {
+  /* Tables: headers plus "premium" (gradient + texte lisible) */
+  --hse-table-header-bg: var(--hse-gradient-header);
+  --hse-table-header-color: var(--hse-on-header);
+  --hse-table-header-weight: 800;
+
+  /* Nombres: look plus technique (monospace) */
+  --hse-number-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Panels: plus de profondeur (si tu veux un rendu glass plus marqué) */
+  --hse-panel-shadow: var(--hse-shadow-md);
+  --hse-panel-border: 1px solid var(--hse-border-soft);
+}
