@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════════════════════════════════════
    HSE CORE CSS
    - Styles globaux (reset, layout, base page)
-   - Ne doit pas contenir de styles spécifiques à une feature.
+   - Ne doit pas contenir de styles spécifiques à une feature ni composants.
    - Consume uniquement des tokens (vars --hse-*) fournis par:
      - style.hse.tokens.ui.css (base)
      - style.hse.themes.v3.css (thèmes)
@@ -74,31 +74,6 @@ button, input, select, textarea {
   color: var(--hse-text);
 }
 
-/* Cards (container principal) */
-.card {
-  background: var(--hse-surface);
-  border: 1px solid var(--hse-border);
-  border-radius: 12px;
-  box-shadow: var(--hse-shadow-sm);
-  padding: 16px;
-}
-
-/* Panels (sections internes) */
-.hse-panel {
-  background: var(--hse-surface);
-  border: 1px solid var(--hse-border);
-  border-radius: 12px;
-  box-shadow: var(--hse-shadow-sm);
-}
-
-.hse-panel-accent {
-  border-color: var(--hse-border-soft);
-}
-
-.hse-panel-muted {
-  background: var(--hse-bg-secondary);
-}
-
 /* Helpers utilisés dans index.html */
 .hse-flex-1 { flex: 1; }
 .hse-mt-10 { margin-top: 10px; }
@@ -110,5 +85,4 @@ button, input, select, textarea {
 @media (max-width: 768px) {
   .hse-header { padding: 14px 14px 8px; }
   .tab-content { padding: 0 14px 18px; }
-  .card { padding: 14px; }
 }
