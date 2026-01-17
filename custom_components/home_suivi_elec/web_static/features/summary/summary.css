@@ -217,7 +217,8 @@
 
 #cacheStatsContent { color: var(--hse-text); }
 
-#cacheStatsContent > div {
+/* Utiliser une classe dédiée plutôt que du style inline (tokens-first) */
+.hse-cache-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 8px;
@@ -365,8 +366,6 @@
   .hse-loader-text { font-size: 1rem; }
 
   .hse-cache-badge { font-size: 0.65rem; padding: 1px 4px; }
-  #cacheStatsContent > div { grid-template-columns: 1fr; }
-
   .hse-top-consumers-grid { grid-template-columns: 1fr; }
 }
 
