@@ -244,6 +244,12 @@ async function toggleCacheStats() {
   const panel = document.getElementById("cacheStatsPanel");
   const content = document.getElementById("cacheStatsContent");
 
+  // Sécurité: certains layouts n'affichent pas ce panneau
+  if (!panel || !content) {
+    console.warn("[cache] cacheStatsPanel/cacheStatsContent introuvable");
+    return;
+  }
+
   if (panel.style.display === "block") {
     panel.style.display = "none";
     return;
@@ -259,7 +265,7 @@ async function toggleCacheStats() {
     if (result && result.error === false && result.data && result.data.stats) {
       const stats = result.data.stats;
       content.innerHTML = `
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:8px;">
+        <div class="hse-cache-stats-grid">
           <div><strong>Total entrées:</strong> ${stats.total_entries}</div>
           <div><strong>Fraîches (&lt;1min):</strong> ${stats.entries_by_age.fresh}</div>
           <div><strong>Valides (1-5min):</strong> ${stats.entries_by_age.valid}</div>
