@@ -1,0 +1,114 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   HSE CORE CSS
+   - Styles globaux (reset, layout, base page)
+   - Ne doit pas contenir de styles spécifiques à une feature.
+   - Consume uniquement des tokens (vars --hse-*) fournis par:
+     - style.hse.tokens.ui.css (base)
+     - style.hse.themes.v3.css (thèmes)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────────────────────
+   RESET / BASE
+   ──────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--hse-font-family);
+  color: var(--hse-text);
+  background: var(--hse-bg, var(--hse-bg-secondary));
+  line-height: 1.45;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+/* Focus visible (accessibilité) */
+:focus-visible {
+  outline: 2px solid var(--hse-primary);
+  outline-offset: 2px;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   PAGE LAYOUT
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-header {
+  padding: 18px 20px 10px;
+}
+
+.hse-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--hse-text);
+}
+
+/* Contenu d’onglet */
+.tab-content {
+  display: none;
+  padding: 0 20px 24px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Titres de page */
+.tab-content h2 {
+  margin: 12px 0 12px;
+  color: var(--hse-text);
+}
+
+/* Cards (container principal) */
+.card {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: 12px;
+  box-shadow: var(--hse-shadow-sm);
+  padding: 16px;
+}
+
+/* Panels (sections internes) */
+.hse-panel {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: 12px;
+  box-shadow: var(--hse-shadow-sm);
+}
+
+.hse-panel-accent {
+  border-color: var(--hse-border-soft);
+}
+
+.hse-panel-muted {
+  background: var(--hse-bg-secondary);
+}
+
+/* Helpers utilisés dans index.html */
+.hse-flex-1 { flex: 1; }
+.hse-mt-10 { margin-top: 10px; }
+
+/* ────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .hse-header { padding: 14px 14px 8px; }
+  .tab-content { padding: 0 14px 18px; }
+  .card { padding: 14px; }
+}
