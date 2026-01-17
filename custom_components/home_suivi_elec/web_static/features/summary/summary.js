@@ -18,8 +18,8 @@ import {
   updateContractInfo,
   toggleDataVisibility,
   renderLiveTopConsumers,
-  renderCostsGlobalPanel,        // ← NOUVEAU
-  renderCostsPerEntityTable       // ← NOUVEAU
+  renderCostsGlobalPanel,
+  renderCostsPerEntityTable,
 } from "./summary.view.js";
 import { LoadingManager, showCacheBadge } from "./logic/summary.loader.js";
 import { formatKwh, formatEuro } from "../../shared/utils/formatters.js";
@@ -31,12 +31,7 @@ const loader = new LoadingManager();
 /**
  * Appelle le backend pour calculer les métriques
  */
-async function calculateMetrics(
-  entityIds,
-  periods,
-  pricingConfig,
-  externalId = null
-) {
+async function calculateMetrics(entityIds, periods, pricingConfig, externalId = null) {
   const result = await httpClient.post(
     "/api/home_suivi_elec/config/calculate_summary",
     {
@@ -87,7 +82,8 @@ function renderMetricsTable(tableId, metricsData, tableType = "internal") {
       <td class="summary-cost-ht">${formatEuro(data.cost_ht ?? data.total_ht ?? 0)}</td>
       <td class="summary-cost-ttc">${formatEuro(data.cost_ttc ?? data.total_ttc ?? 0)}</td>
       <td class="summary-total-ht">${formatEuro(data.total_ht)}</td>
-      <td class="summary-total-ttc summary-total-highlight">${formatEuro(data.total_ttc)}</td>    `;
+      <td class="summary-total-ttc summary-total-highlight">${formatEuro(data.total_ttc)}</td>
+    `;
     tbody.appendChild(row);
   });
 }
@@ -132,25 +128,18 @@ export async function loadSummary() {
     // ✅ Stats en haut (temps réel)
     const externalId =
       data.options?.use_external && data.options.mode === "sensor"
-        ? data.options.external_capteur: null;
+        ? data.options.external_capteur
+        : null;
 
     updateSensorStats(data.sensors, selectedIds);
 
-    const internalPower = calculateInternalPower(
-      selectedIds,
-      data.instant,
-      externalId
-    );
-    const externalData = calculateExternalConsumption(
-      data.options,
-      data.instant,
-      data.sensors
-    );
+    const internalPower = calculateInternalPower(selectedIds, data.instant, externalId);
+    const externalData = calculateExternalConsumption(data.options, data.instant, data.sensors);
     updateInstantPower(internalPower, externalData, data.options);
     updateContractInfo(data.options);
-    
+
     // 🔍 Top consommateurs live
-    const homeContainer = document.getElementById("summaryCard"); 
+    const homeContainer = document.getElementById("summaryCard");
     try {
       const topData = selectTopLiveConsumers(data.instant, data.sensors);
       renderLiveTopConsumers(homeContainer, topData);
@@ -173,66 +162,32 @@ export async function loadSummary() {
 
     // Config pricing
     const pricingConfig = {
-      type_contrat:
-        data.options?.type_contrat || data.options?.type_contrat || "fixe",
-      prix_ht: parseFloat(
-        data.options?.prix_ht || data.options?.prixht || 0.2516
-      ),
-      prix_ttc: parseFloat(
-        data.options?.prix_ttc || data.options?.prixttc || 0.276
-      ),
-      abonnement_ht: parseFloat(
-        data.options?.abonnement_ht ||
-          data.options?.abonnement_ht ||
-          12.44
-      ),
-      abonnement_ttc: parseFloat(
-        data.options?.abonnement_ttc ||
-          data.options?.abonnement_ttc ||
-          13.48
-      ),
+      type_contrat: data.options?.type_contrat || data.options?.type_contrat || "fixe",
+      prix_ht: parseFloat(data.options?.prix_ht || data.options?.prixht || 0.2516),
+      prix_ttc: parseFloat(data.options?.prix_ttc || data.options?.prixttc || 0.276),
+      abonnement_ht: parseFloat(data.options?.abonnement_ht || data.options?.abonnement_ht || 12.44),
+      abonnement_ttc: parseFloat(data.options?.abonnement_ttc || data.options?.abonnement_ttc || 13.48),
       hp: data.options?.hp || {},
       hc: data.options?.hc || {},
     };
 
     const periods = ["hourly", "daily", "weekly", "monthly", "yearly"];
 
-    loader.updateProgress(
-      60,
-      "Appel au moteur de calcul...",
-      "Utilisation du cache si disponible"
-    );
+    loader.updateProgress(60, "Appel au moteur de calcul...", "Utilisation du cache si disponible");
 
     console.log("[summary] 💰 Appel backend calculate_summary...");
-    const metricsResult = await calculateMetrics(
-      selectedIds,
-      periods,
-      pricingConfig,
-      externalId
-    );
+    const metricsResult = await calculateMetrics(selectedIds, periods, pricingConfig, externalId);
 
     loader.updateProgress(80, "Rendu des tableaux...");
 
     console.log("[summary] ✅ Métriques reçues:", metricsResult);
 
     // Remplir les tableaux
-    renderMetricsTable(
-      "summaryInternalSensors",
-      metricsResult.internal,
-      "internal"
-    );
+    renderMetricsTable("summaryInternalSensors", metricsResult.internal, "internal");
 
     if (hasExternal) {
-      renderMetricsTable(
-        "summaryExternalSensors",
-        metricsResult.external,
-        "external"
-      );
-      renderMetricsTable(
-        "summaryDeltaSensors",
-        metricsResult.delta,
-        "delta"
-      );
+      renderMetricsTable("summaryExternalSensors", metricsResult.external, "external");
+      renderMetricsTable("summaryDeltaSensors", metricsResult.delta, "delta");
     }
 
     // 📊 Coûts globaux + par capteur (APRÈS les tableaux de métriques)
@@ -240,7 +195,7 @@ export async function loadSummary() {
 
     try {
       const costsData = await getCostsOverview();
-      
+
       if (costsData && costsData.data && costsData.data.global && costsData.data.per_entity) {
         renderCostsGlobalPanel(homeContainer, costsData.data.global);
         renderCostsPerEntityTable(homeContainer, costsData.data.per_entity);
@@ -256,7 +211,6 @@ export async function loadSummary() {
 
     loader.updateProgress(100, "✅ Chargement terminé !");
     setTimeout(() => loader.hide(), 500);
-
 
     console.log("[summary] ✅ Chargement terminé");
   } catch (error) {
@@ -342,11 +296,7 @@ export function initSummaryEvents() {
   const clearCacheBtn = document.getElementById("clearCache");
   if (clearCacheBtn && !clearCacheBtn.hasAttribute("data-bound")) {
     clearCacheBtn.addEventListener("click", async () => {
-      if (
-        confirm(
-          "Vider le cache ? Les prochains calculs seront plus lents."
-        )
-      ) {
+      if (confirm("Vider le cache ? Les prochains calculs seront plus lents.")) {
         await clearCache();
         await loadSummary(); // Recharger
       }
