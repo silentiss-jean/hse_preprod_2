@@ -1,0 +1,175 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   HSE COMPONENTS CSS
+   - Composants UI réutilisables (boutons, tabs, panels/cards)
+   - Consume uniquement des tokens (vars --hse-*)
+   - Note: certains styles peuvent recouvrir ceux de style.hse.core.css.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────────────────────
+   BUTTONS
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--hse-border);
+  background: var(--hse-surface);
+  color: var(--hse-text);
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: var(--hse-shadow-sm);
+  transition:
+    transform var(--hse-transition-base),
+    box-shadow var(--hse-transition-base),
+    background var(--hse-transition-base),
+    border-color var(--hse-transition-base),
+    color var(--hse-transition-base);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--hse-shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: var(--hse-shadow-sm);
+}
+
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--hse-gradient-primary, var(--hse-primary));
+  border-color: transparent;
+  color: var(--hse-on-accent, #ffffff);
+}
+
+.btn-secondary {
+  background: var(--hse-surface);
+}
+
+/* Layout boutons (index.html) */
+.hse-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0 14px;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   TABS
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.subtab-btn {
+  appearance: none;
+  border: 1px solid var(--hse-border);
+  background: var(--hse-surface);
+  color: var(--hse-text);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: var(--hse-shadow-sm);
+  transition:
+    transform var(--hse-transition-base),
+    box-shadow var(--hse-transition-base),
+    background var(--hse-transition-base),
+    border-color var(--hse-transition-base),
+    color var(--hse-transition-base);
+}
+
+.subtab-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--hse-shadow-md);
+}
+
+.subtab-btn.active {
+  background: var(--hse-gradient-header, var(--hse-primary));
+  border-color: transparent;
+  color: var(--hse-on-header, #ffffff);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   PANELS / CARDS (composants)
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.card,
+.hse-card {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: 12px;
+  box-shadow: var(--hse-shadow-sm);
+  padding: 16px;
+}
+
+.hse-panel {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: 12px;
+  box-shadow: var(--hse-shadow-sm);
+}
+
+.hse-panel-accent {
+  border-color: var(--hse-border-soft);
+}
+
+.hse-panel-muted {
+  background: var(--hse-bg-secondary);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   TEXT / LINKS
+   ──────────────────────────────────────────────────────────────────────────── */
+
+a {
+  color: var(--hse-primary);
+  text-decoration: none;
+}
+
+a:hover { text-decoration: underline; }
+
+abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   SCROLLBAR (optionnel, safe)
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@supports selector(::-webkit-scrollbar) {
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: var(--hse-scroll-track, var(--hse-bg-secondary)); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--hse-scroll-thumb, var(--hse-border-strong));
+    border-radius: 999px;
+    border: 3px solid var(--hse-scroll-track, var(--hse-bg-secondary));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--hse-scroll-thumb-hov, var(--hse-text-muted));
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .hse-tabs { gap: 8px; }
+  .subtab-btn { padding: 9px 12px; }
+  .btn { padding: 9px 12px; }
+}
