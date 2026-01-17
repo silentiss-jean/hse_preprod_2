@@ -2,7 +2,6 @@
    HSE COMPONENTS CSS
    - Composants UI réutilisables (boutons, tabs, panels/cards)
    - Consume uniquement des tokens (vars --hse-*)
-   - Note: certains styles peuvent recouvrir ceux de style.hse.core.css.
    ════════════════════════════════════════════════════════════════════════════ */
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -56,6 +55,20 @@
   background: var(--hse-surface);
 }
 
+/* Variants (feature-specific hooks should live in feature css)
+   Here: generic semantic button accents used by multiple features. */
+.btn-warn {
+  background: var(--hse-gradient-warning);
+  border-color: transparent;
+  color: var(--hse-on-accent, #ffffff);
+}
+
+.btn-info {
+  background: var(--hse-gradient-info);
+  border-color: transparent;
+  color: var(--hse-on-accent, #ffffff);
+}
+
 /* Layout boutons (index.html) */
 .hse-actions-row {
   display: flex;
@@ -107,6 +120,15 @@
    PANELS / CARDS (composants)
    ──────────────────────────────────────────────────────────────────────────── */
 
+.hse-surface-card {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: 12px;
+  box-shadow: var(--hse-shadow-sm);
+  padding: 16px;
+  color: var(--hse-text);
+}
+
 .card,
 .hse-card {
   background: var(--hse-surface);
@@ -129,6 +151,33 @@
 
 .hse-panel-muted {
   background: var(--hse-bg-secondary);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   BADGES
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-badge {
+  display: inline-block;
+  background: var(--hse-surface);
+  color: var(--hse-text);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--hse-border-soft);
+  vertical-align: middle;
+  box-shadow: var(--hse-shadow-sm);
+}
+
+.hse-badge-help {
+  cursor: help;
+  transition: transform var(--hse-transition-base), box-shadow var(--hse-transition-base);
+}
+
+.hse-badge-help:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--hse-shadow-md);
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -172,4 +221,5 @@ abbr[title] {
   .hse-tabs { gap: 8px; }
   .subtab-btn { padding: 9px 12px; }
   .btn { padding: 9px 12px; }
+  .hse-surface-card { padding: 14px; }
 }
