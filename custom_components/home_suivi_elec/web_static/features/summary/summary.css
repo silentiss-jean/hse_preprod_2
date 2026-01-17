@@ -375,12 +375,7 @@
    ============================================ */
 
 .hse-costs-global-panel {
-  background: var(--hse-surface);
-  border-radius: 12px;
-  padding: 16px;
   margin: 16px 0;
-  box-shadow: var(--hse-shadow-sm);
-  border: 1px solid var(--hse-border);
 }
 
 .hse-costs-header {
@@ -408,11 +403,6 @@
 }
 
 .hse-costs-card {
-  background: var(--hse-surface);
-  border-radius: 10px;
-  padding: 14px 16px;
-  box-shadow: var(--hse-shadow-sm);
-  border: 1px solid var(--hse-border);
   transition: transform var(--hse-transition-base), box-shadow var(--hse-transition-base);
 }
 
@@ -487,12 +477,7 @@
    ============================================ */
 
 .hse-costs-per-entity {
-  background: var(--hse-surface);
-  border-radius: 12px;
-  padding: 16px;
   margin: 16px 0;
-  box-shadow: var(--hse-shadow-sm);
-  border: 1px solid var(--hse-border);
 }
 
 .hse-costs-search { margin: 12px 0 16px 0; }
