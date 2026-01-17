@@ -265,30 +265,6 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   BOUTONS ACTIONS
-   ──────────────────────────────────────────────────────────────────────────── */
-
-.btn-cache-clear,
-.btn-cache-stats {
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform var(--hse-transition-base), box-shadow var(--hse-transition-base);
-  font-weight: 600;
-  color: var(--hse-tooltip-text);
-}
-
-.btn-cache-clear { background: var(--hse-gradient-warning); }
-.btn-cache-stats { background: var(--hse-gradient-info); }
-
-.btn-cache-clear:hover,
-.btn-cache-stats:hover {
-  box-shadow: var(--hse-shadow-md);
-  transform: translateY(-1px);
-}
-
-/* ────────────────────────────────────────────────────────────────────────────
    TOP CONSOMMATEURS (LIVE)
    ─────────────────────────────────────────────────────────────────────────── */
 
