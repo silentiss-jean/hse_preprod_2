@@ -270,11 +270,6 @@
 
 .hse-top-consumers {
   margin-top: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  background: var(--hse-surface);
-  border: 1px solid var(--hse-border);
-  box-shadow: var(--hse-shadow-sm);
 }
 
 .hse-top-consumers-header {
@@ -591,17 +586,6 @@
 @media (max-width: 900px){
   .hse-summary-top-grid{ grid-template-columns:1fr; }
 }
-
-/* Cartes lisibles sur tous thèmes */
-.hse-summary-card{
-  background: var(--hse-surface);
-  border: 1px solid var(--hse-border);
-  border-radius: 10px;
-  box-shadow: var(--hse-shadow-sm);
-  padding: 14px 16px;
-  color: var(--hse-text);
-}
-.hse-summary-card h3{ margin:0 0 10px 0; color: var(--hse-text); }
 
 .hse-banner{
   background: var(--hse-surface);
