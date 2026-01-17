@@ -6,6 +6,7 @@
  */
 
 import { renderSummaryTables } from "./logic/tableRenderer.js";
+import { showCacheBadge } from "./logic/summary.loader.js";
 
 /**
  * Utilitaire pour définir le texte d'un élément
@@ -421,10 +422,8 @@ export function renderCostsGlobalPanel(container, globalData) {
     const card = document.createElement("div");
     card.className = "hse-costs-card hse-surface-card";
 
-    // Badge cache si applicable
-    const cacheBadge = data.from_cache
-      ? `<span class="hse-cache-badge">Cache (${Math.round(data.cached_age)}s)</span>`
-      : "";
+    // Badge cache si applicable (utilitaire partagé)
+    const cacheBadge = showCacheBadge(!!data.from_cache, Number(data.cached_age || 0));
 
     card.innerHTML = `
       <div class="hse-costs-card-header">
