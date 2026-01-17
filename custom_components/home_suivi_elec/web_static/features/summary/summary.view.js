@@ -216,7 +216,7 @@ export function renderLiveTopConsumers(container, topData) {
   }
 
   const panel = document.createElement("div");
-  panel.className = "hse-top-consumers";
+  panel.className = "hse-top-consumers hse-surface-card";
 
   const header = document.createElement("div");
   header.className = "hse-top-consumers-header";
