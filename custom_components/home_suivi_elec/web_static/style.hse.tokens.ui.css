@@ -1,38 +1,61 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   HOME SUIVI ÉLEC — UI / TYPO TOKENS (v1)
-   Objectif: centraliser les choix "design" (typo, panels, tables) en tokens.
-   Les modules doivent consommer ces variables via var(...).
-   Les thèmes peuvent ensuite les surcharger (dans style.hse.themes.v3.css).
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════════════
+   HSE UI TOKENS (base)
+   - Base neutre: les thèmes (style.hse.themes.v3.css) doivent surcharger ces vars.
+   - Objectif: summary.css (et le reste) ne contient plus de couleurs hardcodées.
+   ════════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* Typo */
-  --hse-font-size-title: 1.1rem;
-  --hse-font-size-body: 0.9rem;
-  --hse-font-size-muted: 0.85rem;
+  /* Typography */
+  --hse-font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --hse-mono-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  --hse-font-weight-title: 700;
-  --hse-font-weight-body: 500;
-  --hse-font-weight-strong: 600;
+  /* Text */
+  --hse-text: #1f2937;
+  --hse-text-main: var(--hse-text);
+  --hse-text-muted: #6b7280;
 
-  /* Nombres (tableaux / valeurs) */
-  --hse-number-font-family: inherit;
+  /* Surfaces */
+  --hse-surface: #ffffff;
+  --hse-bg-secondary: #f3f4f6;
 
-  /* Panels / cards */
-  --hse-panel-radius: var(--hse-radius-lg);
-  --hse-panel-padding: 16px;
-  --hse-panel-shadow: var(--hse-shadow-sm);
-  --hse-panel-border: 1px solid var(--hse-border);
+  /* Borders */
+  --hse-border: #e5e7eb;
+  --hse-border-soft: #eef2f7;
+  --hse-border-strong: #cbd5e1;
 
-  /* Table headers */
-  --hse-table-header-bg: var(--hse-surface);
-  --hse-table-header-color: var(--hse-text);
-  --hse-table-header-weight: var(--hse-font-weight-title);
+  /* Brand / accents */
+  --hse-primary: #2563eb;
+  --hse-primary-dark: #1d4ed8;
+  --hse-accent: #7c3aed;
+  --hse-hover: rgba(37, 99, 235, 0.08);
 
-  /* Table body (cells) */
-  --hse-table-body-color: var(--hse-text);
-  --hse-table-body-muted-color: var(--hse-text-muted);
+  /* Semantic colors */
+  --hse-info: #0ea5e9;
+  --hse-success: #16a34a;
+  --hse-warning: #f59e0b;
+  --hse-danger: #ef4444;
+  --hse-error: var(--hse-danger);
 
-  /* Accent valeurs */
-  --hse-value-accent-color: var(--hse-primary);
+  /* Soft semantic backgrounds */
+  --hse-success-soft: rgba(22, 163, 74, 0.12);
+  --hse-warning-soft: rgba(245, 158, 11, 0.16);
+  --hse-accent-soft: rgba(124, 58, 237, 0.12);
+  --hse-danger-soft: rgba(239, 68, 68, 0.12);
+
+  /* Semantic text */
+  --hse-warning-text: #92400e;
+  --hse-tooltip-text: #0b1220;
+
+  /* Gradients (base) */
+  --hse-gradient-info: linear-gradient(135deg, rgba(14,165,233,0.18), rgba(14,165,233,0.08));
+  --hse-gradient-warning: linear-gradient(135deg, rgba(245,158,11,0.22), rgba(245,158,11,0.10));
+
+  /* Shadows */
+  --hse-shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --hse-shadow-md: 0 6px 18px rgba(0,0,0,0.10);
+  --hse-shadow-glow: 0 0 18px rgba(124,58,237,0.18);
+
+  /* Motion */
+  --hse-transition-base: 180ms ease;
+  --hse-transition-fast: 120ms ease;
 }
