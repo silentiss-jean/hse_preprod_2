@@ -316,8 +316,8 @@
   color: var(--hse-text);
 }
 
-.hse-top-consumers-row.level-medium { background: var(--hse-accent-soft); }
-.hse-top-consumers-row.level-high { background: var(--hse-danger-soft); }
+.hse-top-consumers-row.level-medium { background: transparent; }
+.hse-top-consumers-row.level-high { background: transparent; }
 
 .hse-top-consumers-left {
   flex: 1;
