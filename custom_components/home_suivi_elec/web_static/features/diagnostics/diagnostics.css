@@ -41,6 +41,118 @@ Refactor/cleanup + Score Hero isolé
 }
 
 /* ==========================================================================
+   HARMONISATION: HEADER + SOUS-ONGLETS + PANNEAUX
+   (aligné avec le design “harmonisé” du reste de l’UI)
+   ========================================================================== */
+
+.diagnostics-header {
+  padding: 16px 18px;
+  margin-bottom: 12px;
+
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-shadow-sm);
+}
+
+.diagnostics-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--hse-text-main);
+}
+
+.diagnostics-subtitle {
+  margin: 0;
+  color: var(--hse-text-muted);
+  font-size: 0.95em;
+  line-height: 1.35;
+}
+
+.diagnostics-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+
+  padding: 10px;
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-shadow-sm);
+}
+
+.diagnostics-subnav .subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 8px 12px;
+  border-radius: 999px;
+
+  background: var(--hse-surface-elevated);
+  color: var(--hse-text-main);
+  border: 1px solid var(--hse-border-soft);
+
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    background var(--hse-transition-fast),
+    border-color var(--hse-transition-fast),
+    box-shadow var(--hse-transition-fast),
+    transform var(--hse-transition-fast);
+}
+
+.diagnostics-subnav .subtab-btn:hover {
+  background: var(--hse-hover);
+  border-color: var(--hse-border);
+  box-shadow: var(--hse-shadow-sm);
+  transform: translateY(-1px);
+}
+
+.diagnostics-subnav .subtab-btn:active {
+  transform: translateY(0);
+}
+
+.diagnostics-subnav .subtab-btn.active {
+  background: var(--hse-accent);
+  color: var(--hse-tooltip-text);
+  border-color: var(--hse-accent);
+  box-shadow: var(--hse-shadow-md);
+}
+
+/* Harmonisation d’un conteneur “panneau” si les sous-vues utilisent .panel */
+.diagnostics-content .panel,
+.diagnostics-content .diagnostics-panel {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-shadow-sm);
+  padding: 14px;
+}
+
+@media (max-width: 768px) {
+  .diagnostics-header {
+    padding: 14px 14px;
+  }
+
+  .diagnostics-subnav {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .diagnostics-subnav .subtab-btn {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==========================================================================
    CAPTEURS (liste/groupes)
    ========================================================================== */
 
