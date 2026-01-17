@@ -390,7 +390,7 @@ export function renderCostsGlobalPanel(container, globalData) {
   if (existing) existing.remove();
 
   const panel = document.createElement("div");
-  panel.className = "hse-costs-global-panel";
+  panel.className = "hse-costs-global-panel hse-surface-card";
 
   // Header
   const header = document.createElement("div");
@@ -419,7 +419,7 @@ export function renderCostsGlobalPanel(container, globalData) {
     if (!data) return;
 
     const card = document.createElement("div");
-    card.className = "hse-costs-card";
+    card.className = "hse-costs-card hse-surface-card";
 
     // Badge cache si applicable
     const cacheBadge = data.from_cache
@@ -472,7 +472,7 @@ export function renderCostsPerEntityTable(container, entities) {
   if (existing) existing.remove();
 
   const panel = document.createElement("div");
-  panel.className = "hse-costs-per-entity";
+  panel.className = "hse-costs-per-entity hse-surface-card";
 
   // Header
   const header = document.createElement("div");
