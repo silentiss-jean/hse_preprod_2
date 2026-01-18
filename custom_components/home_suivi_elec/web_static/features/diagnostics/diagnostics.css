@@ -136,6 +136,13 @@ Refactor/cleanup + Score Hero isolé
   padding: 14px;
 }
 
+/* Wrapper commun (Option A): layout + espacement cohérents */
+.diagnostics-content .diagnostics-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 @media (max-width: 768px) {
   .diagnostics-header {
     padding: 14px 14px;
