@@ -1,1 +1,150 @@
-/* auto-created by audit phase1: configuration */
+/* configuration.css
+   Harmonisation (comme diagnostics/detection)
+   Objectifs:
+   - fond/contrastes lisibles en dark
+   - pas de couleurs hardcodées
+   - respecter les tokens v3 (style.hse.themes.v3.css)
+*/
+
+:root {
+  /* Variables module (thémables) */
+  --hse-config-panel-bg: var(--hse-surface);
+  --hse-config-panel-border: var(--hse-border);
+  --hse-config-panel-shadow: var(--hse-shadow-sm);
+
+  --hse-config-title: var(--hse-text-main);
+  --hse-config-muted: var(--hse-text-muted);
+
+  --hse-config-input-bg: var(--input-bg, var(--hse-surface));
+  --hse-config-input-border: var(--hse-border-strong);
+  --hse-config-input-text: var(--hse-text-main);
+  --hse-config-input-focus: var(--hse-accent);
+
+  --hse-config-banner-bg: rgba(96, 165, 250, 0.18); /* fallback; surchargé possible via thème */
+  --hse-config-banner-border: rgba(96, 165, 250, 0.35);
+  --hse-config-banner-text: var(--hse-text-main);
+}
+
+/* Wrapper */
+.configuration-layout {
+  width: 100%;
+}
+
+/* Bandeau info ("Les modifications seront appliquées...") */
+.configuration-banner,
+#configuration-banner,
+.config-banner,
+.notice-banner {
+  background: var(--hse-config-banner-bg);
+  border: 1px solid var(--hse-config-banner-border);
+  color: var(--hse-config-banner-text);
+  border-radius: var(--hse-radius-lg);
+  padding: 10px 14px;
+  margin: 12px 0 16px 0;
+}
+
+.configuration-banner a,
+#configuration-banner a,
+.config-banner a,
+.notice-banner a {
+  color: var(--hse-accent);
+}
+
+/* Sections / cards */
+.configuration-section,
+.config-section,
+.tariff-section,
+.runtime-section,
+.card.configuration,
+.configuration-card {
+  background: var(--hse-config-panel-bg);
+  border: 1px solid var(--hse-config-panel-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-config-panel-shadow);
+}
+
+.configuration-section h2,
+.config-section h2,
+.tariff-section h2,
+.runtime-section h2,
+.configuration-section h3,
+.config-section h3 {
+  color: var(--hse-config-title);
+}
+
+.configuration-section p,
+.config-section p,
+.tariff-section p,
+.runtime-section p,
+.configuration-section small,
+.config-section small {
+  color: var(--hse-config-muted);
+}
+
+/* Labels / champs */
+.configuration-section label,
+.config-section label,
+.tariff-section label,
+.runtime-section label {
+  color: var(--hse-config-title);
+  font-weight: 700;
+}
+
+/* Inputs & selects */
+.configuration-section input,
+.configuration-section select,
+.configuration-section textarea,
+.config-section input,
+.config-section select,
+.config-section textarea {
+  background: var(--hse-config-input-bg);
+  color: var(--hse-config-input-text);
+  border: 1px solid var(--hse-config-input-border);
+  border-radius: var(--hse-radius-md);
+  padding: 8px 10px;
+  outline: none;
+}
+
+.configuration-section input:focus,
+.configuration-section select:focus,
+.configuration-section textarea:focus,
+.config-section input:focus,
+.config-section select:focus,
+.config-section textarea:focus {
+  border-color: var(--hse-config-input-focus);
+  box-shadow: 0 0 0 3px var(--hse-accent-soft);
+}
+
+/* Boutons */
+.configuration-section button,
+.config-section button,
+button.save-config,
+button#save-config {
+  background: var(--hse-accent);
+  color: var(--hse-on-accent);
+  border: 1px solid var(--hse-accent-hover);
+  border-radius: var(--hse-radius-md);
+  padding: 8px 12px;
+  transition: background var(--hse-transition-base), transform var(--hse-transition-fast);
+}
+
+.configuration-section button:hover,
+.config-section button:hover,
+button.save-config:hover,
+button#save-config:hover {
+  background: var(--hse-accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Petits chips / badges si présents (ex: "612 capteurs détectés") */
+.configuration-badge,
+.badge,
+.pill {
+  background: var(--hse-accent-soft);
+  color: var(--hse-text-main);
+  border: 1px solid var(--hse-border-soft);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
