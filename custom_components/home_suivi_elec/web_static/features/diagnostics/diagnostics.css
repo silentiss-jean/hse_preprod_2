@@ -51,7 +51,7 @@ Refactor/cleanup + Score Hero isolé
 /* ==========================================================================
    HARMONISATION: HEADER + SOUS-ONGLETS + PANNEAUX
    (aligné avec le design “harmonisé” du reste de l’UI)
-   ==========================================================================
+   ========================================================================== */
 
 .diagnostics-header {
   padding: 16px 18px;
@@ -169,28 +169,46 @@ Refactor/cleanup + Score Hero isolé
 
 /* ==========================================================================
    ... (reste inchangé)
-   ==========================================================================
-
-   IMPORTANT:
-   Le reste du fichier est inchangé dans ce commit, on ajoute uniquement
-   le mode ADMIN PANEL tout en fin de fichier.
-*/
+   ========================================================================== */
 
 /* ==========================================================================
    ADMIN PANEL (dense) — Overview uniquement
    Activé via `.diagnostics-content.diagnostics-ui--admin`
-   ==========================================================================
+   ========================================================================== */
 
+/* 2 colonnes, score full-width en haut */
 .diagnostics-content.diagnostics-ui--admin .overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
   gap: 12px;
+  margin-top: 12px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .diagnostics-content.diagnostics-ui--admin .overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.diagnostics-content.diagnostics-ui--admin .hse-score-card {
+  grid-column: 1 / -1;
 }
 
 .diagnostics-content.diagnostics-ui--admin .overview-grid .card,
 .diagnostics-content.diagnostics-ui--admin .hse-score-card {
-  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.10);
   border-radius: 10px;
   box-shadow: none;
+}
+
+@keyframes hseFadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.diagnostics-content.diagnostics-ui--admin .overview-grid > * {
+  animation: hseFadeUp .18s ease-out both;
 }
 
 .diagnostics-content.diagnostics-ui--admin .overview-grid h3,
@@ -212,21 +230,35 @@ Refactor/cleanup + Score Hero isolé
 .diagnostics-content.diagnostics-ui--admin .component-item,
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 10px;
 
-  padding: 8px 10px;
-  border: 1px solid rgba(0,0,0,.07);
+  padding: 8px 10px 8px 12px;
+  border: 1px solid rgba(0,0,0,.08);
   border-radius: 8px;
-  background: rgba(255,255,255,.70);
+  background: transparent;
+
+  transition:
+    transform .12s ease,
+    background .12s ease,
+    border-color .12s ease;
 }
 
 .diagnostics-content.diagnostics-ui--admin .component-item:hover,
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped:hover,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item:hover {
   background: rgba(0,0,0,.03);
+  border-color: rgba(0,0,0,.16);
+  transform: translateY(-1px);
+}
+
+.diagnostics-content.diagnostics-ui--admin .component-item:active,
+.diagnostics-content.diagnostics-ui--admin .alert-item-grouped:active,
+.diagnostics-content.diagnostics-ui--admin .recommendation-item:active {
+  transform: translateY(0);
 }
 
 .diagnostics-content.diagnostics-ui--admin .component-details,
@@ -236,13 +268,7 @@ Refactor/cleanup + Score Hero isolé
   font-size: 12px;
 }
 
-/* Accent gauche au lieu des gros fonds */
-.diagnostics-content.diagnostics-ui--admin .alert-item-grouped,
-.diagnostics-content.diagnostics-ui--admin .recommendation-item {
-  position: relative;
-  padding-left: 12px;
-}
-
+/* Accent gauche */
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped::before,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item::before {
   content: "";
@@ -268,31 +294,31 @@ Refactor/cleanup + Score Hero isolé
   background: rgba(59, 130, 246, .75);
 }
 
-/* Neutraliser les fonds colorés existants en mode admin */
+/* Enlever les fonds colorés des alertes */
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped.alert-critical,
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped.alert-error,
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped.alert-warning,
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped.alert-info {
-  background: rgba(255,255,255,.70);
+  background: transparent !important;
 }
 
-/* Boutons “Voir” plus sobres */
 .diagnostics-content.diagnostics-ui--admin .alert-action-btn,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item button {
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(0,0,0,.12);
+  border: 1px solid rgba(0,0,0,.14);
   background: transparent;
+  transition: background .12s ease, border-color .12s ease;
 }
 
 .diagnostics-content.diagnostics-ui--admin .alert-action-btn:hover,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item button:hover {
   background: rgba(0,0,0,.04);
+  border-color: rgba(0,0,0,.22);
 }
 
-/* HERO: moins de vide */
 .diagnostics-content.diagnostics-ui--admin .hse-score-hero {
-  padding: 12px;
+  padding: 14px;
 }
 
 .diagnostics-content.diagnostics-ui--admin .score-card-content {
@@ -302,5 +328,5 @@ Refactor/cleanup + Score Hero isolé
 .diagnostics-content.diagnostics-ui--admin .score-description {
   margin-top: 6px;
   font-size: 12px;
-  color: rgba(0,0,0,.62) !important;
+  color: rgba(0,0,0,.72) !important;
 }
