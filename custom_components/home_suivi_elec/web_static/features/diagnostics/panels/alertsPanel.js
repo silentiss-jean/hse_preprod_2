@@ -16,6 +16,26 @@ import { Card } from '../../../shared/components/Card.js';
 console.info('[alertsPanel] Module chargé');
 
 /**
+ * Navigation interne (hash) robuste : déclenche aussi l'event hashchange.
+ */
+function navigateToHash(targetHash) {
+  if (!targetHash) return;
+
+  // Normaliser: accepter "#..." ou "diagnostics?..."
+  const normalized = targetHash.startsWith('#') ? targetHash : `#${targetHash}`;
+
+  // Si c'est le même hash, on force quand même l'event pour que le routeur réagisse.
+  const shouldForce = window.location.hash === normalized;
+
+  window.location.hash = normalized;
+
+  if (shouldForce) {
+    // Certains routeurs n'écoutent pas le set hash "identique"
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
+  }
+}
+
+/**
  * Point d'entrée principal
  */
 export async function loadAlertsPanel(container) {
@@ -41,7 +61,7 @@ export async function loadAlertsPanel(container) {
     // Render
     renderAlertsInterface(container, alerts);
 
-    const severity = alerts.length === 0 ? 'success' : 
+    const severity = alerts.length === 0 ? 'success' :
                     alerts.some(a => a.severity === 'critical') ? 'error' : 'warning';
     showToast(
       alerts.length === 0 ? 'Aucune alerte' : `${alerts.length} alerte(s) détectée(s)`,
@@ -125,7 +145,7 @@ function renderAlertsInterface(container, alerts) {
  */
 function renderAlertCard(alert) {
   const severityClass = `alert-${alert.severity}`;
-  
+
   const alertDiv = createElement('div', { class: `alert-card ${severityClass}` });
 
   // Header
@@ -139,7 +159,7 @@ function renderAlertCard(alert) {
   const description = createElement('p', { class: 'alert-description' }, [alert.description]);
 
   // Détails supplémentaires (si présents)
-  const details = alert.details 
+  const details = alert.details
     ? createElement('div', { class: 'alert-details' }, [
         createElement('small', {}, [alert.details])
       ])
@@ -151,7 +171,7 @@ function renderAlertCard(alert) {
         alert.action.label,
         () => {
           if (alert.action.url) {
-            window.location.href = alert.action.url;
+            navigateToHash(alert.action.url);
           } else if (alert.action.callback) {
             alert.action.callback();
           }
@@ -195,13 +215,13 @@ function renderAlertsFallback(container, error) {
  */
 function buildAlerts(groupsData, sensorsData) {
   const alerts = [];
-  
+
   // Protection: vérifier que groupsData est valide
   if (!groupsData || typeof groupsData !== 'object') {
     console.warn('[buildAlerts] groupsData invalide:', groupsData);
     return alerts;
   }
-  
+
   // Sécuriser stats
   const stats = groupsData.stats || {};
 
@@ -218,7 +238,7 @@ function buildAlerts(groupsData, sensorsData) {
         url: '#configuration'
       }
     });
-    
+
     // Si pas de parents, inutile de continuer l'analyse
     return alerts;
   }
@@ -340,9 +360,9 @@ function buildAlerts(groupsData, sensorsData) {
  */
 function countDuplicates(sensorsData) {
   if (!sensorsData) return 0;
-  
+
   let count = 0;
-  
+
   // Parcourir les alternatives pour détecter les doublons
   Object.values(sensorsData.alternatives || {}).forEach(sensors => {
     if (Array.isArray(sensors)) {
@@ -367,4 +387,3 @@ function getSeverityVariant(severity) {
   };
   return variants[severity] || 'secondary';
 }
-
