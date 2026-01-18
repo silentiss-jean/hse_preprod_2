@@ -312,6 +312,21 @@ Refactor/cleanup + Score Hero isolé
   background: transparent !important;
 }
 
+/* 
+  FIX: onglet Alertes (rendu harmonisé)
+  Supprime les fonds colorés des cartes `.alert-card`/`.alert-item` + variantes.
+*/
+.diagnostics-content .alert-card,
+.diagnostics-content .alert-item,
+.diagnostics-content .recommendations-list .alert-card,
+.diagnostics-content .recommendations-list .alert-item,
+.diagnostics-content .alert-critical,
+.diagnostics-content .alert-error,
+.diagnostics-content .alert-warning,
+.diagnostics-content .alert-info {
+  background: transparent !important;
+}
+
 .diagnostics-content.diagnostics-ui--admin .alert-action-btn,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item button {
   padding: 6px 10px;
