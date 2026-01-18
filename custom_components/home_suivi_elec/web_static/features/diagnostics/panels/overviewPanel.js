@@ -20,6 +20,9 @@ export async function loadOverviewPanel(container) {
   try {
     console.log('[overviewPanel] Chargement...');
 
+    // Opt-in : activer le mode “admin panel (dense)” uniquement pour l'overview
+    container.classList.add('diagnostics-ui--admin');
+
     container.innerHTML = '';
     container.appendChild(createElement('div', { class: 'loading-state' }, [
       createElement('div', { class: 'spinner' }),
