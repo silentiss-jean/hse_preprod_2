@@ -372,6 +372,7 @@
   display: block;
   color: var(--text-primary);
   font-size: 0.95rem;
+  font-weight: 800;
 }
 
 .dropdown-item .entity-id-small {
@@ -759,7 +760,8 @@
   gap: var(--spacing-md);
 }
 
-.sensor-card {
+.history-module .sensor-card,
+.history-feature .sensor-card {
   background: var(--card-bg);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -769,7 +771,8 @@
   overflow: hidden;
 }
 
-.sensor-card::before {
+.history-module .sensor-card::before,
+.history-feature .sensor-card::before {
   content: '';
   position: absolute;
   left: 0;
@@ -780,17 +783,22 @@
   transition: background var(--transition-base);
 }
 
-.sensor-card.high-cost::before { background: var(--hse-danger); }
-.sensor-card.medium-cost::before { background: var(--hse-warning); }
-.sensor-card.low-cost::before { background: var(--hse-success); }
+.history-module .sensor-card.high-cost::before,
+.history-feature .sensor-card.high-cost::before { background: var(--hse-danger); }
+.history-module .sensor-card.medium-cost::before,
+.history-feature .sensor-card.medium-cost::before { background: var(--hse-warning); }
+.history-module .sensor-card.low-cost::before,
+.history-feature .sensor-card.low-cost::before { background: var(--hse-success); }
 
-.sensor-card:hover {
+.history-module .sensor-card:hover,
+.history-feature .sensor-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
   border-color: var(--hse-primary);
 }
 
-.sensor-card .sensor-rank {
+.history-module .sensor-card .sensor-rank,
+.history-feature .sensor-card .sensor-rank {
   position: absolute;
   top: var(--spacing-sm);
   right: var(--spacing-sm);
@@ -802,29 +810,35 @@
   font-weight: 900;
 }
 
-.sensor-card .sensor-info {
+.history-module .sensor-card .sensor-info,
+.history-feature .sensor-card .sensor-info {
   margin-bottom: var(--spacing-sm);
 }
 
-.sensor-card .sensor-name {
+.history-module .sensor-card .sensor-name,
+.history-feature .sensor-card .sensor-name {
   font-size: 1rem;
   font-weight: 900;
   color: var(--text-primary);
   margin-bottom: 4px;
 }
 
-.sensor-card .sensor-source {
+.history-module .sensor-card .sensor-source,
+.history-feature .sensor-card .sensor-source {
   font-size: 0.8rem;
   color: var(--text-tertiary);
 }
 
-.sensor-card .sensor-metrics {
+.history-module .sensor-card .sensor-metrics,
+.history-feature .sensor-card .sensor-metrics {
   border-top: 1px solid var(--border-color-light);
   padding-top: var(--spacing-sm);
 }
 
-.sensor-card .metric-row .value.cost { color: var(--hse-primary); }
-.sensor-card .metric-row .value.energy { color: var(--hse-info); }
+.history-module .sensor-card .metric-row .value.cost,
+.history-feature .sensor-card .metric-row .value.cost { color: var(--hse-primary); }
+.history-module .sensor-card .metric-row .value.energy,
+.history-feature .sensor-card .metric-row .value.energy { color: var(--hse-info); }
 
 /* Other sensors scrollable */
 .other-sensors-list {
