@@ -3,7 +3,16 @@
    - enlever gradients/fonds forcés via styles inline (on les écrase ici)
    - enlever couleurs de texte forcées (bleu/violet/orange)
    - afficher 2 intégrations par ligne
+   - rendre les couleurs modifiables via thème (variables CSS)
 */
+
+:root {
+  /* Valeurs par défaut (thémables): la plupart des thèmes pourront les surcharger */
+  --hse-detect-row-bg: var(--hse-surface-elevated);
+  --hse-detect-row-text: var(--hse-text-main);
+  --hse-detect-row-muted: var(--hse-text-muted);
+  --hse-detect-row-value: var(--hse-accent);
+}
 
 /* Layout global */
 .detection-layout {
@@ -88,8 +97,13 @@
   background: var(--hse-surface) !important;
 }
 
-/* Liste capteurs: neutraliser hover inline + couleurs forcées */
+/* 
+  Lignes capteurs: lisibles par défaut
+  - fond clair (thémable)
+  - texte "bleu" (via --hse-detect-row-value)
+*/
 #content-detection .sensor-item {
+  background: var(--hse-detect-row-bg) !important;
   border-bottom: 1px solid var(--hse-border-soft) !important;
 }
 
@@ -97,19 +111,19 @@
   background: var(--hse-hover) !important;
 }
 
-/* Forcer le texte à la charte */
+/* Forcer le texte à la charte + thémable */
 #content-detection .sensor-item strong {
-  color: var(--hse-text-main) !important;
+  color: var(--hse-detect-row-text) !important;
 }
 
 #content-detection .sensor-item small,
 #content-detection .sensor-item div {
-  color: var(--hse-text-muted);
+  color: var(--hse-detect-row-muted) !important;
 }
 
-/* Valeur à droite: enlever violet/bleu forcé */
-#content-detection .sensor-item [style*="color:"] {
-  color: var(--hse-text-main) !important;
+/* Valeur à droite: bleu/teinte accent, thémable */
+#content-detection .sensor-item [style*="font-weight: bold"] {
+  color: var(--hse-detect-row-value) !important;
 }
 
 /* Carte valeur actuelle (référence) : enlever gradient + texte blanc */
