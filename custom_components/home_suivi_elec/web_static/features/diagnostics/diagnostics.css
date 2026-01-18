@@ -197,7 +197,7 @@ Refactor/cleanup + Score Hero isolé
 
 .diagnostics-content.diagnostics-ui--admin .overview-grid .card,
 .diagnostics-content.diagnostics-ui--admin .hse-score-card {
-  border: 1px solid rgba(0, 0, 0, 0.10);
+  border: 1px solid var(--hse-border);
   border-radius: 10px;
   box-shadow: none;
 }
@@ -217,6 +217,7 @@ Refactor/cleanup + Score Hero isolé
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.2px;
+  color: var(--hse-text-main);
 }
 
 .diagnostics-content.diagnostics-ui--admin .components-list,
@@ -237,7 +238,7 @@ Refactor/cleanup + Score Hero isolé
   gap: 10px;
 
   padding: 8px 10px 8px 12px;
-  border: 1px solid rgba(0,0,0,.08);
+  border: 1px solid var(--hse-border-soft);
   border-radius: 8px;
   background: transparent;
 
@@ -250,8 +251,8 @@ Refactor/cleanup + Score Hero isolé
 .diagnostics-content.diagnostics-ui--admin .component-item:hover,
 .diagnostics-content.diagnostics-ui--admin .alert-item-grouped:hover,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item:hover {
-  background: rgba(0,0,0,.03);
-  border-color: rgba(0,0,0,.16);
+  background: var(--hse-hover);
+  border-color: var(--hse-border);
   transform: translateY(-1px);
 }
 
@@ -261,10 +262,19 @@ Refactor/cleanup + Score Hero isolé
   transform: translateY(0);
 }
 
+.diagnostics-content.diagnostics-ui--admin .component-item,
+.diagnostics-content.diagnostics-ui--admin .alert-item-grouped,
+.diagnostics-content.diagnostics-ui--admin .recommendation-item,
+.diagnostics-content.diagnostics-ui--admin .component-item *,
+.diagnostics-content.diagnostics-ui--admin .alert-item-grouped *,
+.diagnostics-content.diagnostics-ui--admin .recommendation-item * {
+  color: var(--hse-text-main);
+}
+
 .diagnostics-content.diagnostics-ui--admin .component-details,
 .diagnostics-content.diagnostics-ui--admin .rec-description,
 .diagnostics-content.diagnostics-ui--admin .rec-action {
-  color: rgba(0,0,0,.62);
+  color: var(--hse-text-muted);
   font-size: 12px;
 }
 
@@ -306,15 +316,16 @@ Refactor/cleanup + Score Hero isolé
 .diagnostics-content.diagnostics-ui--admin .recommendation-item button {
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(0,0,0,.14);
+  border: 1px solid var(--hse-border-soft);
   background: transparent;
+  color: var(--hse-text-main);
   transition: background .12s ease, border-color .12s ease;
 }
 
 .diagnostics-content.diagnostics-ui--admin .alert-action-btn:hover,
 .diagnostics-content.diagnostics-ui--admin .recommendation-item button:hover {
-  background: rgba(0,0,0,.04);
-  border-color: rgba(0,0,0,.22);
+  background: var(--hse-hover);
+  border-color: var(--hse-border);
 }
 
 .diagnostics-content.diagnostics-ui--admin .hse-score-hero {
@@ -328,5 +339,5 @@ Refactor/cleanup + Score Hero isolé
 .diagnostics-content.diagnostics-ui--admin .score-description {
   margin-top: 6px;
   font-size: 12px;
-  color: rgba(0,0,0,.72) !important;
+  color: var(--hse-text-muted) !important;
 }
