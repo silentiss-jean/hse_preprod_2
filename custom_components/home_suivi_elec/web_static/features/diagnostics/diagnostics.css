@@ -5,7 +5,7 @@ Refactor/cleanup + Score Hero isolé
 
 /* ==========================================================================
    BASE / LAYOUT
-   ==========================================================================
+   ===========================================================================
 
    NOTE: Le fichier contient désormais 2 styles pour la vue d'ensemble :
    - Style “HSE harmonisé” (historique)
@@ -325,6 +325,25 @@ Refactor/cleanup + Score Hero isolé
 .diagnostics-content .alert-warning,
 .diagnostics-content .alert-info {
   background: transparent !important;
+}
+
+/* FIX: enlever les couleurs de texte "rouge/orange" des alertes (tout en gardant badges/accents) */
+.diagnostics-content .alert-card,
+.diagnostics-content .alert-card * {
+  color: var(--hse-text-main) !important;
+}
+
+.diagnostics-content .alert-card .alert-description,
+.diagnostics-content .alert-card .alert-details,
+.diagnostics-content .alert-card .alert-details * {
+  color: var(--hse-text-muted) !important;
+}
+
+/* FIX: espacement des badges stats (Total / Critiques / ...) */
+.diagnostics-content .alerts-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .diagnostics-content.diagnostics-ui--admin .alert-action-btn,
