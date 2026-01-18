@@ -83,7 +83,6 @@ function renderCapteursInterface(container, data) {
   ]);
 
   const mainCard = Card.create('🔌 Capteurs Groupés', content);
-  container.appendChild(mainCard);
 
   // Bouton refresh
   const refreshBtn = Button.create(
@@ -91,7 +90,14 @@ function renderCapteursInterface(container, data) {
     () => loadCapteursPanel(container),
     'secondary'
   );
-  container.appendChild(refreshBtn);
+
+  // Option A: wrapper (card + actions)
+  const panel = createElement('div', { class: 'diagnostics-panel' }, [
+    mainCard,
+    refreshBtn
+  ]);
+
+  container.appendChild(panel);
 }
 
 /**

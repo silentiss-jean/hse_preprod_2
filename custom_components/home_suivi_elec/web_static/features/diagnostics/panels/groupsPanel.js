@@ -89,7 +89,6 @@ function renderGroupsInterface(container, data) {
   ].filter(Boolean));
 
   const mainCard = Card.create('Groupes & Relations (Diagnostic)', content);
-  container.appendChild(mainCard);
 
   // Bouton refresh
   const refreshBtn = Button.create(
@@ -97,7 +96,14 @@ function renderGroupsInterface(container, data) {
     () => loadGroupsPanel(container),
     'secondary'
   );
-  container.appendChild(refreshBtn);
+
+  // Option A: wrapper (card + actions)
+  const panel = createElement('div', { class: 'diagnostics-panel' }, [
+    mainCard,
+    refreshBtn
+  ]);
+
+  container.appendChild(panel);
 
   // Appliquer filtres par défaut
   setTimeout(() => applyFilters(), 50);
