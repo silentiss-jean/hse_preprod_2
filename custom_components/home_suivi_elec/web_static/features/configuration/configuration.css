@@ -41,13 +41,20 @@
 .configuration-banner,
 #configuration-banner,
 .config-banner,
-.notice-banner {
+.notice-banner,
+.hse-config-note {
   background: var(--hse-config-banner-bg);
   border: 1px solid var(--hse-config-banner-border);
   color: var(--hse-config-banner-text);
   border-radius: var(--hse-radius-lg);
   padding: 10px 14px;
   margin: 12px 0 16px 0;
+}
+
+.hse-config-note-text {
+  margin: 0;
+  font-size: 0.9em;
+  color: var(--hse-text-main);
 }
 
 .configuration-banner a,
@@ -63,11 +70,44 @@
 .tariff-section,
 .runtime-section,
 .card.configuration,
-.configuration-card {
+.configuration-card,
+.hse-tarif-section {
   background: var(--hse-config-panel-bg);
   border: 1px solid var(--hse-config-panel-border);
   border-radius: var(--hse-radius-lg);
   box-shadow: var(--hse-config-panel-shadow);
+}
+
+.hse-config-root {
+  margin-bottom: 20px;
+}
+
+.hse-config-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.hse-config-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .hse-config-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hse-config-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hse-config-label {
+  font-weight: 700;
+  color: var(--hse-text-main);
 }
 
 .configuration-section h2,
@@ -88,28 +128,21 @@
   color: var(--hse-config-muted);
 }
 
-/* Labels / champs */
-.configuration-section label,
-.config-section label,
-.tariff-section label,
-.runtime-section label {
-  color: var(--hse-config-title);
-  font-weight: 700;
-}
-
 /* Inputs & selects */
 .configuration-section input,
 .configuration-section select,
 .configuration-section textarea,
 .config-section input,
 .config-section select,
-.config-section textarea {
+.config-section textarea,
+.hse-config-input {
   background: var(--hse-config-input-bg);
   color: var(--hse-config-input-text);
   border: 1px solid var(--hse-config-input-border);
   border-radius: var(--hse-radius-md);
   padding: 8px 10px;
   outline: none;
+  width: 100%;
 }
 
 .configuration-section input:focus,
@@ -117,9 +150,57 @@
 .configuration-section textarea:focus,
 .config-section input:focus,
 .config-section select:focus,
-.config-section textarea:focus {
+.config-section textarea:focus,
+.hse-config-input:focus {
   border-color: var(--hse-config-input-focus);
   box-shadow: 0 0 0 3px var(--hse-accent-soft);
+}
+
+/* Tarifs */
+.hse-tarif-title {
+  margin: 0 0 12px 0;
+  color: var(--hse-text-main);
+  font-size: 1em;
+}
+
+.hse-mb-20 { margin-bottom: 20px; }
+
+.hse-runtime-section { margin-top: 16px; }
+
+.hse-inline-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95em;
+  color: var(--hse-text-main);
+}
+
+.hse-runtime-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hse-muted {
+  font-size: 0.9em;
+  color: var(--hse-text-muted);
+}
+
+.hse-btn-compact {
+  padding: 8px 12px;
+}
+
+.hse-config-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.hse-save-config {
+  padding: 10px 24px;
+  width: auto;
 }
 
 /* Boutons */
