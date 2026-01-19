@@ -20,9 +20,16 @@
   --hse-config-input-text: var(--hse-text-main);
   --hse-config-input-focus: var(--hse-accent);
 
-  --hse-config-banner-bg: rgba(96, 165, 250, 0.18); /* fallback; surchargé possible via thème */
+  --hse-config-banner-bg: rgba(96, 165, 250, 0.18);
   --hse-config-banner-border: rgba(96, 165, 250, 0.35);
   --hse-config-banner-text: var(--hse-text-main);
+
+  /* Auto-select panel (ancien hardcode bleu) */
+  --hse-auto-bg: var(--hse-accent-soft);
+  --hse-auto-border: var(--hse-accent);
+  --hse-auto-title: var(--hse-text-main);
+  --hse-auto-text: var(--hse-text-muted);
+  --hse-auto-status: var(--hse-accent);
 }
 
 /* Wrapper */
@@ -148,3 +155,52 @@ button#save-config:hover {
   font-size: 0.82rem;
   font-weight: 700;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Auto-select panel — thémable (remplace styles inline)
+   ═══════════════════════════════════════════════════════════════════════ */
+.hse-auto-panel {
+  background: var(--hse-auto-bg);
+  border-left: 4px solid var(--hse-auto-border);
+  border-radius: var(--hse-radius-lg);
+  padding: 14px 14px;
+  margin-top: 20px;
+}
+
+.hse-auto-panel h3 {
+  color: var(--hse-auto-title);
+  margin-top: 0;
+}
+
+.hse-auto-panel p,
+.hse-auto-panel li {
+  color: var(--hse-auto-text);
+}
+
+.hse-auto-panel ul {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.hse-auto-panel .hse-auto-desc {
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.hse-auto-panel .hse-auto-btn {
+  font-size: 16px;
+  padding: 12px 24px;
+  box-shadow: var(--hse-shadow-md);
+}
+
+/* status colors via classes (set by JS) */
+.hse-auto-status {
+  margin-top: 12px;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--hse-auto-status);
+}
+
+.hse-auto-status.is-warn { color: var(--hse-warning); }
+.hse-auto-status.is-ok { color: var(--hse-success); }
+.hse-auto-status.is-err { color: var(--hse-error); }
