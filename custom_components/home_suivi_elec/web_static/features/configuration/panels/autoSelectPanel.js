@@ -16,12 +16,12 @@ import { showToast } from '../../../shared/uiToast.js';
 export function renderAutoSelectPanel() {
   return `
     <!-- ✅✅✅ BLOC SÉLECTION AUTO ✅✅✅ -->
-    <div class="card" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #2196f3; margin-top: 20px;">
+    <div class="card hse-auto-panel">
       <h3>🤖 Sélection automatique intelligente</h3>
-      <p style="margin-bottom: 15px; line-height: 1.5;">
+      <p class="hse-auto-desc">
         <strong>Le système analyse tous vos capteurs</strong> et sélectionne automatiquement les meilleurs selon ces critères :
       </p>
-      <ul style="margin-bottom: 15px; line-height: 1.6;">
+      <ul>
         <li>✅ <strong>Energy (kWh)</strong> prioritaire sur Power (W)</li>
         <li>⭐ Score de qualité optimal (intégration, fiabilité)</li>
         <li>🎯 Un seul capteur par appareil (évite les doublons)</li>
@@ -29,13 +29,12 @@ export function renderAutoSelectPanel() {
       </ul>
       <button 
         id="autoSelectBtn" 
-        class="primary" 
-        type="button" 
-        style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); font-size: 16px; padding: 12px 24px; box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);"
+        class="primary hse-auto-btn" 
+        type="button"
       >
         ✨ Lancer la sélection automatique
       </button>
-      <p id="autoSelectStatus" style="margin-top: 12px; font-size: 0.9em; color: #1565c0; font-weight: 600;"></p>
+      <p id="autoSelectStatus" class="hse-auto-status"></p>
     </div>
   `;
 }
@@ -67,6 +66,13 @@ export function initAutoSelectPanel(autoSelectCallback) {
   console.info('[autoSelectPanel] ✅ Initialisé');
 }
 
+function setStatus(statusEl, text, kind) {
+  if (!statusEl) return;
+  statusEl.textContent = text || '';
+  statusEl.classList.remove('is-warn', 'is-ok', 'is-err');
+  if (kind) statusEl.classList.add(kind);
+}
+
 /**
  * Gère le clic sur le bouton de sélection automatique
  * @param {Function} autoSelectCallback - Callback de sélection
@@ -78,46 +84,35 @@ async function handleAutoSelect(autoSelectCallback) {
   try {
     // Désactiver le bouton pendant le traitement
     if (btn) btn.disabled = true;
-    
-    if (statusEl) {
-      statusEl.textContent = '⏳ Analyse des capteurs en cours...';
-      statusEl.style.color = '#ff9800';
-    }
+
+    setStatus(statusEl, '⏳ Analyse des capteurs en cours...', 'is-warn');
 
     console.log('[autoSelectPanel] Lancement sélection automatique');
 
     if (typeof autoSelectCallback === 'function') {
       const result = await autoSelectCallback();
-      
-      // Afficher le résultat
-      if (statusEl) {
-        statusEl.textContent = `✅ ${result.count || 0} capteur(s) sélectionné(s) automatiquement !`;
-        statusEl.style.color = '#4caf50';
-      }
-      
-      showToast(`✨ Sélection automatique terminée : ${result.count || 0} capteur(s)`, 'success');
-      
+
+      setStatus(
+        statusEl,
+        `✅ ${result.count || 0} capteur(s) sélectionné(s) automatiquement !`,
+        'is-ok',
+      );
+
+      showToast(
+        `✨ Sélection automatique terminée : ${result.count || 0} capteur(s)`,
+        'success',
+      );
+
       // Émettre événement pour rafraîchir l'affichage
       eventBus.emit('auto-selection-completed', result);
-      
     } else {
       console.warn('[autoSelectPanel] Callback autoSelectCallback manquant');
-      if (statusEl) {
-        statusEl.textContent = '⚠️ Fonction de sélection non disponible';
-        statusEl.style.color = '#f44336';
-      }
+      setStatus(statusEl, '⚠️ Fonction de sélection non disponible', 'is-err');
     }
-
   } catch (error) {
     console.error('[autoSelectPanel] Erreur sélection auto:', error);
-    
-    if (statusEl) {
-      statusEl.textContent = '❌ Erreur lors de la sélection automatique';
-      statusEl.style.color = '#f44336';
-    }
-    
+    setStatus(statusEl, '❌ Erreur lors de la sélection automatique', 'is-err');
     showToast('❌ Erreur lors de la sélection automatique', 'error');
-    
   } finally {
     // Réactiver le bouton
     if (btn) btn.disabled = false;
@@ -130,6 +125,6 @@ async function handleAutoSelect(autoSelectCallback) {
 export function resetAutoSelectStatus() {
   const statusEl = document.getElementById('autoSelectStatus');
   if (statusEl) {
-    statusEl.textContent = '';
+    setStatus(statusEl, '');
   }
 }
