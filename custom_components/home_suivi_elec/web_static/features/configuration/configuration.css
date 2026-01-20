@@ -252,6 +252,33 @@ button#save-config:hover {
   transform: translateY(-1px);
 }
 
+/* Boutons hors "section" (auto-select + capteur de référence)
+   -> certains boutons restent sur le style HA/navigateur (gris) */
+#configuration #autoSelectBtn,
+#configuration .hse-auto-btn,
+#configuration .reference-panel button,
+#configuration .hse-config-note button {
+  background: var(--hse-accent) !important;
+  color: var(--hse-on-accent) !important;
+  border: 1px solid var(--hse-accent-hover) !important;
+  border-radius: var(--hse-radius-md);
+}
+
+#configuration #autoSelectBtn:hover,
+#configuration .hse-auto-btn:hover,
+#configuration .reference-panel button:hover,
+#configuration .hse-config-note button:hover {
+  background: var(--hse-accent-hover) !important;
+}
+
+#configuration #autoSelectBtn:disabled,
+#configuration .hse-auto-btn:disabled,
+#configuration .reference-panel button:disabled,
+#configuration .hse-config-note button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 /* Petits chips / badges si présents */
 .configuration-badge,
 .badge,
