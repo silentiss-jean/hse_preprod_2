@@ -20,11 +20,12 @@
   --hse-config-input-text: var(--hse-text-main);
   --hse-config-input-focus: var(--hse-accent);
 
-  --hse-config-banner-bg: rgba(96, 165, 250, 0.18);
-  --hse-config-banner-border: rgba(96, 165, 250, 0.35);
+  /* Bandeau info (thémable) */
+  --hse-config-banner-bg: var(--hse-accent-soft);
+  --hse-config-banner-border: var(--hse-accent);
   --hse-config-banner-text: var(--hse-text-main);
 
-  /* Auto-select panel (ancien hardcode bleu) */
+  /* Auto-select panel */
   --hse-auto-bg: var(--hse-accent-soft);
   --hse-auto-border: var(--hse-accent);
   --hse-auto-title: var(--hse-text-main);
@@ -37,7 +38,7 @@
   width: 100%;
 }
 
-/* Bandeau info ("Les modifications seront appliquées...") */
+/* Bandeau info ("les modifications ..." / "gestion des doublons" etc.) */
 .configuration-banner,
 #configuration-banner,
 .config-banner,
@@ -224,7 +225,7 @@ button#save-config:hover {
   transform: translateY(-1px);
 }
 
-/* Petits chips / badges si présents (ex: "612 capteurs détectés") */
+/* Petits chips / badges si présents */
 .configuration-badge,
 .badge,
 .pill {
@@ -238,7 +239,7 @@ button#save-config:hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   Auto-select panel — thémable (remplace styles inline)
+   Auto-select panel — thémable
    ═══════════════════════════════════════════════════════════════════════ */
 .hse-auto-panel {
   background: var(--hse-auto-bg);
@@ -285,3 +286,33 @@ button#save-config:hover {
 .hse-auto-status.is-warn { color: var(--hse-warning); }
 .hse-auto-status.is-ok { color: var(--hse-success); }
 .hse-auto-status.is-err { color: var(--hse-error); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ✅ Remplacement styles inline (JS)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Bloc erreur de chargement (remplace <div style="...">) */
+.hse-config-error {
+  border-radius: var(--hse-radius-lg);
+  border: 1px solid var(--hse-error);
+  background: var(--hse-accent-soft);
+  padding: 14px;
+}
+
+.hse-config-error h3 {
+  margin: 0 0 8px 0;
+  color: var(--hse-error);
+}
+
+.hse-config-error p {
+  margin: 0;
+  color: var(--hse-text-main);
+}
+
+/* Bouton save dirty */
+#configuration #saveSelection.hse-btn--dirty {
+  background: var(--hse-warning) !important;
+  color: var(--hse-text-main) !important;
+  border-color: var(--hse-warning) !important;
+  font-weight: 800;
+}
