@@ -149,7 +149,7 @@ export class TodayPanel {
      */
     renderSummary() {
         const excludedBadge = this.data.excluded_count > 0 ? `
-            <div class="meta-info" style="margin-top: var(--spacing-sm);">
+            <div class="meta-info">
                 <span class="meta-item meta-warning">
                     ⚠️ ${this.data.excluded_count} capteur(s) exclu(s) ${this.renderExcludedDetails()}
                 </span>
