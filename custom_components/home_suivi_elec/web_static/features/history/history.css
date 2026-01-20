@@ -698,6 +698,10 @@
   box-shadow: var(--shadow-lg);
 }
 
+.today-panel .summary-card .meta-info {
+  margin-top: var(--spacing-sm);
+}
+
 .summary-header {
   display: flex;
   justify-content: space-between;
@@ -728,21 +732,23 @@
   padding: var(--spacing-sm);
   background: var(--hse-surface);
   border-radius: var(--border-radius-sm);
-  border: 1px solid var(--hse-surface);
+  border: 1px solid var(--border-color-light);
+  color: var(--text-primary);
 }
 
 .summary-metrics .metric .label {
   display: block;
   font-size: 0.85rem;
-  opacity: 0.9;
   margin-bottom: var(--spacing-xs);
   font-weight: 700;
+  color: var(--text-secondary);
 }
 
 .summary-metrics .metric .value {
   display: block;
   font-size: 1.5rem;
   font-weight: 900;
+  color: var(--text-primary);
 }
 
 /* Top sensors grid */
