@@ -282,8 +282,7 @@ function openMoveSensorModal(container, groupKey, entityIds, kind) {
   body.appendChild(info);
 
   const select = createElement("select", {
-    className: "hse-select",
-    style: "width:100%; margin-top:8px;",
+    className: "hse-select hse-modal-select",
   });
 
   groupKeys
@@ -300,15 +299,14 @@ function openMoveSensorModal(container, groupKey, entityIds, kind) {
   body.appendChild(select);
 
   const orText = document.createElement("p");
-  orText.style.marginTop = "12px";
+  orText.className = "hse-modal-or";
   orText.textContent = "Ou créer un nouveau groupe :";
   body.appendChild(orText);
 
   const newInput = createElement("input", {
     type: "text",
-    className: "hse-group-name-input",
+    className: "hse-group-name-input hse-modal-new-input",
     placeholder: "Nom du nouveau groupe",
-    style: "width:100%;",
   });
   body.appendChild(newInput);
 
@@ -655,21 +653,17 @@ export async function renderGroupsPanel(container) {
   listContainer.classList.add("hse-groups-container");
 
   // === Barre d'actions principales ===
-  const header = createElement("div", {
-    style:
-      "margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;",
-  });
+  const header = createElement("div", { className: "hse-groups-headerbar" });
 
-  const title = createElement("h3", { style: "margin:0; font-size:18px;" });
+  const title = createElement("h3", { className: "hse-groups-title" });
   title.textContent = "Regroupement des capteurs";
 
-  const spacer = createElement("div", { style: "flex:1;" });
+  const spacer = createElement("div", { className: "hse-groups-spacer" });
 
   const filterInput = createElement("input", {
     type: "text",
     placeholder: "Filtrer les capteurs…",
-    className: "hse-group-name-input",
-    style: "min-width:200px;",
+    className: "hse-group-name-input hse-groups-filter",
   });
   filterInput.addEventListener("input", () => {
     globalFilter = filterInput.value || "";
@@ -779,30 +773,22 @@ export async function renderGroupsPanel(container) {
   container.appendChild(header);
 
   // === Actions de masse par mot-clé ===
-  const bulkBar = createElement("div", {
-    style:
-      "background:var(--hse-surface-muted); border-radius:8px; padding:12px; margin-bottom:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;",
-  });
+  const bulkBar = createElement("div", { className: "hse-groups-bulkbar" });
 
-  const bulkLabel = createElement("span", {
-    style: "font-weight:600; font-size:0.9rem;",
-  });
+  const bulkLabel = createElement("span", { className: "hse-groups-bulk-label" });
   bulkLabel.textContent = "Action de masse :";
 
   const keywordInput = createElement("input", {
     type: "text",
     placeholder: "Mot-clé (ex: emma)…",
-    className: "hse-group-name-input",
-    style: "min-width:180px;",
+    className: "hse-group-name-input hse-groups-keyword",
   });
 
   const scopeSelect = createElement("select", {
-    className: "hse-select",
-    style: "min-width:140px;",
+    className: "hse-select hse-groups-select hse-groups-scope",
   });
   const targetSelect = createElement("select", {
-    className: "hse-select",
-    style: "min-width:160px;",
+    className: "hse-select hse-groups-select hse-groups-target",
   });
 
   // Stocke les références globales pour que updateBulkSelects puisse les manipuler
@@ -849,9 +835,7 @@ export async function renderGroupsPanel(container) {
 
   // === Légende ===
   const legend = createElement("div", {
-    className: "hse-groups-toolbar-info",
-    style:
-      "display:flex; flex-wrap:wrap; gap:12px; margin:0 0 12px 0; align-items:center;",
+    className: "hse-groups-legend hse-groups-toolbar-info",
   });
   const autoLegend = document.createElement("div");
   autoLegend.innerHTML = "<strong>AUTO</strong> : groupe géré automatiquement.";
@@ -877,9 +861,7 @@ export async function renderGroupsPanel(container) {
       state = getGroupsState();
     } catch (e) {
       console.error("[customisation][groupsPanel] Erreur getGroups:", e);
-      const err = createElement("p", {
-        style: "color:#b91c1c; padding:10px 0;",
-      });
+      const err = createElement("p", { className: "hse-groups-error" });
       err.textContent = "Erreur lors du chargement des groupes.";
       container.appendChild(err);
       return;

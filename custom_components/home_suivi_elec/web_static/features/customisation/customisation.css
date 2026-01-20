@@ -78,6 +78,11 @@
   color: var(--hse-text-main) !important;
 }
 
+/* Section regroupement */
+.hse-custom-section {
+  margin-top: 30px;
+}
+
 /* Panel regroupement */
 #hse-groups-panel {
   margin-top: 12px;
@@ -86,6 +91,107 @@
 #hse-groups-panel h2 {
   margin: 0 0 10px 0;
   color: var(--hse-custom-title);
+}
+
+/* Header bar (actions) */
+.hse-groups-headerbar {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hse-groups-title {
+  margin: 0;
+  font-size: 18px;
+  color: var(--hse-text-main);
+}
+
+.hse-groups-spacer {
+  flex: 1;
+}
+
+.hse-groups-filter {
+  min-width: 200px;
+}
+
+/* Bulk bar */
+.hse-groups-bulkbar {
+  background: var(--hse-surface-muted);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hse-groups-bulk-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--hse-text-main);
+}
+
+.hse-groups-keyword {
+  min-width: 180px;
+}
+
+.hse-groups-scope {
+  min-width: 140px;
+}
+
+.hse-groups-target {
+  min-width: 160px;
+}
+
+/* Légende */
+.hse-groups-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 12px 0;
+  align-items: center;
+}
+
+/* Message d'erreur */
+.hse-groups-error {
+  color: var(--hse-error);
+  padding: 10px 0;
+}
+
+/* Force les selects du panel (évite le rendu clair du navigateur) */
+#hse-groups-panel .hse-select,
+#hse-groups-panel select.hse-select,
+#hse-groups-panel select {
+  background: var(--hse-custom-input-bg) !important;
+  color: var(--hse-custom-input-text) !important;
+  border: 1px solid var(--hse-custom-input-border) !important;
+  border-radius: var(--hse-radius-md);
+  padding: 7px 10px;
+  outline: none;
+}
+
+#hse-groups-panel .hse-select option,
+#hse-groups-panel select option {
+  background: var(--hse-surface) !important;
+  color: var(--hse-text-main) !important;
+}
+
+/* Modal move */
+.hse-modal-select {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.hse-modal-or {
+  margin-top: 12px;
+}
+
+.hse-modal-new-input {
+  width: 100%;
 }
 
 /* List container (cards) */
