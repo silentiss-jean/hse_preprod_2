@@ -163,6 +163,27 @@
   box-shadow: 0 0 0 3px var(--hse-accent-soft);
 }
 
+/* Force les form controls à respecter le thème HSE
+   (Home Assistant peut imposer des styles natifs sur select/input) */
+#configuration .hse-config-input,
+#configuration select.hse-config-input,
+#configuration input.hse-config-input {
+  background: var(--hse-surface-muted) !important;
+  color: var(--hse-text-main) !important;
+  border-color: var(--hse-border-strong) !important;
+}
+
+/* Dropdown list: garantit la lisibilité dans la liste */
+#configuration select.hse-config-input option {
+  background: var(--hse-surface) !important;
+  color: var(--hse-text-main) !important;
+}
+
+/* Aide le navigateur à rendre correctement les contrôles en thème sombre */
+#configuration {
+  color-scheme: dark;
+}
+
 /* Tarifs */
 .hse-tarif-title {
   margin: 0 0 12px 0;
