@@ -134,7 +134,8 @@
   flex-wrap: wrap;
 }
 
-/* Panels grid (YAML + Preview) */
+/* Panels grid (YAML + Preview)
+   NOTE: On garde l'aperçu sous le YAML (une colonne), même en desktop. */
 .generation-layout .generation-panels {
   display: grid;
   grid-template-columns: 1fr;
@@ -304,22 +305,6 @@
 
   .generation-layout .preview-card:hover {
     transform: none;
-  }
-}
-
-@media (min-width: 1100px) {
-  /* Desktop: YAML à gauche, Aperçu à droite */
-  .generation-layout .generation-panels {
-    grid-template-columns: 1.25fr 1fr;
-  }
-
-  /* Si l'aperçu est caché, YAML prend toute la largeur */
-  .generation-layout .generation-panels > #preview-container.is-hidden {
-    display: none !important;
-  }
-
-  .generation-layout .generation-panels:has(#preview-container.is-hidden) {
-    grid-template-columns: 1fr;
   }
 }
 
