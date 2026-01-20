@@ -14,9 +14,13 @@
   --hse-text-main: var(--hse-text);
   --hse-text-muted: #6b7280;
 
+  /* Text (inverse) */
+  --hse-text-inverse: #ffffff;
+
   /* Surfaces */
   --hse-surface: #ffffff;
   --hse-bg-secondary: #f3f4f6;
+  --hse-surface-muted: #f1f5f9;
 
   /* Borders */
   --hse-border: #e5e7eb;
@@ -58,4 +62,30 @@
   /* Motion */
   --hse-transition-base: 180ms ease;
   --hse-transition-fast: 120ms ease;
+
+  /* Layout / spacing scale */
+  --hse-spacing-xs: 4px;
+  --hse-spacing-sm: 8px;
+  --hse-spacing-md: 16px;
+  --hse-spacing-lg: 24px;
+  --hse-spacing-xl: 32px;
+
+  /* Typography scale */
+  --hse-font-size-xs: 0.8rem;
+  --hse-font-size-sm: 0.95rem;
+  --hse-font-size-lg: 1.1rem;
+  --hse-font-size-2xl: 1.6rem;
+
+  --hse-font-weight-semibold: 600;
+  --hse-font-weight-bold: 700;
+  --hse-font-weight-black: 900;
+
+  /* Radius */
+  --hse-radius-sm: 6px;
+  --hse-radius-md: 10px;
+  --hse-radius-lg: 16px;
+  --hse-radius-xl: 24px;
+
+  /* Layout container */
+  --hse-container-max-width: 1280px;
 }
