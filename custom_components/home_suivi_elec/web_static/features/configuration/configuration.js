@@ -85,8 +85,9 @@ function markDirty() {
   if (saveBtn) {
     saveBtn.textContent =
       "💾 Sauvegarder la sélection * (modifications en attente)";
-    saveBtn.style.backgroundColor = "#ff9800";
-    saveBtn.style.fontWeight = "600";
+    // ✅ plus de style inline: on s'appuie sur le thème + CSS
+    saveBtn.classList.add("hse-btn--dirty");
+    saveBtn.setAttribute("data-dirty", "true");
   }
 }
 
@@ -95,8 +96,8 @@ function markClean() {
   const saveBtn = document.getElementById("saveSelection");
   if (saveBtn) {
     saveBtn.textContent = "💾 Sauvegarder la sélection des capteurs";
-    saveBtn.style.backgroundColor = "";
-    saveBtn.style.fontWeight = "";
+    saveBtn.classList.remove("hse-btn--dirty");
+    saveBtn.removeAttribute("data-dirty");
   }
 }
 
@@ -483,15 +484,9 @@ export async function loadConfiguration() {
 
     contentUpdated.innerHTML = "";
 
+    // ✅ plus de cssText inline: classe CSS pilotée par le thème
     const banner = document.createElement("div");
-    banner.style.cssText = `
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-      border-radius: 4px;
-      padding: 12px;
-      margin-bottom: 16px;
-      font-size: 14px;
-    `;
+    banner.className = "hse-config-note";
     banner.innerHTML = `
       <strong>ℹ️ Gestion des doublons multi-intégrations</strong><br>
       Un seul capteur par appareil physique (par type : energy/power) peut être actif.<br>
@@ -884,8 +879,9 @@ export async function loadConfiguration() {
     console.error("[config] loadConfiguration() — erreur", err);
     const errorContent = document.getElementById("content-configuration");
     if (errorContent) {
+      // ✅ plus de style inline: classe CSS
       errorContent.innerHTML = `
-        <div style="color: red; padding: 20px;">
+        <div class="hse-config-error">
           <h3>❌ Erreur de chargement</h3>
           <p>${err.message}</p>
         </div>
