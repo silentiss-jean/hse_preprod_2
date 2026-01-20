@@ -36,7 +36,7 @@ export class ComparisonController {
      */
     async render(comparisonType = 'today_yesterday') {
         this.currentComparison = comparisonType;
-        
+
         this.container.innerHTML = `
             <div class="comparison-panel">
                 <div class="comparison-header">
@@ -69,35 +69,35 @@ export class ComparisonController {
                     </button>
                 </div>
 
-                <div id="comparison-loading" class="loading-indicator" style="display: none;">
+                <div id="comparison-loading" class="loading-indicator" hidden>
                     <div class="spinner"></div>
                     <p>Analyse en cours...</p>
                 </div>
 
-                <div id="comparison-results" class="comparison-results" style="display: none;">
+                <div id="comparison-results" class="comparison-results" hidden>
                     <!-- 🆕 PANEL RÉFÉRENCE (en premier) -->
                     <div id="comparison-reference-sensor"></div>
-                    
+
                     <!-- RÉSUMÉ (capteurs internes seulement) -->
                     <div id="comparison-summary"></div>
-                    
+
                     <!-- TOP VARIATIONS -->
                     <div id="comparison-top-variations"></div>
-                    
+
                     <!-- AUTRES CAPTEURS -->
                     <div id="comparison-other-sensors"></div>
-                    
+
                     <!-- FOCUS PANEL -->
                     <div id="comparison-focus"></div>
                 </div>
 
-                <div id="comparison-error" class="error-message" style="display: none;"></div>
+                <div id="comparison-error" class="error-message" hidden></div>
             </div>
         `;
 
         // Attach event listeners
         this.attachEventListeners();
-        
+
         // Render period selector based on type
         this.renderPeriodSelector(comparisonType);
     }
@@ -123,9 +123,9 @@ export class ComparisonController {
         // Back to today button
         document.getElementById('back-to-today')?.addEventListener('click', () => {
             // Dispatch event to main controller to switch view
-            this.container.dispatchEvent(new CustomEvent('switchView', { 
+            this.container.dispatchEvent(new CustomEvent('switchView', {
                 detail: { view: 'today' },
-                bubbles: true 
+                bubbles: true
             }));
         });
     }
@@ -280,11 +280,11 @@ export class ComparisonController {
         const start = new Date(startISO);
         const end = new Date(endISO);
 
-        const options = { 
-            day: 'numeric', 
-            month: 'short', 
-            hour: '2-digit', 
-            minute: '2-digit' 
+        const options = {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
         };
 
         return `${start.toLocaleDateString('fr-FR', options)} → ${end.toLocaleDateString('fr-FR', options)}`;
@@ -354,28 +354,27 @@ export class ComparisonController {
     renderReferenceSensor() {
         const refEl = document.getElementById('comparison-reference-sensor');
         if (!refEl) return;
-        
+
         const refSensor = this.data.reference_sensor;
-        
+
         if (!refSensor) {
             // Pas de capteur de référence configuré
             refEl.innerHTML = `
-                <div style="padding: 20px; text-align: center; color: #888; font-size: 0.9em;">
+                <div class="hse-panel hse-panel-accent hse-empty-state">
                     <p>💡 Aucun capteur de référence configuré</p>
-                    <p style="font-size: 0.85em;">Configurez un capteur externe (ex: Atome) pour suivre la consommation totale au compteur</p>
+                    <p class="hse-empty-state__hint">Configurez un capteur externe (ex: Atome) pour suivre la consommation totale au compteur</p>
                 </div>
             `;
             return;
         }
-        
+
         const deltaCost = refSensor.delta_cost_ttc;
         const deltaEnergy = refSensor.delta_energy_kwh;
         const pctCost = refSensor.pct_cost_ttc;
-        
+
         const trendIcon = deltaCost > 0 ? '📈' : deltaCost < 0 ? '📉' : '➡️';
         const trendClass = deltaCost > 0 ? 'increase' : deltaCost < 0 ? 'decrease' : 'stable';
-        const trendText = deltaCost > 0 ? 'augmenté' : deltaCost < 0 ? 'diminué' : 'stable';
-        
+
         refEl.innerHTML = `
             <div class="reference-sensor-panel">
                 <div class="reference-header">
@@ -383,7 +382,7 @@ export class ComparisonController {
                     <h3>${refSensor.display_name}</h3>
                     <p class="reference-subtitle">Consommation totale au compteur</p>
                 </div>
-                
+
                 <div class="reference-comparison">
                     <div class="reference-period">
                         <div class="period-label">Période de référence</div>
@@ -402,8 +401,8 @@ export class ComparisonController {
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="reference-arrow ${trendClass}">
+
+                    <div class="reference-arrow ${trendClass}" data-state="${trendClass}">
                         <span class="trend-icon">${trendIcon}</span>
                         <div class="delta-summary">
                             <div>${deltaEnergy >= 0 ? '+' : ''}${deltaEnergy.toFixed(3)} kWh</div>
@@ -411,7 +410,7 @@ export class ComparisonController {
                             <div class="delta-percent">(${pctCost >= 0 ? '+' : ''}${pctCost.toFixed(1)}%)</div>
                         </div>
                     </div>
-                    
+
                     <div class="reference-period">
                         <div class="period-label">Période à comparer</div>
                         <div class="period-values">
@@ -430,7 +429,7 @@ export class ComparisonController {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="reference-footer">
                     <button class="btn-focus-reference" data-entity="${refSensor.entity_id}">
                         🎯 Analyser en détail
@@ -438,7 +437,7 @@ export class ComparisonController {
                 </div>
             </div>
         `;
-        
+
         // Attach focus button
         const focusBtn = refEl.querySelector('.btn-focus-reference');
         if (focusBtn) {
@@ -508,7 +507,7 @@ export class ComparisonController {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="comparison-delta ${trendClass}">
                         <div class="trend-icon">${trendIcon}</div>
                         <div class="delta-values">
@@ -522,7 +521,7 @@ export class ComparisonController {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="period-summary event">
                         <h4>Période à comparer</h4>
                         <p class="date-range">${this.formatDateRange(event.start, event.end)}</p>
@@ -583,17 +582,17 @@ export class ComparisonController {
                 }
             }
         }
-        
+
         const topConsumersEl = document.getElementById('comparison-top-consumers');
         if (!topConsumersEl) return;
-        
+
         const topConsumers = this.data.top_consumers || [];
-        
+
         if (topConsumers.length === 0) {
             topConsumersEl.innerHTML = '<p class="no-data">Aucune donnée de consommation</p>';
             return;
         }
-        
+
         topConsumersEl.innerHTML = `
             <div class="top-consumers-section">
                 <h3>⚡ Top ${topConsumers.length} des plus gros consommateurs</h3>
@@ -602,7 +601,7 @@ export class ComparisonController {
                 </div>
             </div>
         `;
-        
+
         // Attacher les listeners pour les boutons focus
         this.attachFocusListeners();
     }
@@ -613,10 +612,10 @@ export class ComparisonController {
     renderConsumerCard(sensor, rank) {
         const eventCost = sensor.event_cost_ttc;
         const eventEnergy = sensor.event_energy_kwh;
-        
+
         // Icône selon le rang
         const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-        
+
         return `
             <div class="consumer-card" data-entity="${sensor.entity_id}">
                 <div class="card-header">
@@ -631,7 +630,7 @@ export class ComparisonController {
                         </div>
                     </div>
                     <p class="sensor-description">
-                        Ce capteur représente <strong>${this.formatNumber((eventCost / this.data.event_period.total_cost_ttc) * 100, 1)}%</strong> 
+                        Ce capteur représente <strong>${this.formatNumber((eventCost / this.data.event_period.total_cost_ttc) * 100, 1)}%</strong>
                         de la consommation totale.
                     </p>
                     <div class="metrics-comparison">
@@ -659,7 +658,7 @@ export class ComparisonController {
         const deltaCost = sensor.delta_cost_ttc;
         const deltaEnergy = sensor.delta_energy_kwh;
         const pctCost = sensor.pct_cost_ttc;
-        
+
         const trendIcon = deltaCost > 0 ? '📈' : deltaCost < 0 ? '📉' : '➡️';
         const trendClass = deltaCost > 0 ? 'increase' : deltaCost < 0 ? 'decrease' : 'stable';
         const trendText = deltaCost > 0 ? 'augmenté' : deltaCost < 0 ? 'diminué' : 'stable';
@@ -673,9 +672,9 @@ export class ComparisonController {
                 <div class="card-body">
                     <h4 class="sensor-name">${sensor.display_name}</h4>
                     <p class="sensor-description">
-                        Le capteur <strong>${sensor.display_name}</strong> a <strong>${trendText}</strong> de 
+                        Le capteur <strong>${sensor.display_name}</strong> a <strong>${trendText}</strong> de
                         <strong>${Math.abs(pctCost).toFixed(1)}%</strong>.
-                        Il coûte <strong>${Math.abs(deltaCost).toFixed(2)} € ${deltaCost >= 0 ? 'de plus' : 'de moins'}</strong> 
+                        Il coûte <strong>${Math.abs(deltaCost).toFixed(2)} € ${deltaCost >= 0 ? 'de plus' : 'de moins'}</strong>
                         par rapport à la période de référence.
                     </p>
                     <div class="metrics-comparison">
@@ -718,7 +717,7 @@ export class ComparisonController {
             <div class="other-sensors-section">
                 <h3>📋 Autres capteurs analysés (${otherSensors.length})</h3>
                 <div class="sensors-scrollable">
-                    ${otherSensors.map((sensor, index) => this.renderCompactSensorRow(sensor)).join('')}
+                    ${otherSensors.map((sensor) => this.renderCompactSensorRow(sensor)).join('')}
                 </div>
             </div>
         `;
@@ -800,7 +799,7 @@ export class ComparisonController {
                     <h3>🎯 Focus: ${sensor.display_name}</h3>
                     <button id="close-focus" class="btn-close">✕</button>
                 </div>
-                
+
                 <div class="focus-body">
                     <div class="focus-summary">
                         <div class="trend-indicator ${trendClass}">
@@ -808,13 +807,13 @@ export class ComparisonController {
                             <span class="text">Consommation a ${trendText}</span>
                         </div>
                         <p class="focus-description">
-                            Le capteur <strong>${sensor.display_name}</strong> a consommé 
-                            <strong>${sensor.event_energy_kwh.toFixed(3)} kWh</strong> pendant la période analysée, 
+                            Le capteur <strong>${sensor.display_name}</strong> a consommé
+                            <strong>${sensor.event_energy_kwh.toFixed(3)} kWh</strong> pendant la période analysée,
                             pour un coût de <strong>${sensor.event_cost_ttc.toFixed(2)} €</strong>.
                             <br><br>
-                            Comparé à la période de référence, la consommation a ${trendText} de 
-                            <strong>${Math.abs(deltaEnergy).toFixed(3)} kWh (${Math.abs(pctEnergy).toFixed(1)}%)</strong>, 
-                            ce qui représente un coût ${deltaCost >= 0 ? 'supplémentaire' : 'économisé'} de 
+                            Comparé à la période de référence, la consommation a ${trendText} de
+                            <strong>${Math.abs(deltaEnergy).toFixed(3)} kWh (${Math.abs(pctEnergy).toFixed(1)}%)</strong>,
+                            ce qui représente un coût ${deltaCost >= 0 ? 'supplémentaire' : 'économisé'} de
                             <strong>${Math.abs(deltaCost).toFixed(2)} €</strong>.
                         </p>
                     </div>
@@ -937,7 +936,7 @@ export class ComparisonController {
      */
     showLoading(show) {
         const loadingEl = document.getElementById('comparison-loading');
-        if (loadingEl) loadingEl.style.display = show ? 'block' : 'none';
+        if (loadingEl) loadingEl.hidden = !show;
     }
 
     /**
@@ -945,7 +944,7 @@ export class ComparisonController {
      */
     showResults() {
         const resultsEl = document.getElementById('comparison-results');
-        if (resultsEl) resultsEl.style.display = 'block';
+        if (resultsEl) resultsEl.hidden = false;
     }
 
     /**
@@ -953,7 +952,7 @@ export class ComparisonController {
      */
     hideResults() {
         const resultsEl = document.getElementById('comparison-results');
-        if (resultsEl) resultsEl.style.display = 'none';
+        if (resultsEl) resultsEl.hidden = true;
     }
 
     /**
@@ -963,7 +962,7 @@ export class ComparisonController {
         const errorEl = document.getElementById('comparison-error');
         if (errorEl) {
             errorEl.textContent = `❌ ${message}`;
-            errorEl.style.display = 'block';
+            errorEl.hidden = false;
         }
     }
 
@@ -973,7 +972,7 @@ export class ComparisonController {
     hideError() {
         const errorEl = document.getElementById('comparison-error');
         if (errorEl) {
-            errorEl.style.display = 'none';
+            errorEl.hidden = true;
         }
     }
 }
