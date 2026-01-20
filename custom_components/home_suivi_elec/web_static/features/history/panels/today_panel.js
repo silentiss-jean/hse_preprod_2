@@ -86,7 +86,7 @@ export class TodayPanel {
     }
 
     /**
-     * 🆕 Panel du capteur de référence (compteur principal)
+     * Panel du capteur de référence (compteur principal)
      */
     renderReferenceSensor() {
         const refSensor = this.data.reference_sensor;
@@ -110,8 +110,8 @@ export class TodayPanel {
                     (${gap.energy_kwh > 0 ? '+' : ''}${gap.percent.toFixed(1)}%) 
                     → ${gap.energy_kwh > 0 ? '+' : ''}${gap.cost_ttc.toFixed(2)} € TTC
                     <p class="gap-explanation">
-                        ${gap.energy_kwh > 0 
-                            ? 'Consommation non tracée par les capteurs internes' 
+                        ${gap.energy_kwh > 0
+                            ? 'Consommation non tracée par les capteurs internes'
                             : 'Suivi cohérent avec le compteur'}
                     </p>
                 </div>
@@ -145,52 +145,46 @@ export class TodayPanel {
     }
 
     /**
-     * Résumé global des capteurs internes
+     * Résumé global des capteurs internes (compact)
      */
     renderSummary() {
-        // Badge d'information si des capteurs sont exclus
         const excludedBadge = this.data.excluded_count > 0 ? `
-            <div class="summary-alert">
-                <span class="alert-icon">⚠️</span>
-                <div class="alert-content">
-                    <strong>${this.data.excluded_count} capteur(s) exclu(s)</strong>
-                    ${this.renderExcludedDetails()}
-                </div>
+            <div class="meta-info" style="margin-top: var(--spacing-sm);">
+                <span class="meta-item meta-warning">
+                    ⚠️ ${this.data.excluded_count} capteur(s) exclu(s) ${this.renderExcludedDetails()}
+                </span>
             </div>
         ` : '';
 
         return `
-            <div class="summary-section">
-                <h3>📋 Capteurs internes</h3>
+            <div class="summary-card">
+                <div class="summary-header">
+                    <h3>📋 Capteurs internes</h3>
+                    <span class="timestamp">📊 ${this.data.sensor_count} actifs</span>
+                </div>
+
                 ${excludedBadge}
-                <div class="summary-grid">
-                    <div class="summary-metric">
-                        <span class="metric-icon">💶</span>
-                        <div class="metric-content">
-                            <div class="metric-label">Total TTC</div>
-                            <div class="metric-value">${this.formatPrice(this.data.total_cost_ttc)}</div>
-                        </div>
+
+                <div class="summary-metrics">
+                    <div class="metric">
+                        <span class="label">💶 Total TTC</span>
+                        <span class="value">${this.formatPrice(this.data.total_cost_ttc)}</span>
                     </div>
-                    <div class="summary-metric">
-                        <span class="metric-icon">💵</span>
-                        <div class="metric-content">
-                            <div class="metric-label">Total HT</div>
-                            <div class="metric-value">${this.formatPrice(this.data.total_cost_ht)}</div>
-                        </div>
+                    <div class="metric">
+                        <span class="label">💵 Total HT</span>
+                        <span class="value">${this.formatPrice(this.data.total_cost_ht)}</span>
                     </div>
-                    <div class="summary-metric">
-                        <span class="metric-icon">⚡</span>
-                        <div class="metric-content">
-                            <div class="metric-label">Énergie totale</div>
-                            <div class="metric-value">${this.formatEnergy(this.data.total_energy_kwh)}</div>
-                        </div>
+                    <div class="metric">
+                        <span class="label">⚡ Énergie totale</span>
+                        <span class="value">${this.formatEnergy(this.data.total_energy_kwh)}</span>
                     </div>
-                    <div class="summary-metric">
-                        <span class="metric-icon">📊</span>
-                        <div class="metric-content">
-                            <div class="metric-label">Capteurs actifs</div>
-                            <div class="metric-value">${this.data.sensor_count}</div>
-                        </div>
+                    <div class="metric">
+                        <span class="label">⚠️ Exclus</span>
+                        <span class="value">${this.data.excluded_count || 0}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">📊 Actifs</span>
+                        <span class="value">${this.data.sensor_count}</span>
                     </div>
                 </div>
             </div>
@@ -216,7 +210,7 @@ export class TodayPanel {
 
         if (details.length === 0) return '';
 
-        return `<span class="excluded-details">(${details.join(' • ')})</span>`;
+        return `(${details.join(' • ')})`;
     }
 
     /**
