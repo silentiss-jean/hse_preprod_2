@@ -9,7 +9,7 @@
  * @returns {string} HTML
  */
 export function renderGenerationLayout() {
-    return `
+  return `
         <div class="generation-layout">
             <div class="container">
                 <!-- Header avec titre et bouton refresh -->
@@ -53,7 +53,7 @@ export function renderGenerationLayout() {
                 </div>
 
                 <!-- Preview Section (hidden by default) -->
-                <div id="preview-container" style="display:none;">
+                <div id="preview-container" class="is-hidden">
                     <h3>👁️ Aperçu du Dashboard</h3>
                     <div id="dashboard-preview" class="preview-grid"></div>
                 </div>
@@ -61,4 +61,3 @@ export function renderGenerationLayout() {
         </div>
     `;
 }
-
