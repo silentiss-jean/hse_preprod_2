@@ -6,7 +6,15 @@
    - styles scopés au module (évite collisions)
 */
 
-:root {
+/*
+  IMPORTANT:
+  - On scope les variables locales au wrapper .generation-layout (pas :root)
+    pour éviter tout effet de bord global.
+  - On évite les classes génériques type .container (souvent stylées globalement)
+    au profit d'un conteneur dédié.
+*/
+
+.generation-layout {
   /* Variables locales (toutes mappées sur tokens HSE) */
   --hse-generation-surface: var(--hse-surface);
   --hse-generation-surface-muted: var(--hse-surface-muted);
@@ -36,7 +44,7 @@
   width: 100%;
 }
 
-.generation-layout .container {
+.generation-layout .generation-container {
   max-width: var(--hse-container-max-width);
   margin: 0 auto;
   padding: var(--hse-spacing-xl) var(--hse-spacing-lg);
