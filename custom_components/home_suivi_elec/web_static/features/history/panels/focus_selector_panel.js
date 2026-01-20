@@ -1,174 +1,148 @@
 /**
- * Panel de sélection du capteur focus avec autocomplétion
+ * @file focus_selector_panel.js
+ * @description Focus selector panel (autocomplete) with no inline styles.
+ * UI is styled via history.css tokens/classes.
  */
-import { createElement } from '../../../shared/utils/dom.js';
 
-export class FocusSelectorPanel {
-    constructor(state) {
-        this.state = state;
-        this.container = null;
-        this.sensors = [];
-        this.filteredSensors = [];
+export default class FocusSelectorPanel {
+  /**
+   * @param {HTMLElement} container
+   * @param {{
+   *  entities?: Array<{ entity_id: string, display_name?: string }>,
+   *  placeholder?: string,
+   *  label?: string,
+   *  onSelect?: (entityId: string) => void,
+   * }} options
+   */
+  constructor(container, options = {}) {
+    this.container = container;
+    this.options = options;
+    this.entities = Array.isArray(options.entities) ? options.entities : [];
+
+    this._onDocClick = this._onDocClick.bind(this);
+  }
+
+  init() {
+    if (!this.container) return;
+
+    const label = this.options.label || '🎯 Focus capteur';
+    const placeholder = this.options.placeholder || 'Rechercher un capteur…';
+
+    this.container.innerHTML = `
+      <div class="focus-selector-panel">
+        <label class="focus-label" for="hse-focus-input">${label}</label>
+        <div class="autocomplete-wrapper">
+          <input
+            id="hse-focus-input"
+            class="focus-input"
+            type="text"
+            autocomplete="off"
+            placeholder="${placeholder}"
+            aria-label="${label}"
+          />
+          <ul id="hse-focus-dropdown" class="autocomplete-dropdown" hidden></ul>
+        </div>
+      </div>
+    `;
+
+    this.inputEl = this.container.querySelector('#hse-focus-input');
+    this.dropdownEl = this.container.querySelector('#hse-focus-dropdown');
+
+    if (!this.inputEl || !this.dropdownEl) return;
+
+    this.inputEl.addEventListener('input', () => this._renderDropdown());
+    this.inputEl.addEventListener('focus', () => this._renderDropdown());
+    document.addEventListener('click', this._onDocClick);
+
+    // First render (empty)
+    this._renderDropdown();
+  }
+
+  destroy() {
+    document.removeEventListener('click', this._onDocClick);
+  }
+
+  setEntities(entities) {
+    this.entities = Array.isArray(entities) ? entities : [];
+    this._renderDropdown();
+  }
+
+  _onDocClick(e) {
+    if (!this.container) return;
+    if (!this.container.contains(e.target)) this._hideDropdown();
+  }
+
+  _hideDropdown() {
+    if (this.dropdownEl) this.dropdownEl.hidden = true;
+  }
+
+  _normalize(s) {
+    return String(s || '').toLowerCase().trim();
+  }
+
+  _filterEntities(query) {
+    const q = this._normalize(query);
+    if (!q) return this.entities.slice(0, 50);
+
+    return this.entities
+      .map((e) => ({
+        entity_id: e.entity_id,
+        display_name: e.display_name || e.entity_id,
+      }))
+      .filter((e) => {
+        const name = this._normalize(e.display_name);
+        const id = this._normalize(e.entity_id);
+        return name.includes(q) || id.includes(q);
+      })
+      .slice(0, 50);
+  }
+
+  _renderDropdown() {
+    if (!this.inputEl || !this.dropdownEl) return;
+
+    const items = this._filterEntities(this.inputEl.value);
+
+    if (items.length === 0) {
+      this.dropdownEl.innerHTML = '<li class="dropdown-item empty">Aucun résultat</li>';
+      this.dropdownEl.hidden = false;
+      return;
     }
 
-    render(sensors = []) {
-        // ✅ CORRECTION : Normaliser les capteurs (friendly_name → display_name)
-        this.sensors = sensors.map(s => ({
-            ...s,
-            display_name: s.display_name || s.friendly_name || s.entity_id
-        }));
-        this.filteredSensors = this.sensors;
+    this.dropdownEl.innerHTML = items
+      .map(
+        (e) => `
+        <li class="dropdown-item" data-entity-id="${e.entity_id}">
+          <strong>${e.display_name}</strong>
+          <span class="entity-id-small">${e.entity_id}</span>
+        </li>
+      `
+      )
+      .join('');
 
-        this.container = createElement('div', { class: 'focus-selector-panel' });
+    this.dropdownEl.hidden = false;
 
-        const label = createElement('label', { 
-            textContent: 'Capteur à mettre en avant (optionnel):',
-            class: 'focus-label',
-        });
-        this.container.appendChild(label);
+    this.dropdownEl.querySelectorAll('.dropdown-item[data-entity-id]').forEach((li) => {
+      li.addEventListener('click', () => {
+        const entityId = li.dataset.entityId;
+        if (!entityId) return;
 
-        // Input avec autocomplétion
-        const inputWrapper = createElement('div', { class: 'autocomplete-wrapper' });
+        const display = li.querySelector('strong')?.textContent || entityId;
+        this.inputEl.value = display;
+        this._hideDropdown();
 
-        const input = createElement('input', {
-            type: 'text',
-            class: 'focus-input',
-            placeholder: 'Rechercher un capteur...',
-            id: 'focus_search',
-        });
-
-        input.addEventListener('input', (e) => this.handleSearch(e.target.value));
-        input.addEventListener('focus', () => this.showDropdown());
-
-        inputWrapper.appendChild(input);
-
-        // Dropdown des suggestions
-        const dropdown = createElement('ul', { 
-            class: 'autocomplete-dropdown',
-            id: 'focus_dropdown',
-            style: 'display: none;',
-        });
-
-        inputWrapper.appendChild(dropdown);
-        this.container.appendChild(inputWrapper);
-
-        // Bouton clear
-        const clearBtn = createElement('button', {
-            class: 'btn-secondary btn-small',
-            textContent: '✕ Retirer le focus',
-            style: 'display: none;',
-            id: 'clear_focus_btn',
-        });
-
-        clearBtn.addEventListener('click', () => this.clearFocus());
-        this.container.appendChild(clearBtn);
-
-        // Si un focus est déjà sélectionné, l'afficher
-        const currentFocus = this.state.get('focus_entity_id');
-        if (currentFocus) {
-            const sensor = this.sensors.find(s => s.entity_id === currentFocus);
-            if (sensor) {
-                input.value = sensor.display_name;
-                clearBtn.style.display = 'inline-block';
-            }
+        // Callback
+        if (typeof this.options.onSelect === 'function') {
+          this.options.onSelect(entityId);
         }
 
-        return this.container;
-    }
-
-    handleSearch(query) {
-        const q = query.toLowerCase().trim();
-
-        if (!q) {
-            this.filteredSensors = this.sensors;
-        } else {
-            this.filteredSensors = this.sensors.filter(s => 
-                (s.display_name && s.display_name.toLowerCase().includes(q)) || 
-                (s.entity_id && s.entity_id.toLowerCase().includes(q))
-            );
-        }
-
-        this.updateDropdown();
-    }
-
-    showDropdown() {
-        const dropdown = document.getElementById('focus_dropdown');
-        if (dropdown) {
-            this.updateDropdown();
-            dropdown.style.display = 'block';
-        }
-    }
-
-    hideDropdown() {
-        const dropdown = document.getElementById('focus_dropdown');
-        if (dropdown) {
-            dropdown.style.display = 'none';
-        }
-    }
-
-    updateDropdown() {
-        const dropdown = document.getElementById('focus_dropdown');
-        if (!dropdown) return;
-
-        dropdown.innerHTML = '';
-
-        if (this.filteredSensors.length === 0) {
-            const emptyItem = createElement('li', { 
-                textContent: 'Aucun résultat',
-                class: 'dropdown-item empty',
-            });
-            dropdown.appendChild(emptyItem);
-            dropdown.style.display = 'block';
-            return;
-        }
-
-        // Limiter à 10 résultats
-        const toShow = this.filteredSensors.slice(0, 10);
-
-        toShow.forEach(sensor => {
-            const item = createElement('li', { class: 'dropdown-item' });
-            item.innerHTML = `
-                <strong>${sensor.display_name}</strong>
-                <span class="entity-id-small">${sensor.entity_id}</span>
-            `;
-
-            item.addEventListener('click', () => this.selectSensor(sensor));
-            dropdown.appendChild(item);
-        });
-
-        dropdown.style.display = 'block';
-    }
-
-    selectSensor(sensor) {
-        const input = document.getElementById('focus_search');
-        const clearBtn = document.getElementById('clear_focus_btn');
-
-        if (input) {
-            input.value = sensor.display_name;
-        }
-
-        if (clearBtn) {
-            clearBtn.style.display = 'inline-block';
-        }
-
-        this.state.update({ focus_entity_id: sensor.entity_id });
-        this.hideDropdown();
-    }
-
-    clearFocus() {
-        const input = document.getElementById('focus_search');
-        const clearBtn = document.getElementById('clear_focus_btn');
-
-        if (input) {
-            input.value = '';
-        }
-
-        if (clearBtn) {
-            clearBtn.style.display = 'none';
-        }
-
-        this.state.update({ focus_entity_id: null });
-        this.filteredSensors = this.sensors;
-        this.hideDropdown();
-    }
+        // Event
+        this.container.dispatchEvent(
+          new CustomEvent('focusSelected', {
+            detail: { entityId },
+            bubbles: true,
+          })
+        );
+      });
+    });
+  }
 }
