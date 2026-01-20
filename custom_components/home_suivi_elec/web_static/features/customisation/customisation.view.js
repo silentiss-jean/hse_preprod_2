@@ -16,12 +16,10 @@ export function renderCustomisationLayout() {
         <p class="hint">Le thème est mémorisé dans ce navigateur (localStorage).</p>
       </div>
 
-      <section style="margin-top:30px;">
+      <section class="hse-custom-section">
         <h2>Regroupement des capteurs</h2>
         <div id="hse-groups-panel"></div>
       </section>
     </div>
   `;
 }
-
-
