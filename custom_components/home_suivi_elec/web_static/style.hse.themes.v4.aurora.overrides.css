@@ -1,0 +1,54 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   HSE — AURORA THEME OVERRIDES (V4)
+   Objectif: pousser le thème Aurora « au max » uniquement via tokens.
+   IMPORTANT: aucun style module ici — uniquement des overrides de variables.
+
+   NOTE:
+   - Ce fichier remplace l'ancien override V3 (style.hse.themes.v3.aurora.overrides.css)
+   - Il est chargé après style.hse.themes.v4.css dans index.html
+   ════════════════════════════════════════════════════════════════════════════ */
+
+html[data-theme="aurora"] {
+  /* ───────────────────────────────────────────────────────────────────────
+     Typo : plus « premium »
+     (impact direct sur Summary via summary.tokens.css)
+     ─────────────────────────────────────────────────────────────────────── */
+  --hse-font-size-title: 1.15rem;
+  --hse-font-size-body: 0.92rem;
+  --hse-font-size-muted: 0.86rem;
+
+  --hse-font-weight-title: 850;
+  --hse-font-weight-body: 520;
+  --hse-font-weight-strong: 700;
+
+  /* Nombres : look technique */
+  --hse-number-font-family: var(--hse-mono-font-family);
+
+  /* Accent valeurs : légèrement plus « néon » */
+  --hse-value-accent-color: #22d3ee;
+
+  /* ───────────────────────────────────────────────────────────────────────
+     Panels : glass + profondeur + spacing
+     ─────────────────────────────────────────────────────────────────────── */
+  --hse-panel-radius: var(--hse-radius-xl);
+  --hse-panel-padding: 18px;
+  --hse-panel-shadow: var(--hse-shadow-lg);
+
+  /* Bordure plus fine (style "verre") */
+  --hse-panel-border: 1px solid rgba(255,255,255,0.12);
+
+  /* Hover un peu plus magique (utilisé par Summary) */
+  --hse-hover: rgba(124, 58, 237, 0.14);
+
+  /* ───────────────────────────────────────────────────────────────────────
+     Tables : header gradient + texte lisible
+     ─────────────────────────────────────────────────────────────────────── */
+  --hse-table-header-bg: var(--hse-gradient-header);
+  --hse-table-header-color: var(--hse-on-header);
+  --hse-table-header-weight: 900;
+
+  /* Fix ciblé: texte du tableau "Coûts par capteur" (tbody)
+     (fallback dark text si le tableau est rendu sur un fond clair) */
+  --hse-table-body-color: rgba(15, 23, 42, 0.92);
+  --hse-table-body-muted-color: rgba(15, 23, 42, 0.65);
+}

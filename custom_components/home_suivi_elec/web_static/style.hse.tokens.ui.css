@@ -10,6 +10,31 @@
   --hse-mono-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --hse-font-tracking: 0.1px;
 
+  /* Typo tokens (consommés par summary.tokens.css et/ou features) */
+  --hse-font-size-title: 1.05rem;
+  --hse-font-size-body: 0.95rem;
+  --hse-font-size-muted: 0.86rem;
+
+  --hse-font-weight-title: 800;
+  --hse-font-weight-body: 520;
+  --hse-font-weight-strong: 700;
+
+  --hse-number-font-family: var(--hse-mono-font-family);
+  --hse-value-accent-color: var(--hse-primary);
+
+  /* Panels tokens (features peuvent s'en servir) */
+  --hse-panel-radius: var(--hse-radius-lg);
+  --hse-panel-padding: 16px;
+  --hse-panel-shadow: var(--hse-shadow-md);
+  --hse-panel-border: 1px solid var(--hse-border);
+
+  /* Table tokens (features) */
+  --hse-table-header-bg: var(--hse-gradient-header);
+  --hse-table-header-color: var(--hse-on-header);
+  --hse-table-header-weight: 800;
+  --hse-table-body-color: var(--hse-text);
+  --hse-table-body-muted-color: var(--hse-text-muted);
+
   /* Surfaces */
   --hse-bg: #f7f9ff;
   --hse-bg-secondary: #f3f4f6;
