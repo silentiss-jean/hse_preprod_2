@@ -11,7 +11,7 @@
 export function renderGenerationLayout() {
   return `
         <div class="generation-layout">
-            <div class="container">
+            <div class="generation-container">
 
                 <!-- Hero / Title -->
                 <div class="generation-hero">
