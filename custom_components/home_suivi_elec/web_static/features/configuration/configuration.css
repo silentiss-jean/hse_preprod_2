@@ -173,6 +173,24 @@
   border-color: var(--hse-border-strong) !important;
 }
 
+/* Référence: certains selects ne portent pas .hse-config-input */
+#configuration .reference-panel select,
+#configuration .reference-panel input,
+#configuration .hse-config-note select,
+#configuration .hse-config-note input {
+  background: var(--hse-surface-muted) !important;
+  color: var(--hse-text-main) !important;
+  border: 1px solid var(--hse-border-strong) !important;
+  border-radius: var(--hse-radius-md);
+  padding: 6px 10px;
+}
+
+#configuration .reference-panel select option,
+#configuration .hse-config-note select option {
+  background: var(--hse-surface) !important;
+  color: var(--hse-text-main) !important;
+}
+
 /* Dropdown list: garantit la lisibilité dans la liste */
 #configuration select.hse-config-input option {
   background: var(--hse-surface) !important;
@@ -235,7 +253,8 @@
 .configuration-section button,
 .config-section button,
 button.save-config,
-button#save-config {
+button#save-config,
+#configuration #saveSelection {
   background: var(--hse-accent);
   color: var(--hse-on-accent);
   border: 1px solid var(--hse-accent-hover);
@@ -247,7 +266,8 @@ button#save-config {
 .configuration-section button:hover,
 .config-section button:hover,
 button.save-config:hover,
-button#save-config:hover {
+button#save-config:hover,
+#configuration #saveSelection:hover {
   background: var(--hse-accent-hover);
   transform: translateY(-1px);
 }
