@@ -1,1 +1,249 @@
-/* auto-created by audit phase1: customisation */
+/* customisation.css
+   Harmonisation UI (comme configuration/diagnostic/detection)
+   Objectifs:
+   - mise en page propre et lisible (dark)
+   - compatible tokens HSE v3 (style.hse.themes.v3.css)
+   - pas de couleurs hardcodées
+   NOTE: commit 1 = CSS uniquement (suppression inline styles -> commit 2)
+*/
+
+:root {
+  --hse-custom-panel-bg: var(--hse-surface);
+  --hse-custom-panel-border: var(--hse-border);
+  --hse-custom-panel-shadow: var(--hse-shadow-sm);
+
+  --hse-custom-title: var(--hse-text-main);
+  --hse-custom-muted: var(--hse-text-muted);
+
+  --hse-custom-input-bg: var(--hse-surface-muted);
+  --hse-custom-input-border: var(--hse-border-strong);
+  --hse-custom-input-text: var(--hse-text-main);
+
+  --hse-custom-chip-bg: var(--hse-accent-soft);
+  --hse-custom-chip-text: var(--hse-text-main);
+}
+
+/* Layout global */
+.customisation-layout {
+  width: 100%;
+}
+
+.customisation-header h2 {
+  margin: 0 0 10px 0;
+  color: var(--hse-custom-title);
+}
+
+/* Bloc "Apparence & Thème" */
+.customisation-content {
+  background: var(--hse-custom-panel-bg);
+  border: 1px solid var(--hse-custom-panel-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-custom-panel-shadow);
+  padding: 12px 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  max-width: 560px;
+}
+
+.customisation-content label {
+  color: var(--hse-custom-title);
+  font-weight: 700;
+}
+
+.customisation-content .hint {
+  margin: 0;
+  font-size: 0.9em;
+  color: var(--hse-custom-muted);
+}
+
+/* Select thème (certains navigateurs imposent des styles) */
+.customisation-content .hse-select,
+.customisation-content select {
+  background: var(--hse-custom-input-bg) !important;
+  color: var(--hse-custom-input-text) !important;
+  border: 1px solid var(--hse-custom-input-border) !important;
+  border-radius: var(--hse-radius-md);
+  padding: 8px 10px;
+  outline: none;
+  width: 100%;
+  max-width: 420px;
+}
+
+.customisation-content select option,
+.customisation-content .hse-select option {
+  background: var(--hse-surface) !important;
+  color: var(--hse-text-main) !important;
+}
+
+/* Panel regroupement */
+#hse-groups-panel {
+  margin-top: 12px;
+}
+
+#hse-groups-panel h2 {
+  margin: 0 0 10px 0;
+  color: var(--hse-custom-title);
+}
+
+/* List container (cards) */
+.hse-groups-container {
+  display: grid;
+  gap: 12px;
+}
+
+/* Carte groupe */
+.hse-group-card {
+  background: var(--hse-custom-panel-bg);
+  border: 1px solid var(--hse-custom-panel-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-custom-panel-shadow);
+  overflow: hidden;
+}
+
+.hse-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--hse-border-soft);
+  background: var(--hse-surface);
+}
+
+/* Boutons icônes (toggle/edit/delete) */
+.hse-group-toggle {
+  border: 1px solid var(--hse-border-strong);
+  background: var(--hse-surface-muted);
+  color: var(--hse-text-main);
+  border-radius: var(--hse-radius-md);
+  padding: 6px 10px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.hse-group-toggle:hover {
+  background: var(--hse-accent-soft);
+}
+
+.hse-group-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hse-group-icon {
+  opacity: 0.9;
+}
+
+.hse-group-name-label {
+  font-weight: 800;
+  color: var(--hse-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Info chips (counts / legend) */
+.hse-groups-toolbar-info {
+  font-size: 0.9em;
+  color: var(--hse-custom-muted);
+}
+
+/* Select mode du groupe */
+.hse-group-mode {
+  background: var(--hse-custom-input-bg) !important;
+  color: var(--hse-custom-input-text) !important;
+  border: 1px solid var(--hse-custom-input-border) !important;
+  border-radius: var(--hse-radius-md);
+  padding: 7px 10px;
+  min-width: 140px;
+}
+
+.hse-group-mode option {
+  background: var(--hse-surface) !important;
+  color: var(--hse-text-main) !important;
+}
+
+/* Corps groupe */
+.hse-group-body {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .hse-group-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Colonnes energy/power */
+.hse-group-column {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border-soft);
+  border-radius: var(--hse-radius-lg);
+  overflow: hidden;
+}
+
+.hse-group-column-title {
+  padding: 8px 10px;
+  font-weight: 800;
+  color: var(--hse-text-main);
+  background: var(--hse-accent-soft);
+  border-bottom: 1px solid var(--hse-border-soft);
+}
+
+.hse-group-sensor-list {
+  padding: 8px;
+  max-height: 520px;
+  overflow: auto;
+}
+
+/* Items capteurs */
+.hse-group-sensor-item {
+  padding: 6px 8px;
+  border-radius: var(--hse-radius-md);
+  border: 1px solid transparent;
+  color: var(--hse-text-main);
+  word-break: break-word;
+}
+
+.hse-group-sensor-item + .hse-group-sensor-item {
+  margin-top: 6px;
+}
+
+.hse-group-sensor-item.is-clickable {
+  cursor: pointer;
+  background: var(--hse-surface-muted);
+  border-color: var(--hse-border-soft);
+}
+
+.hse-group-sensor-item.is-clickable:hover {
+  background: var(--hse-accent-soft);
+  border-color: var(--hse-border-strong);
+}
+
+.hse-group-empty {
+  color: var(--hse-custom-muted);
+  padding: 8px;
+}
+
+/* Inputs utilisés dans le panel (filter + keyword) */
+.hse-group-name-input {
+  background: var(--hse-custom-input-bg) !important;
+  color: var(--hse-custom-input-text) !important;
+  border: 1px solid var(--hse-custom-input-border) !important;
+  border-radius: var(--hse-radius-md);
+  padding: 7px 10px;
+  outline: none;
+}
+
+.hse-group-name-input:focus {
+  border-color: var(--hse-accent) !important;
+  box-shadow: 0 0 0 3px var(--hse-accent-soft);
+}
