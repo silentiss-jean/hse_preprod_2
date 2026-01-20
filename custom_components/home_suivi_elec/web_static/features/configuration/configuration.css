@@ -528,3 +528,153 @@ button#save-config:hover {
     max-height: 400px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Sélection panel — CSS (ex-inline)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.hse-selection-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .hse-selection-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hse-selection-columns .capteur-column {
+  min-width: 0;
+}
+
+.hse-selection-columns .capteur-column h3 {
+  margin: 0 0 8px 0;
+  color: var(--hse-text-main);
+}
+
+.hse-selection-empty {
+  margin: 0;
+  color: var(--hse-text-muted);
+  font-size: 13px;
+  padding: 8px;
+}
+
+.hse-selection-columns .integration-section {
+  margin-bottom: 8px;
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-md);
+  overflow: hidden;
+  background: var(--hse-surface);
+}
+
+.hse-selection-columns .integration-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  cursor: pointer;
+  background: var(--hse-accent-soft);
+  font-size: 13px;
+  user-select: none;
+}
+
+.hse-selection-columns .integration-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hse-selection-columns .integration-count-badge {
+  background: var(--hse-accent);
+  color: var(--hse-on-accent);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.hse-selection-columns .integration-actions {
+  display: flex;
+  gap: 6px;
+  padding: 4px 8px;
+  border-top: 1px solid var(--hse-border-soft);
+  background: var(--hse-surface);
+}
+
+.hse-selection-columns .hse-btn-mini {
+  font-size: 11px;
+  padding: 2px 6px;
+  cursor: pointer;
+  border-radius: var(--hse-radius-md);
+  border: 1px solid var(--hse-border-strong);
+  background: var(--hse-surface);
+  color: var(--hse-text-main);
+}
+
+.hse-selection-columns .hse-btn-mini:hover {
+  background: var(--hse-accent-soft);
+}
+
+.hse-selection-columns .sensor-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--hse-border-soft);
+  font-size: 13px;
+}
+
+.hse-selection-columns .capteur-checkbox {
+  margin-right: 8px;
+}
+
+.hse-selection-columns .hse-sensor-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.hse-selection-columns .hse-sensor-name {
+  font-weight: 500;
+  color: var(--hse-text-main);
+}
+
+.hse-selection-columns .hse-sensor-meta {
+  color: var(--hse-text-muted);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hse-selection-columns .hse-cost-badge {
+  margin-left: 4px;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--hse-border-strong);
+  background: var(--hse-warning-soft, #fff3cd);
+  color: var(--hse-text-main);
+}
+
+.hse-selection-columns .hse-summary-toggle,
+.hse-selection-columns .hse-summary-bulk {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--hse-border-strong);
+  cursor: pointer;
+  background: var(--hse-surface);
+  color: var(--hse-text-main);
+}
+
+.hse-selection-columns .hse-summary-toggle.is-on,
+.hse-selection-columns .hse-summary-bulk.is-on {
+  background: var(--hse-success-soft, #e0ffe0);
+}
+
+.hse-selection-columns .hse-summary-toggle:hover,
+.hse-selection-columns .hse-summary-bulk:hover {
+  background: var(--hse-accent-soft);
+}
