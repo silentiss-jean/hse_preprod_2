@@ -21,12 +21,12 @@
   --hse-config-input-focus: var(--hse-accent);
 
   /* Bandeau info (thémable) */
-  --hse-config-banner-bg: var(--hse-accent-soft);
-  --hse-config-banner-border: var(--hse-accent);
+  --hse-config-banner-bg: var(--hse-surface);
+  --hse-config-banner-border: var(--hse-border);
   --hse-config-banner-text: var(--hse-text-main);
 
   /* Auto-select panel */
-  --hse-auto-bg: var(--hse-accent-soft);
+  --hse-auto-bg: var(--hse-surface);
   --hse-auto-border: var(--hse-accent);
   --hse-auto-title: var(--hse-text-main);
   --hse-auto-text: var(--hse-text-muted);
@@ -36,6 +36,12 @@
 /* Wrapper */
 .configuration-layout {
   width: 100%;
+}
+
+.configuration-layout hr {
+  border: 0;
+  border-top: 1px solid var(--hse-border-soft);
+  margin: 12px 0;
 }
 
 /* Bandeau info ("les modifications ..." / "gestion des doublons" etc.) */
@@ -243,7 +249,9 @@ button#save-config:hover {
    ═══════════════════════════════════════════════════════════════════════ */
 .hse-auto-panel {
   background: var(--hse-auto-bg);
+  border: 1px solid var(--hse-border);
   border-left: 4px solid var(--hse-auto-border);
+  box-shadow: var(--hse-shadow-sm);
   border-radius: var(--hse-radius-lg);
   padding: 14px 14px;
   margin-top: 20px;
@@ -654,7 +662,7 @@ button#save-config:hover {
   padding: 1px 6px;
   border-radius: 10px;
   border: 1px solid var(--hse-border-strong);
-  background: var(--hse-warning-soft, #fff3cd);
+  background: var(--hse-warning-soft, var(--hse-accent-soft));
   color: var(--hse-text-main);
 }
 
@@ -671,7 +679,7 @@ button#save-config:hover {
 
 .hse-selection-columns .hse-summary-toggle.is-on,
 .hse-selection-columns .hse-summary-bulk.is-on {
-  background: var(--hse-success-soft, #e0ffe0);
+  background: var(--hse-success-soft, var(--hse-accent-soft));
 }
 
 .hse-selection-columns .hse-summary-toggle:hover,
