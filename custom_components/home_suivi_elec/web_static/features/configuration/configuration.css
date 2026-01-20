@@ -316,3 +316,215 @@ button#save-config:hover {
   border-color: var(--hse-warning) !important;
   font-weight: 800;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Doublons panel — CSS (ex-<style> injecté)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.hse-dup-title {
+  margin: 0 0 8px 0;
+}
+
+.dup-empty {
+  margin: 0;
+  color: var(--hse-text-muted);
+  font-size: 13px;
+}
+
+.hse-duplicates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.dup-column {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  padding: 8px;
+  min-height: 200px;
+  box-sizing: border-box;
+}
+
+.dup-column-header {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-bottom: 2px solid var(--hse-border-strong);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--hse-text-main);
+}
+
+.dup-count {
+  background: var(--hse-accent);
+  color: var(--hse-on-accent);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.dup-column-body {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.dup-column-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dup-column-body::-webkit-scrollbar-thumb {
+  background: var(--hse-border-strong);
+  border-radius: 4px;
+}
+
+.dup-column-body::-webkit-scrollbar-thumb:hover {
+  background: var(--hse-text-muted);
+}
+
+.dup-group-card {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-md);
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: var(--hse-shadow-sm);
+  font-size: 13px;
+}
+
+.dup-group-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--hse-text-main);
+}
+
+.dup-group-sub {
+  color: var(--hse-text-muted);
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.dup-sensor-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  border-top: 1px solid var(--hse-border-soft);
+  gap: 6px;
+}
+
+.dup-sensor-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dup-sensor-name {
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.dup-sensor-meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--hse-text-muted);
+}
+
+.dup-sensor-score {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--hse-accent-soft);
+  color: var(--hse-accent);
+  border: 1px solid var(--hse-border-soft);
+}
+
+.dup-ref-star {
+  color: var(--hse-warning);
+  margin-left: 4px;
+}
+
+.dup-actions {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dup-btn-primary {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: var(--hse-radius-md);
+  border: 1px solid var(--hse-accent-hover);
+  cursor: pointer;
+  background: var(--hse-accent);
+  color: var(--hse-on-accent);
+}
+
+.dup-btn-primary:hover {
+  background: var(--hse-accent-hover);
+}
+
+.dup-btn-secondary {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--hse-radius-md);
+  border: 1px solid var(--hse-border-strong);
+  cursor: pointer;
+  background: var(--hse-surface);
+  color: var(--hse-text-main);
+}
+
+.dup-btn-secondary:hover {
+  background: var(--hse-accent-soft);
+}
+
+.dup-integration-header {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 4px 0;
+  color: var(--hse-text-main);
+  opacity: 0.85;
+}
+
+.dup-ignored-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-top: 1px solid var(--hse-border-soft);
+  font-size: 12px;
+  gap: 10px;
+}
+
+.dup-ignored-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .hse-duplicates-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dup-column-body {
+    max-height: 400px;
+  }
+}

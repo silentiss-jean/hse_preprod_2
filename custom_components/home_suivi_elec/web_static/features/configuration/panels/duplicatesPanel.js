@@ -98,10 +98,7 @@ export function renderDuplicatesPanel(parentEl, cfg = {}) {
     ignoredByIntegration.get(integ).push(cap);
   });
 
-  const totalMulti = multiGroups.reduce(
-    (sum, g) => sum + g.members.length,
-    0,
-  );
+  const totalMulti = multiGroups.reduce((sum, g) => sum + g.members.length, 0);
   const totalSame = Array.from(intraByIntegration.values()).reduce(
     (sum, arr) =>
       sum +
@@ -128,7 +125,7 @@ export function renderDuplicatesPanel(parentEl, cfg = {}) {
 
   const title = document.createElement("h2");
   title.textContent = "Doublons par appareil";
-  title.style.margin = "0 0 8px 0";
+  title.className = "hse-dup-title";
   parentEl.appendChild(title);
 
   const container = document.createElement("div");
@@ -153,8 +150,7 @@ export function renderDuplicatesPanel(parentEl, cfg = {}) {
   if (totalMulti === 0) {
     const p = document.createElement("p");
     p.textContent = "Aucun doublon multi-intégrations.";
-    p.style.color = "#777";
-    p.style.fontSize = "13px";
+    p.className = "dup-empty";
     body1.appendChild(p);
   } else {
     multiGroups.forEach((g) => {
@@ -195,8 +191,7 @@ export function renderDuplicatesPanel(parentEl, cfg = {}) {
   if (totalSame === 0) {
     const p = document.createElement("p");
     p.textContent = "Aucun doublon détecté.";
-    p.style.color = "#777";
-    p.style.fontSize = "13px";
+    p.className = "dup-empty";
     body2.appendChild(p);
   } else {
     const integKeys = Array.from(intraByIntegration.keys()).sort();
@@ -246,8 +241,7 @@ export function renderDuplicatesPanel(parentEl, cfg = {}) {
   if (totalIgnored === 0) {
     const p = document.createElement("p");
     p.textContent = "Aucun capteur ignoré.";
-    p.style.color = "#777";
-    p.style.fontSize = "13px";
+    p.className = "dup-empty";
     body3.appendChild(p);
   } else {
     const integKeys = Array.from(ignoredByIntegration.keys()).sort();
@@ -263,11 +257,7 @@ export function renderDuplicatesPanel(parentEl, cfg = {}) {
         row.className = "dup-ignored-row";
 
         const main = document.createElement("div");
-        main.style.display = "flex";
-        main.style.alignItems = "center";
-        main.style.gap = "6px";
-        main.style.flex = "1";
-        main.style.minWidth = "0";
+        main.className = "dup-ignored-main";
 
         const nameSpan = document.createElement("span");
         nameSpan.textContent =
@@ -305,201 +295,6 @@ export function renderDuplicatesPanel(parentEl, cfg = {}) {
   container.appendChild(col3);
 
   parentEl.appendChild(container);
-
-  // =========================
-  // Injection styles
-  // =========================
-
-  if (!document.getElementById("hse-duplicates-styles")) {
-    const style = document.createElement("style");
-    style.id = "hse-duplicates-styles";
-    style.textContent = `
-      .hse-duplicates-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .dup-column {
-        background: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 8px;
-        min-height: 200px;
-        box-sizing: border-box;
-      }
-
-      .dup-column-header {
-        font-weight: 600;
-        font-size: 14px;
-        padding: 6px 8px;
-        border-bottom: 2px solid #ccc;
-        margin-bottom: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .dup-count {
-        background: #2196f3;
-        color: #fff;
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 500;
-      }
-
-      .dup-column-body {
-        max-height: 500px;
-        overflow-y: auto;
-        padding-right: 4px;
-      }
-
-      .dup-column-body::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      .dup-column-body::-webkit-scrollbar-thumb {
-        background: #999;
-        border-radius: 4px;
-      }
-
-      .dup-column-body::-webkit-scrollbar-thumb:hover {
-        background: #666;
-      }
-
-      .dup-group-card {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 10px;
-        margin-bottom: 8px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-        font-size: 13px;
-      }
-
-      .dup-group-title {
-        font-weight: 600;
-        margin-bottom: 4px;
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-      }
-
-      .dup-group-sub {
-        color: #666;
-        font-size: 11px;
-        margin-bottom: 6px;
-      }
-
-      .dup-sensor-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 3px 0;
-        border-top: 1px solid #eee;
-        gap: 6px;
-      }
-
-      .dup-sensor-main {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        flex: 1;
-        min-width: 0;
-      }
-
-      .dup-sensor-name {
-        font-weight: 500;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-
-      .dup-sensor-meta {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-        font-size: 11px;
-        color: #666;
-      }
-
-      .dup-sensor-score {
-        font-size: 11px;
-        padding: 1px 4px;
-        border-radius: 999px;
-        background: #e3f2fd;
-        color: #1565c0;
-      }
-
-      .dup-ref-star {
-        color: #ff9800;
-        margin-left: 4px;
-      }
-
-      .dup-actions {
-        margin-top: 6px;
-        display: flex;
-        justify-content: flex-end;
-      }
-
-      .dup-btn-primary {
-        font-size: 11px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        background: #2196f3;
-        color: #fff;
-      }
-
-      .dup-btn-primary:hover {
-        background: #1976d2;
-      }
-
-      .dup-btn-secondary {
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 4px;
-        border: 1px solid #bbb;
-        cursor: pointer;
-        background: #fafafa;
-        color: #333;
-      }
-
-      .dup-btn-secondary:hover {
-        background: #f0f0f0;
-      }
-
-      .dup-integration-header {
-        font-size: 12px;
-        font-weight: 600;
-        margin: 4px 0;
-        color: #444;
-      }
-
-      .dup-ignored-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 4px 0;
-        border-top: 1px solid #eee;
-        font-size: 12px;
-      }
-
-      @media (max-width: 1024px) {
-        .hse-duplicates-grid {
-          grid-template-columns: 1fr;
-          gap: 16px;
-        }
-        .dup-column-body {
-          max-height: 400px;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-  }
 }
 
 
