@@ -45,22 +45,27 @@ export function renderGenerationLayout() {
                     </div>
                 </div>
 
-                <!-- YAML Output Section -->
-                <div class="yaml-section">
-                    <div class="yaml-header">
-                        <h3>📝 Code YAML généré</h3>
-                        <div class="yaml-hint">Astuce: copier puis coller dans un nouveau dashboard, puis adapter si besoin.</div>
-                    </div>
-                    <pre id="yaml-code" class="code-block">Cliquez sur "Générer" pour commencer...</pre>
-                </div>
+                <!-- Panels grid (YAML + Preview) -->
+                <div class="generation-panels">
 
-                <!-- Preview Section (hidden by default) -->
-                <div id="preview-container" class="is-hidden">
-                    <div class="preview-header">
-                        <h3>👁️ Aperçu du Dashboard</h3>
-                        <div class="preview-hint">Aperçu simplifié (affichage rapide), pas un rendu Lovelace 1:1.</div>
+                    <!-- YAML Output Section -->
+                    <div class="yaml-section">
+                        <div class="yaml-header">
+                            <h3>📝 Code YAML</h3>
+                            <div class="yaml-hint">Astuce: copier puis coller dans un nouveau dashboard, puis adapter si besoin.</div>
+                        </div>
+                        <pre id="yaml-code" class="code-block">Cliquez sur "Générer" pour commencer...</pre>
                     </div>
-                    <div id="dashboard-preview" class="preview-grid"></div>
+
+                    <!-- Preview Section (hidden by default) -->
+                    <div id="preview-container" class="is-hidden">
+                        <div class="preview-header">
+                            <h3>👁️ Aperçu</h3>
+                            <div class="preview-hint">Aperçu simplifié (affichage rapide), pas un rendu Lovelace 1:1.</div>
+                        </div>
+                        <div id="dashboard-preview" class="preview-grid"></div>
+                    </div>
+
                 </div>
 
             </div>
