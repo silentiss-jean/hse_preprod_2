@@ -14,7 +14,7 @@
   justify-content: center;
   gap: 8px;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--hse-radius-md);
   border: 1px solid var(--hse-border);
   background: var(--hse-surface);
   color: var(--hse-text);
@@ -55,8 +55,7 @@
   background: var(--hse-surface);
 }
 
-/* Variants (feature-specific hooks should live in feature css)
-   Here: generic semantic button accents used by multiple features. */
+/* Variants */
 .btn-warn {
   background: var(--hse-gradient-warning);
   border-color: transparent;
@@ -65,6 +64,18 @@
 
 .btn-info {
   background: var(--hse-gradient-info);
+  border-color: transparent;
+  color: var(--hse-on-accent, #ffffff);
+}
+
+.btn-success {
+  background: var(--hse-gradient-success);
+  border-color: transparent;
+  color: var(--hse-on-accent, #ffffff);
+}
+
+.btn-danger {
+  background: var(--hse-gradient-danger);
   border-color: transparent;
   color: var(--hse-on-accent, #ffffff);
 }
@@ -92,7 +103,7 @@
   border: 1px solid var(--hse-border);
   background: var(--hse-surface);
   color: var(--hse-text);
-  border-radius: 10px;
+  border-radius: var(--hse-radius-md);
   padding: 10px 14px;
   cursor: pointer;
   font-weight: 700;
@@ -117,32 +128,35 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   PANELS / CARDS (composants)
+   PANELS / CARDS
    ──────────────────────────────────────────────────────────────────────────── */
 
 .hse-surface-card {
   background: var(--hse-surface);
   border: 1px solid var(--hse-border);
-  border-radius: 12px;
+  border-radius: var(--hse-radius-lg);
   box-shadow: var(--hse-shadow-sm);
   padding: 16px;
   color: var(--hse-text);
+  backdrop-filter: var(--hse-backdrop-filter);
 }
 
 .card,
 .hse-card {
   background: var(--hse-surface);
   border: 1px solid var(--hse-border);
-  border-radius: 12px;
+  border-radius: var(--hse-radius-lg);
   box-shadow: var(--hse-shadow-sm);
   padding: 16px;
+  backdrop-filter: var(--hse-backdrop-filter);
 }
 
 .hse-panel {
   background: var(--hse-surface);
   border: 1px solid var(--hse-border);
-  border-radius: 12px;
+  border-radius: var(--hse-radius-lg);
   box-shadow: var(--hse-shadow-sm);
+  backdrop-filter: var(--hse-backdrop-filter);
 }
 
 .hse-panel-accent {
@@ -158,14 +172,16 @@
    ──────────────────────────────────────────────────────────────────────────── */
 
 .hse-badge {
-  display: inline-block;
-  background: var(--hse-surface);
-  color: var(--hse-text);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 999px;
-  border: 1px solid var(--hse-border-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--hse-badge-bg, var(--hse-surface));
+  color: var(--hse-badge-fg, var(--hse-text));
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: var(--hse-badge-padding, 2px 8px);
+  border-radius: var(--hse-badge-radius, 999px);
+  border: 1px solid var(--hse-badge-border, var(--hse-border-soft));
   vertical-align: middle;
   box-shadow: var(--hse-shadow-sm);
 }
@@ -178,6 +194,16 @@
 .hse-badge-help:hover {
   transform: translateY(-1px);
   box-shadow: var(--hse-shadow-md);
+}
+
+.hse-badge[data-state="ok"] {
+  border-color: color-mix(in srgb, var(--hse-success) 55%, var(--hse-badge-border, var(--hse-border-soft)));
+}
+.hse-badge[data-state="warn"] {
+  border-color: color-mix(in srgb, var(--hse-warning) 55%, var(--hse-badge-border, var(--hse-border-soft)));
+}
+.hse-badge[data-state="danger"] {
+  border-color: color-mix(in srgb, var(--hse-error) 55%, var(--hse-badge-border, var(--hse-border-soft)));
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

@@ -1,15 +1,9 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   HSE CORE CSS
-   - Styles globaux (reset, layout, base page)
-   - Ne doit pas contenir de styles spécifiques à une feature ni composants.
-   - Consume uniquement des tokens (vars --hse-*) fournis par:
-     - style.hse.tokens.ui.css (base)
-     - style.hse.themes.v3.css (thèmes)
+   HSE CORE CSS (V4-ready)
+   - Reset + base layout
+   - Fond dynamique via variables: --hse-bg / --hse-bg-dynamic
+   - Ne contient pas de styles “feature” (history/summary/…)
    ════════════════════════════════════════════════════════════════════════════ */
-
-/* ────────────────────────────────────────────────────────────────────────────
-   RESET / BASE
-   ──────────────────────────────────────────────────────────────────────────── */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -23,64 +17,72 @@ html {
 body {
   margin: 0;
   font-family: var(--hse-font-family);
-  color: var(--hse-text);
+  color: var(--hse-text-main, var(--hse-text));
   background: var(--hse-bg, var(--hse-bg-secondary));
   line-height: 1.45;
+  letter-spacing: var(--hse-font-tracking, 0.1px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  position: relative;
+  overflow-x: hidden;
 }
 
-img, svg, video, canvas {
-  max-width: 100%;
-  height: auto;
+/* Fond dynamique (léger, derrière tout) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -40px;
+  z-index: -1;
+  background: var(--hse-bg-dynamic, none);
+  opacity: var(--hse-bg-dynamic-opacity, 0.55);
+  filter: blur(18px) saturate(110%);
+  transform: translate3d(0,0,0);
+  animation: hse-bg-float 18s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
-button, input, select, textarea {
-  font: inherit;
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
 }
 
-/* Focus visible (accessibilité) */
+@keyframes hse-bg-float {
+  0%   { transform: translate3d(-1.5%, -1%, 0) scale(1.02); }
+  100% { transform: translate3d( 1.5%,  1%, 0) scale(1.04); }
+}
+
+img, svg, video, canvas { max-width: 100%; height: auto; }
+
+button, input, select, textarea { font: inherit; }
+
 :focus-visible {
   outline: 2px solid var(--hse-primary);
   outline-offset: 2px;
 }
 
-/* ────────────────────────────────────────────────────────────────────────────
-   PAGE LAYOUT
-   ──────────────────────────────────────────────────────────────────────────── */
-
-.hse-header {
-  padding: 18px 20px 10px;
-}
+.hse-header { padding: 18px 20px 10px; }
 
 .hse-header h1 {
   margin: 0 0 10px 0;
   font-size: 2rem;
-  font-weight: 800;
-  color: var(--hse-text);
+  font-weight: 850;
+  color: var(--hse-text-main, var(--hse-text));
 }
 
-/* Contenu d’onglet */
 .tab-content {
   display: none;
   padding: 0 20px 24px;
 }
 
-.tab-content.active {
-  display: block;
-}
+.tab-content.active { display: block; }
 
-/* Titres de page */
 .tab-content h2 {
   margin: 12px 0 12px;
-  color: var(--hse-text);
+  color: var(--hse-text-main, var(--hse-text));
 }
 
-/* Helpers utilisés dans index.html */
 .hse-flex-1 { flex: 1; }
 .hse-mt-10 { margin-top: 10px; }
-
-/* ────────────────────────────────────────────────────────────────────────────
-   RESPONSIVE
-   ──────────────────────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
   .hse-header { padding: 14px 14px 8px; }

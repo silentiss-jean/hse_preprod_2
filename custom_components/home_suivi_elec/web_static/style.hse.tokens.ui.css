@@ -1,25 +1,19 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   HSE UI TOKENS (base)
-   - Base neutre: les thèmes (style.hse.themes.v3.css) doivent surcharger ces vars.
-   - Objectif: summary.css (et le reste) ne contient plus de couleurs hardcodées.
+   HSE UI TOKENS (V4-ready base)
+   - Base neutre (fallback): les thèmes v4 définissent les vraies couleurs
+   - Contient toutes les vars attendues par components + features
    ════════════════════════════════════════════════════════════════════════════ */
 
 :root {
   /* Typography */
   --hse-font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   --hse-mono-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-  /* Text */
-  --hse-text: #1f2937;
-  --hse-text-main: var(--hse-text);
-  --hse-text-muted: #6b7280;
-
-  /* Text (inverse) */
-  --hse-text-inverse: #ffffff;
+  --hse-font-tracking: 0.1px;
 
   /* Surfaces */
-  --hse-surface: #ffffff;
+  --hse-bg: #f7f9ff;
   --hse-bg-secondary: #f3f4f6;
+  --hse-surface: #ffffff;
   --hse-surface-muted: #f1f5f9;
 
   /* Borders */
@@ -27,65 +21,92 @@
   --hse-border-soft: #eef2f7;
   --hse-border-strong: #cbd5e1;
 
+  /* Text */
+  --hse-text: #1f2937;
+  --hse-text-main: var(--hse-text);
+  --hse-text-muted: #6b7280;
+  --hse-text-soft: #7b8697;
+  --hse-text-inverse: #ffffff;
+
   /* Brand / accents */
   --hse-primary: #2563eb;
   --hse-primary-dark: #1d4ed8;
+
   --hse-accent: #7c3aed;
+  --hse-accent-hover: #6d28d9;
+  --hse-accent-soft: rgba(124, 58, 237, 0.12);
+
   --hse-hover: rgba(37, 99, 235, 0.08);
 
   /* Semantic colors */
   --hse-info: #0ea5e9;
+  --hse-info-dark: #0284c7;
   --hse-success: #16a34a;
+  --hse-success-dark: #15803d;
   --hse-warning: #f59e0b;
-  --hse-danger: #ef4444;
-  --hse-error: var(--hse-danger);
+  --hse-warning-dark: #b45309;
+  --hse-error: #ef4444;
+  --hse-error-dark: #dc2626;
 
   /* Soft semantic backgrounds */
   --hse-success-soft: rgba(22, 163, 74, 0.12);
   --hse-warning-soft: rgba(245, 158, 11, 0.16);
-  --hse-accent-soft: rgba(124, 58, 237, 0.12);
-  --hse-danger-soft: rgba(239, 68, 68, 0.12);
+  --hse-error-soft: rgba(239, 68, 68, 0.12);
+  --hse-info-soft: rgba(14, 165, 233, 0.12);
 
-  /* Semantic text */
-  --hse-warning-text: #92400e;
-  --hse-tooltip-text: #0b1220;
-
-  /* Gradients (base) */
+  /* Gradients (fallback base) */
+  --hse-gradient-primary: linear-gradient(135deg, rgba(37,99,235,1), rgba(124,58,237,1));
+  --hse-gradient-header: linear-gradient(135deg, rgba(37,99,235,0.95), rgba(14,165,233,0.85));
   --hse-gradient-info: linear-gradient(135deg, rgba(14,165,233,0.18), rgba(14,165,233,0.08));
   --hse-gradient-warning: linear-gradient(135deg, rgba(245,158,11,0.22), rgba(245,158,11,0.10));
+  --hse-gradient-success: linear-gradient(135deg, rgba(22,163,74,0.22), rgba(22,163,74,0.10));
+  --hse-gradient-danger: linear-gradient(135deg, rgba(239,68,68,0.22), rgba(239,68,68,0.10));
+
+  /* On-colors */
+  --hse-on-accent: #ffffff;
+  --hse-on-header: #ffffff;
+
+  /* Backdrop (glass theme uses it) */
+  --hse-backdrop-filter: none;
 
   /* Shadows */
   --hse-shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
-  --hse-shadow-md: 0 6px 18px rgba(0,0,0,0.10);
+  --hse-shadow-md: 0 10px 24px rgba(0,0,0,0.12);
+  --hse-shadow-lg: 0 22px 56px rgba(0,0,0,0.16);
   --hse-shadow-glow: 0 0 18px rgba(124,58,237,0.18);
 
   /* Motion */
-  --hse-transition-base: 180ms ease;
   --hse-transition-fast: 120ms ease;
+  --hse-transition-base: 180ms ease;
+  --hse-transition-slow: 320ms ease;
 
-  /* Layout / spacing scale */
+  /* Radius */
+  --hse-radius-sm: 8px;
+  --hse-radius-md: 12px;
+  --hse-radius-lg: 18px;
+  --hse-radius-xl: 26px;
+
+  /* Spacing scale */
   --hse-spacing-xs: 4px;
   --hse-spacing-sm: 8px;
   --hse-spacing-md: 16px;
   --hse-spacing-lg: 24px;
   --hse-spacing-xl: 32px;
 
-  /* Typography scale */
-  --hse-font-size-xs: 0.8rem;
-  --hse-font-size-sm: 0.95rem;
-  --hse-font-size-lg: 1.1rem;
-  --hse-font-size-2xl: 1.6rem;
-
-  --hse-font-weight-semibold: 600;
-  --hse-font-weight-bold: 700;
-  --hse-font-weight-black: 900;
-
-  /* Radius */
-  --hse-radius-sm: 6px;
-  --hse-radius-md: 10px;
-  --hse-radius-lg: 16px;
-  --hse-radius-xl: 24px;
-
-  /* Layout container */
+  /* Container */
   --hse-container-max-width: 1280px;
+
+  /* Badge */
+  --hse-badge-bg: rgba(0,0,0,0.04);
+  --hse-badge-border: rgba(0,0,0,0.10);
+  --hse-badge-fg: var(--hse-text);
+  --hse-badge-radius: 999px;
+  --hse-badge-padding: 2px 8px;
+
+  /* Dynamic background (fallback) */
+  --hse-bg-dynamic-opacity: 0.55;
+  --hse-bg-dynamic:
+    radial-gradient(900px 700px at 10% 10%, rgba(37,99,235,0.18), transparent 60%),
+    radial-gradient(900px 700px at 90% 20%, rgba(124,58,237,0.16), transparent 60%),
+    radial-gradient(900px 700px at 50% 95%, rgba(14,165,233,0.14), transparent 60%);
 }
