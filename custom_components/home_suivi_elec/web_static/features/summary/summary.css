@@ -489,7 +489,9 @@
   border-radius: 8px;
   outline: none;
   transition: border-color var(--hse-transition-base);
-  background: var(--hse-surface);
+  /* glass léger */
+  background: rgba(255, 255, 255, 0.72); /* fallback */
+  background: color-mix(in srgb, var(--hse-surface) 72%, transparent);
   color: var(--hse-text);
 }
 
@@ -501,7 +503,9 @@
   overflow-y: auto;
   border-radius: 8px;
   border: 1px solid var(--hse-border);
-  background: var(--hse-surface);
+  /* glass léger */
+  background: rgba(255, 255, 255, 0.72); /* fallback */
+  background: color-mix(in srgb, var(--hse-surface) 72%, transparent);
 }
 
 .hse-costs-table {
@@ -511,7 +515,9 @@
 }
 
 .hse-costs-th {
-  background: var(--hse-surface);
+  /* header un peu plus opaque pour la lisibilité */
+  background: rgba(255, 255, 255, 0.82); /* fallback */
+  background: color-mix(in srgb, var(--hse-surface) 82%, transparent);
   color: var(--hse-text);
   padding: 12px;
   text-align: left;
@@ -520,6 +526,7 @@
   top: 0;
   z-index: 10;
   border-bottom: 1px solid var(--hse-border);
+  backdrop-filter: var(--hse-backdrop-filter);
 }
 
 .hse-costs-th-number { text-align: right; }
@@ -572,13 +579,16 @@
 }
 
 .hse-banner{
-  background: var(--hse-surface);
+  /* glass léger */
+  background: rgba(255, 255, 255, 0.72); /* fallback */
+  background: color-mix(in srgb, var(--hse-surface) 72%, transparent);
   border: 1px solid var(--hse-border);
   border-left-width: 4px;
   padding: 12px;
   margin-bottom: 16px;
   border-radius: 8px;
   color: var(--hse-text);
+  backdrop-filter: var(--hse-backdrop-filter);
 }
 
 .hse-banner-info{ border-left-color: var(--hse-info); }
