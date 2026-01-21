@@ -10,6 +10,54 @@
 
 html[data-theme="aurora"] {
   /* ───────────────────────────────────────────────────────────────────────
+     Aurora Light Glass — fond clair en dégradés "aurora" + glass doux
+     (vise le rendu pastel/clair de ta capture)
+     ─────────────────────────────────────────────────────────────────────── */
+  color-scheme: light;
+
+  /* Plus de glow en fond (style aurora clair) */
+  --hse-bg-dynamic-opacity: 0.92;
+
+  --hse-bg: #f7fbff;
+  --hse-bg-secondary: rgba(255, 255, 255, 0.72);
+  --hse-surface: rgba(255,255,255,0.78);
+  --hse-surface-muted: rgba(255,255,255,0.62);
+
+  --hse-border: rgba(11,18,32,0.10);
+  --hse-border-soft: rgba(11,18,32,0.06);
+  --hse-border-strong: rgba(11,18,32,0.16);
+
+  --hse-text: #0b1220;
+  --hse-text-main: var(--hse-text);
+  --hse-text-muted: rgba(11,18,32,0.70);
+  --hse-text-soft: rgba(11,18,32,0.52);
+  --hse-text-inverse: #ffffff;
+
+  --hse-primary: #0ea5e9;
+  --hse-primary-dark: #0284c7;
+
+  --hse-accent: #7c3aed;
+  --hse-accent-hover: #6d28d9;
+  --hse-accent-soft: rgba(124,58,237,0.12);
+
+  --hse-info: #0ea5e9;
+  --hse-info-dark: #0284c7;
+  --hse-success: #16a34a;
+  --hse-success-dark: #15803d;
+  --hse-warning: #f59e0b;
+  --hse-warning-dark: #b45309;
+  --hse-error: #ef4444;
+  --hse-error-dark: #dc2626;
+
+  --hse-success-soft: rgba(22,163,74,0.10);
+  --hse-warning-soft: rgba(245,158,11,0.14);
+  --hse-error-soft: rgba(239,68,68,0.10);
+  --hse-info-soft: rgba(14,165,233,0.10);
+
+  /* Glass */
+  --hse-backdrop-filter: blur(18px) saturate(160%);
+
+  /* ───────────────────────────────────────────────────────────────────────
      Typo : plus « premium »
      (impact direct sur Summary via summary.tokens.css)
      ─────────────────────────────────────────────────────────────────────── */
@@ -24,7 +72,7 @@ html[data-theme="aurora"] {
   /* Nombres : look technique */
   --hse-number-font-family: var(--hse-mono-font-family);
 
-  /* Accent valeurs : légèrement plus « néon » */
+  /* Accent valeurs : légèrement plus "néon" */
   --hse-value-accent-color: #22d3ee;
 
   /* ───────────────────────────────────────────────────────────────────────
@@ -34,11 +82,11 @@ html[data-theme="aurora"] {
   --hse-panel-padding: 18px;
   --hse-panel-shadow: var(--hse-shadow-lg);
 
-  /* Bordure plus fine (style "verre") */
-  --hse-panel-border: 1px solid rgba(255,255,255,0.12);
+  /* Bordure (cohérente en thème clair) */
+  --hse-panel-border: 1px solid var(--hse-border);
 
-  /* Hover un peu plus magique (utilisé par Summary) */
-  --hse-hover: rgba(124, 58, 237, 0.14);
+  /* Hover doux (utilisé par Summary) */
+  --hse-hover: rgba(124, 58, 237, 0.10);
 
   /* ───────────────────────────────────────────────────────────────────────
      Tables : header gradient + texte lisible
@@ -51,4 +99,11 @@ html[data-theme="aurora"] {
      (fallback dark text si le tableau est rendu sur un fond clair) */
   --hse-table-body-color: rgba(15, 23, 42, 0.92);
   --hse-table-body-muted-color: rgba(15, 23, 42, 0.65);
+
+  /* Fond dynamique façon aurora clair */
+  --hse-bg-dynamic:
+    radial-gradient(1200px 900px at 12% 18%, rgba(56,189,248,0.35), transparent 62%),
+    radial-gradient(1200px 900px at 88% 22%, rgba(167,139,250,0.28), transparent 62%),
+    radial-gradient(1200px 900px at 50% 95%, rgba(52,211,153,0.24), transparent 62%),
+    radial-gradient(1000px 700px at 92% 88%, rgba(244,114,182,0.22), transparent 60%);
 }
