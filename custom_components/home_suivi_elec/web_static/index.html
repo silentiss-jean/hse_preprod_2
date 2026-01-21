@@ -108,7 +108,66 @@
 
       <!-- Tables Résumé -->
       <section id="summaryData" hidden>
-        ...
+        <div id="tablesDetail" class="hse-summary-tables-detail">
+          <h3 class="hse-summary-table-title">Capteurs détectés – Puissance cumulée</h3>
+          <div class="integrations-table-container">
+            <table id="summarySelectedSensors" class="integrations-table">
+              <thead>
+                <tr>
+                  <th>Période</th>
+                  <th>kWh</th>
+                  <th>Coût consommation HT (€)</th>
+                  <th>Coût consommation TTC (€)</th>
+                  <th>Total HT (€)</th>
+                  <th>Total TTC (€)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="6" class="hse-summary-message">Sélectionnez et configurez vos capteurs pour que le résumé affiche des estimations</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 id="externalSummaryTitle" class="hse-summary-table-title">Capteur externe de référence</h3>
+          <div class="integrations-table-container">
+            <table id="summaryExternalSensors" class="integrations-table">
+              <thead>
+                <tr>
+                  <th>Période</th>
+                  <th>kWh</th>
+                  <th>Coût consommation HT (€)</th>
+                  <th>Coût consommation TTC (€)</th>
+                  <th>Total HT (€)</th>
+                  <th>Total TTC (€)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <h3 id="deltaSummaryTitle" class="hse-summary-table-title">Delta (externe - interne)</h3>
+          <div class="integrations-table-container">
+            <table id="summaryDeltaSensors" class="integrations-table">
+              <thead>
+                <tr>
+                  <th>Période</th>
+                  <th>kWh</th>
+                  <th>Coût consommation HT (€)</th>
+                  <th>Coût consommation TTC (€)</th>
+                  <th>Total HT (€)</th>
+                  <th>Total TTC (€)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <p id="summaryMessage" class="hse-summary-message">
+            Les totaux incluent l'abonnement mensuel proratisé sur chaque période.
+          </p>
+        </div>
       </section>
     </div>
   </div>   <!-- /#home -->
