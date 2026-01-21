@@ -230,6 +230,68 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
+   HSE TABLE (generic)
+   - Objectif: un seul composant table, réutilisable partout.
+   - Basé sur les tokens --hse-*, compatible data-theme.
+   - Protégé contre les overrides HA: on force un rendu "vrai tableau".
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-table-wrapper {
+  overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid var(--hse-border);
+  background: var(--hse-surface);
+}
+
+.hse-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-size: 0.9rem;
+}
+
+/* Force le layout tableau même si un reset externe bidouille th/td */
+.hse-table th,
+.hse-table td {
+  display: table-cell;
+  width: auto;
+  padding: 12px;
+  color: var(--hse-table-body-color, var(--hse-text));
+  white-space: nowrap;
+}
+
+.hse-table th {
+  background: var(--hse-table-header-bg, var(--hse-surface));
+  color: var(--hse-table-header-color, var(--hse-text));
+  font-weight: var(--hse-table-header-weight, 800);
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--hse-border);
+}
+
+.hse-table tr {
+  border-bottom: 1px solid var(--hse-border-soft);
+  transition: background-color var(--hse-transition-fast);
+}
+
+.hse-table tr:hover { background-color: var(--hse-hover); }
+
+.hse-table .hse-table-number {
+  text-align: right;
+  font-weight: 600;
+  font-family: var(--hse-number-font-family, var(--hse-mono-font-family));
+}
+
+@media (max-width: 768px) {
+  .hse-table { font-size: 0.8rem; }
+  .hse-table th, .hse-table td { padding: 8px; }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
    SUMMARY TABLES
    ──────────────────────────────────────────────────────────────────────────── */
 
@@ -265,27 +327,52 @@
   margin-top: 16px;
 }
 
-/*
-  Alignement post-patch: l'HTML utilise désormais des wrappers
-  .integrations-table-container + .integrations-table autour des tables Summary.
-  Sans styles explicites, la table peut se "coller" à gauche (width:auto) ou
-  paraître trop compacte.
-*/
+/* Mapping de compat: tant que l'HTML Summary reste en integrations-table, on le mappe vers hse-table */
+#tablesDetail .integrations-table-container { composes: hse-table-wrapper; }
 
+/* composes n'est pas supporté en CSS natif: duplication minimale et ciblée */
 #tablesDetail .integrations-table-container {
-  width: 100%;
   overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid var(--hse-border);
+  background: var(--hse-surface);
 }
 
 #tablesDetail table.integrations-table {
   width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-size: 0.9rem;
 }
 
-/* Garder les nombres lisibles (évite les retours à la ligne) */
 #tablesDetail table.integrations-table th,
 #tablesDetail table.integrations-table td {
+  display: table-cell;
+  width: auto;
+  padding: 12px;
+  color: var(--hse-table-body-color, var(--hse-text));
   white-space: nowrap;
 }
+
+#tablesDetail table.integrations-table th {
+  background: var(--hse-table-header-bg, var(--hse-surface));
+  color: var(--hse-table-header-color, var(--hse-text));
+  font-weight: var(--hse-table-header-weight, 800);
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--hse-border);
+}
+
+#tablesDetail table.integrations-table tr {
+  border-bottom: 1px solid var(--hse-border-soft);
+  transition: background-color var(--hse-transition-fast);
+}
+
+#tablesDetail table.integrations-table tr:hover { background-color: var(--hse-hover); }
 
 /* Petite respiration verticale entre blocs */
 #tablesDetail .hse-summary-table-title {
@@ -522,6 +609,11 @@
 
 .hse-costs-search-input:focus { border-color: var(--hse-primary); }
 
+/* Compat: l'existant continue d'utiliser hse-costs-table-* (on migrera ensuite) */
+.hse-costs-table-wrapper { composes: hse-table-wrapper; }
+.hse-costs-table { composes: hse-table; }
+
+/* duplication minimale car composes non supporté en CSS natif */
 .hse-costs-table-wrapper {
   overflow-x: auto;
   max-height: 500px;
@@ -534,13 +626,21 @@
 .hse-costs-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
   font-size: 0.9rem;
+}
+
+.hse-costs-th, .hse-costs-td {
+  display: table-cell;
+  width: auto;
+  padding: 12px;
+  color: var(--hse-table-body-color, var(--hse-text));
+  white-space: nowrap;
 }
 
 .hse-costs-th {
   background: var(--hse-surface);
   color: var(--hse-text);
-  padding: 12px;
   text-align: left;
   font-weight: 700;
   position: sticky;
@@ -549,7 +649,12 @@
   border-bottom: 1px solid var(--hse-border);
 }
 
-.hse-costs-th-number { text-align: right; }
+.hse-costs-th-number,
+.hse-costs-td-number {
+  text-align: right;
+  font-weight: 600;
+  font-family: var(--hse-number-font-family, var(--hse-mono-font-family));
+}
 
 .hse-costs-tr {
   border-bottom: 1px solid var(--hse-border-soft);
@@ -557,17 +662,6 @@
 }
 
 .hse-costs-tr:hover { background-color: var(--hse-hover); }
-
-.hse-costs-td {
-  padding: 12px;
-  color: var(--hse-text);
-}
-
-.hse-costs-td-number {
-  text-align: right;
-  font-weight: 600;
-  font-family: var(--hse-mono-font-family);
-}
 
 .hse-costs-entity-name {
   font-weight: 700;
