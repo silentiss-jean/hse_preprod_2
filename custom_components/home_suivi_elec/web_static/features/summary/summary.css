@@ -265,6 +265,33 @@
   margin-top: 16px;
 }
 
+/*
+  Alignement post-patch: l'HTML utilise désormais des wrappers
+  .integrations-table-container + .integrations-table autour des tables Summary.
+  Sans styles explicites, la table peut se "coller" à gauche (width:auto) ou
+  paraître trop compacte.
+*/
+
+#tablesDetail .integrations-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+#tablesDetail table.integrations-table {
+  width: 100%;
+}
+
+/* Garder les nombres lisibles (évite les retours à la ligne) */
+#tablesDetail table.integrations-table th,
+#tablesDetail table.integrations-table td {
+  white-space: nowrap;
+}
+
+/* Petite respiration verticale entre blocs */
+#tablesDetail .hse-summary-table-title {
+  margin-top: 26px;
+}
+
 /* ────────────────────────────────────────────────────────────────────────────
    TOP CONSOMMATEURS (LIVE)
    ─────────────────────────────────────────────────────────────────────────── */
