@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Home Suivi Élec</title>
+
+  <!-- Base + variables (legacy) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Thèmes HSE (hselight/hsedark/...) + composants globaux -->
+  <link rel="stylesheet" href="style.hse.themes.css">
+
+  <!-- Features -->
+  <link rel="stylesheet" href="features/summary/summary.css">
+  <link rel="stylesheet" href="features/diagnostics/diagnostics.css">
+  <link rel="stylesheet" href="features/migration/migration.css">
+  <link rel="stylesheet" href="features/history/history.css">
+</head>
+
+<!-- Thème par défaut -->
+<body class="hselight">
+
+  <header class="hse-header">
+    <h1>⚡ Home Suivi Élec</h1>
+
+    <!-- Tabs : on réutilise les styles existants .subtab-btn -->
+    <nav id="tabs" class="hse-tabs">
+      <button type="button" class="subtab-btn active" onclick="showTab('home')">🏠 Accueil</button>
+      <button type="button" class="subtab-btn" onclick="showTab('diagnostics')">🔧 Diagnostic</button>
+      <button type="button" class="subtab-btn" onclick="showTab('detection')">🔍 Détection</button>
+      <button type="button" class="subtab-btn" onclick="showTab('configuration')">⚙️ Configuration</button>
+      <button type="button" class="subtab-btn" onclick="showTab('customisation')">🎨 Customisation</button>
+      <button type="button" class="subtab-btn" onclick="showTab('generation')">🧩 Génération cartes</button>
+      <button type="button" class="subtab-btn" onclick="showTab('migration')">🔄 Migration capteurs</button>
+      <button type="button" class="subtab-btn" onclick="showTab('history')">📊 Analyse de coûts</button>
+    </nav>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════════════════════
+       🏠 ACCUEIL - RÉSUMÉ GÉNÉRAL
+       ════════════════════════════════════════════════════════════════════════════ -->
+  <div id="home" class="tab-content active">
+
+    <!-- Boutons d'actions (layout via classes, pas de style inline) -->
+    <div class="actions-section hse-actions-row">
+      <button id="refreshHome" class="btn btn-primary" type="button">🔄 Actualiser résumé</button>
+      <button id="clearCache" class="btn btn-secondary btn-cache-clear" type="button">🗑️ Vider cache</button>
+      <button id="showCacheStats" class="btn btn-secondary btn-cache-stats" type="button">📊 Stats cache</button>
+    </div>
+
+    <!-- Panneau stats cache -->
+    <div id="cacheStatsPanel" class="hse-panel hse-panel-accent" hidden>
+      <strong>📊 Statistiques du cache</strong>
+      <div id="cacheStatsContent">Chargement...</div>
+    </div>
+
+    <h2>Résumé général</h2>
+
+    <div id="summaryCard" class="card">
+      <div id="topBlocks" class="hse-split">
+        <div id="instantaneBlock" class="hse-panel hse-panel-accent hse-flex-1">
+          <h3>Capteurs</h3>
+          <p><strong>Total capteurs détectés :</strong> <span id="totalCapteurs">-</span></p>
+          <p><strong>Capteurs sélectionnés :</strong> <span id="actifsCapteurs">-</span></p>
+          <p><strong>Capteurs sélectionnés (tous actifs) :</strong> <span id="instantaneInterne">- W</span></p>
+          <p><strong id="externalTitle"></strong> <span id="externeCompact"></span> <abbr title="Valeur mesurée en temps réel, coût HT réel">*</abbr></p>
+          <p><strong>Consommation actuelle non mesurée (Delta) :</strong> <span id="deltaPuissance">- W</span></p>
+        </div>
+
+        <div id="resumeGeneral" class="hse-panel hse-panel-muted hse-flex-1">
+          <h3>Résumé général</h3>
+          <p><strong>Type contrat :</strong> <span id="typeContratSummary">-</span></p>
+          <p><strong>Abonnement HT :</strong> <span id="abonnementHTSummary">-</span> €</p>
+          <p><strong>Abonnement TTC :</strong> <span id="abonnementTTCSummary">-</span> €</p>
+
+          <div id="blocFixe" hidden class="hse-mt-10">
+            <p><strong>Prix du kWh HT :</strong> <span id="prixFixeHT">-</span> €</p>
+            <p><strong>Prix du kWh TTC :</strong> <span id="prixFixeTTC">-</span> €</p>
+          </div>
+
+          <div id="blocHpHc" hidden class="hse-mt-10">
+            <p><strong>Tarif HP HT :</strong> <span id="tarifHPHTSummary">-</span> €</p>
+            <p><strong>Tarif HP TTC :</strong> <span id="tarifHPTTCSummary">-</span> €</p>
+            <p><strong>Tarif HC HT :</strong> <span id="tarifHCHTSummary">-</span> €</p>
+            <p><strong>Tarif HC TTC :</strong> <span id="tarifHCTTCSummary">-</span> €</p>
+            <p><strong>Heures HC début :</strong> <span id="heuresHPDebutSummary">-</span></p>
+            <p><strong>Heures HC fin :</strong> <span id="heuresHPFinSummary">-</span></p>
+          </div>
+
+          <div id="tarifsSummary"></div>
+          <p><strong>Dernier refresh :</strong> <span id="dernierRefresh">-</span></p>
+        </div>
+      </div>
+
+      <!-- Backend-powered loading/error -->
+      <div id="summaryContent"></div>
+
+      <!-- Tables Résumé -->
+      <section id="summaryData" hidden>
+        <div id="tablesDetail" class="hse-mt-10">
+          <h3>Capteurs détectés – Puissance cumulée</h3>
+
+          <table id="summaryInternalSensors">
+            <thead>
+              <tr>
+                <th>Période</th>
+                <th>kWh</th>
+                <th>Coût consommation HT (€)</th>
+                <th>Coût consommation TTC (€)</th>
+                <th>Total HT (€)</th>
+                <th>Total TTC (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="6" class="hse-center hse-text-muted hse-p-20">
+                  Sélectionnez et configurez vos capteurs pour que le résumé affiche des estimations
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="externalSummaryTitle" class="hse-mt-30">Capteur externe de référence</h3>
+          <table id="summaryExternalSensors">
+            <thead>
+              <tr>
+                <th>Période</th>
+                <th>kWh</th>
+                <th>Coût consommation HT (€)</th>
+                <th>Coût consommation TTC (€)</th>
+                <th>Total HT (€)</th>
+                <th>Total TTC (€)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <h3 id="deltaSummaryTitle" class="hse-mt-30">Delta (externe - interne)</h3>
+          <table id="summaryDeltaSensors">
+            <thead>
+              <tr>
+                <th>Période</th>
+                <th>kWh</th>
+                <th>Coût consommation HT (€)</th>
+                <th>Coût consommation TTC (€)</th>
+                <th>Total HT (€)</th>
+                <th>Total TTC (€)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <p id="summaryMessage" class="hse-text-muted hse-small hse-mt-10">
+            Sélectionnez et configurez vos capteurs pour que le résumé affiche des estimations
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- AUTRES ONGLETS -->
+  <div id="diagnostics" class="tab-content"></div>
+  <div id="detection" class="tab-content"></div>
+  <div id="configuration" class="tab-content"></div>
+  <div id="customisation" class="tab-content"></div>
+  <div id="generation" class="tab-content"></div>
+  <div id="migration" class="tab-content"></div>
+
+  <!-- HISTORY -->
+  <div id="history" class="tab-content">
+    <div id="history-app"></div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="core/app.js"></script>
+  <script type="module" src="core/router.js"></script>
+</body>
+</html>
