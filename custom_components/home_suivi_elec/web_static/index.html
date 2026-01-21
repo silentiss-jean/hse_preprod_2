@@ -111,7 +111,8 @@
         <div id="tablesDetail" class="hse-summary-tables-detail">
           <h3 class="hse-summary-table-title">Capteurs détectés – Puissance cumulée</h3>
           <div class="integrations-table-container">
-            <table id="summarySelectedSensors" class="integrations-table">
+            <!-- NOTE: keep prod behavior: summary.js writes into #summaryInternalSensors -->
+            <table id="summaryInternalSensors" class="integrations-table">
               <thead>
                 <tr>
                   <th>Période</th>
