@@ -694,11 +694,12 @@
   border-right: none;
 }
 
+/* En-têtes unifiés via tokens => gradient/teinte selon data-theme */
 .hse-costs-th {
-  background: var(--hse-surface);
-  color: var(--hse-text);
+  background: var(--hse-table-header-bg, var(--hse-gradient-header));
+  color: var(--hse-table-header-color, var(--hse-on-header));
   text-align: left;
-  font-weight: 700;
+  font-weight: var(--hse-table-header-weight, 800);
   position: sticky;
   top: 0;
   z-index: 10;
