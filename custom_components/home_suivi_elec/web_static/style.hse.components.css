@@ -168,6 +168,23 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
+   TITLES (utility)
+   - Pour donner un rendu "header" (gradient) à un simple <h3> / <h4>
+   - N'affecte pas la structure table (<th>)
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hse-title-gradient {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--hse-table-header-bg, var(--hse-gradient-header));
+  color: var(--hse-table-header-color, var(--hse-on-header));
+  font-weight: 800;
+  letter-spacing: var(--hse-font-tracking, 0.1px);
+  box-shadow: var(--hse-shadow-sm);
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
    BADGES
    ──────────────────────────────────────────────────────────────────────────── */
 
