@@ -190,6 +190,7 @@ export function renderLiveTopConsumers(container, topData) {
   const header = document.createElement("div");
   header.className = "hse-top-consumers-header";
   const title = document.createElement("h3");
+  title.classList.add("hse-title-gradient");
   title.textContent = "Top consommateurs (live)";
   const subtitle = document.createElement("p");
   subtitle.textContent =
@@ -206,8 +207,8 @@ export function renderLiveTopConsumers(container, topData) {
   const colHigh = document.createElement("div");
   colHigh.className = "hse-top-consumers-column";
 
-  colLow.appendChild(makeTopColumnHeader("100–500 W"));
-  colHigh.appendChild(makeTopColumnHeader("> 500 W"));
+  colLow.appendChild(makeTopColumnHeader("Appareils (100–500 W)"));
+  colHigh.appendChild(makeTopColumnHeader("Appareils (> 500 W)"));
 
   (topData.lowRange || []).forEach((sensor) => {
     colLow.appendChild(makeTopSensorRow(sensor, "medium"));
@@ -347,6 +348,7 @@ export function renderCostsGlobalPanel(container, globalData) {
   const header = document.createElement("div");
   header.className = "hse-costs-header";
   const title = document.createElement("h3");
+  title.classList.add("hse-title-gradient");
   title.textContent = "Coûts globaux";
   const subtitle = document.createElement("p");
   subtitle.textContent = "Consommation + Abonnement (tous capteurs sélectionnés)";
@@ -421,6 +423,7 @@ export function renderCostsPerEntityTable(container, entities) {
   const header = document.createElement("div");
   header.className = "hse-costs-header";
   const title = document.createElement("h3");
+  title.classList.add("hse-title-gradient");
   title.textContent = "Coûts par capteur";
   const subtitle = document.createElement("p");
   subtitle.textContent = `${entities.length} capteurs · Triés par coût journalier décroissant`;
