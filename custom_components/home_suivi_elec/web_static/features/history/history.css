@@ -598,6 +598,11 @@
   padding: var(--spacing-xl);
 }
 
+.loading-panel {
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
 .history-feature .spinner,
 .history-module .spinner {
   width: 40px;
@@ -816,6 +821,25 @@
   font-weight: 900;
 }
 
+/* today_panel.js utilise .card-rank/.rank-badge */
+.history-module .sensor-card .card-rank,
+.history-feature .sensor-card .card-rank {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+}
+
+.history-module .sensor-card .card-rank .rank-badge,
+.history-feature .sensor-card .card-rank .rank-badge {
+  display: inline-block;
+  background: var(--hse-primary);
+  color: var(--hse-surface);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
 .history-module .sensor-card .sensor-info,
 .history-feature .sensor-card .sensor-info {
   margin-bottom: var(--spacing-sm);
@@ -870,6 +894,145 @@
   border-radius: 4px;
 }
 .sensors-scrollable::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* ---- TODAY: capteur de référence (today_panel.js) ---- */
+.reference-panel-today {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.reference-sensor-placeholder {
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+}
+
+.reference-sensor-placeholder p {
+  margin: 0;
+  font-weight: 900;
+}
+
+.reference-sensor-placeholder .subtitle {
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.ref-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.ref-header h3 {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.ref-subtitle {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.ref-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  border: 1px solid var(--border-color-light);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.ref-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+}
+
+.ref-metrics .metric-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+}
+
+.ref-metrics .metric-label {
+  display: block;
+  color: var(--text-secondary);
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.ref-metrics .metric-value {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 900;
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.ref-metrics .metric-value.primary {
+  color: var(--hse-primary);
+}
+
+.gap-alert {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-start;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.gap-alert.warning {
+  border-color: var(--hse-warning);
+  background: var(--hse-warning-light);
+}
+
+.gap-alert.info {
+  border-color: var(--hse-info);
+  background: var(--hse-info-soft, var(--bg-secondary));
+}
+
+.gap-icon {
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.gap-content {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.gap-content strong {
+  font-weight: 900;
+}
+
+.gap-explanation {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+@media (max-width: 980px) {
+  .ref-metrics {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ==========================================================================
    COMPARISON PANEL (nouveau)
