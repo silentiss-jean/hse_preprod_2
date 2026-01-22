@@ -27,10 +27,6 @@ export class HistoryView {
             return;
         }
 
-        // Injecte un petit correctif CSS pour harmoniser le rendu avec les thèmes HSE
-        // (évite une dépendance à des couleurs en dur + corrige le mismatch .comparison-column vs CSS legacy)
-        this.ensureThemeCompatibleStyles();
-
         EventBus.on('history:analyze:requested', () => this.handleAnalyze());
         EventBus.on('history:state:changed', () => this.render());
 
