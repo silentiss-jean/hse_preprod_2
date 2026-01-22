@@ -1283,10 +1283,37 @@ class HistoryAnalysisView(HomeAssistantView):
             except Exception as e:
                 _LOGGER.warning(f"[CURRENT-COSTS] Impossible de lire external_capteur: {e}")
 
+            # ✅ CORRECTION: pré-initialiser reference_sensor à partir de external_capteur
+            # (même si aucun capteur coût "référence" n'est trouvé/retourné)
+            reference_sensor = None
+            if external_capteur:
+                ref_state = self.hass.states.get(external_capteur)
+                ref_attrs = (ref_state.attributes or {}) if ref_state else {}
+
+                ref_energy = 0.0
+                if ref_state and ref_state.state not in ("unknown", "unavailable"):
+                    try:
+                        ref_energy = float(ref_state.state)
+                    except (ValueError, TypeError):
+                        ref_energy = 0.0
+
+                reference_sensor = {
+                    "entity_id": external_capteur,
+                    "friendly_name": ref_attrs.get("friendly_name", external_capteur),
+                    "cost_ttc": 0.0,
+                    "cost_ht": 0.0,
+                    "energy_kwh": round(ref_energy, 3),
+                    "unit": ref_attrs.get("unit_of_measurement"),
+                    "source_entity": external_capteur,
+                    "cycle": "daily",
+                    "is_reference": True,
+                    "reference_only": True,  # marker: placeholder (pas un capteur coût HSE)
+                    "state": ref_state.state if ref_state else None,
+                }
+
             entity_reg = er.async_get(self.hass)
 
             cost_sensors_map = {}  # Dict[source_entity_id, sensor_data] (SANS référence)
-            reference_sensor = None  # 🆕
             excluded_count = 0
             excluded_reasons = {
                 "unavailable": 0,
@@ -1387,11 +1414,20 @@ class HistoryAnalysisView(HomeAssistantView):
                         "unit": attrs.get("unit_of_measurement", "EUR"),
                         "source_entity": source_entity_id,
                         "cycle": "daily",
-                        "is_reference": is_reference,  # 🆕
+                        "is_reference": is_reference,
+                        "reference_only": False,  # 🆕 (explicite)
                     }
 
                     # 🆕 Séparer référence vs internes
                     if is_reference:
+                        # ✅ CORRECTION: si on a déjà un placeholder reference_only, on le remplace
+                        if reference_sensor is not None and reference_sensor.get("reference_only"):
+                            reference_sensor = sensor_data
+                            _LOGGER.info(
+                                f"[CURRENT-COSTS] Référence (placeholder→capteur coût): {entity_id} = {cost_ttc:.2f}€"
+                            )
+                            continue
+
                         if reference_sensor is None:
                             reference_sensor = sensor_data
                             _LOGGER.info(
@@ -1494,14 +1530,14 @@ class HistoryAnalysisView(HomeAssistantView):
 
             return self._success(
                 {
-                    "reference_sensor": reference_sensor,  # 🆕
+                    "reference_sensor": reference_sensor,
                     "top_10": top_10,
                     "other_sensors": other_sensors,
                     "total_cost_ttc": round(total_cost_ttc, 2),
                     "total_cost_ht": round(total_cost_ht, 2),
                     "total_energy_kwh": round(total_energy, 3),
                     "sensor_count": len(cost_sensors),
-                    "gap": gap_info,  # 🆕
+                    "gap": gap_info,
                     "excluded_count": excluded_count,
                     "excluded_reasons": excluded_reasons,
                     "timestamp": self._get_timestamp(),
@@ -1571,10 +1607,14 @@ class HistoryAnalysisView(HomeAssistantView):
                 config_entries = self.hass.config_entries.async_entries(DOMAIN)
                 if config_entries:
                     hse_entry = config_entries[0]  # Normalement une seule entry
-                    external_capteur = hse_entry.options.get("external_capteur")
+                    external_capteur = (
+                        hse_entry.options.get("external_capteur")
+                        or hse_entry.options.get("external_sensor")
+                    )
                     _LOGGER.info(f"[COST-ANALYSIS] Capteur de référence: {external_capteur}")
             except Exception as e:
                 _LOGGER.warning(f"[COST-ANALYSIS] Impossible de lire external_capteur: {e}")
+
 
             # ═══════════════════════════════════════════════════════════
             # 2. Récupérer tous les capteurs de COÛT HSE avec leur source
