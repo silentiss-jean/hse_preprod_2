@@ -1164,6 +1164,32 @@ class HistoryAnalysisView(HomeAssistantView):
         self.hass = hass
         _LOGGER.info("🕒 API History Analysis initialisée")
     
+    def _is_derived_from(self, entity_id: str, reference_id: str) -> bool:
+        """True si entity_id == reference_id OU si en remontant source_entity on tombe sur reference_id."""
+        if not entity_id or not reference_id:
+            return False
+
+        visited = set()
+        current = entity_id
+
+        while current and current not in visited:
+            if current == reference_id:
+                return True
+
+            visited.add(current)
+            st = self.hass.states.get(current)
+            if not st:
+                return False
+
+            attrs = st.attributes or {}
+            parent = attrs.get("source_entity") or attrs.get("source_energy_entity")
+            if not parent or parent == current:
+                return False
+
+            current = parent
+
+        return False
+
     # === GET ===
     
     async def get(self, request, action=None):
@@ -1368,7 +1394,7 @@ class HistoryAnalysisView(HomeAssistantView):
                             pass
 
                     # 🆕 Détecter si c'est le capteur de référence
-                    is_reference = bool(external_capteur and source_entity_id == external_capteur)
+                    is_reference = bool(external_capteur and self._is_derived_from(source_entity_id, external_capteur))
 
                     # ✅ DÉTECTION DU TYPE DE CAPTEUR (TTC ou HT)
                     is_ttc = "_ttc" in entity_id.lower()
@@ -1736,7 +1762,7 @@ class HistoryAnalysisView(HomeAssistantView):
                         continue
 
                     # 🆕 Détecter si c'est le capteur de référence
-                    is_reference = bool(external_capteur and source_entity == external_capteur)
+                    is_reference = bool(external_capteur and self._is_derived_from(source_entity_id, external_capteur))
 
                     # Détecter si HT ou TTC
                     is_ttc = "_ttc" in entity_id.lower()
