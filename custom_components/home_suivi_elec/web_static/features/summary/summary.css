@@ -250,6 +250,11 @@
   border-collapse: collapse;
   table-layout: auto;
   font-size: 0.9rem;
+
+  /* visible "table" + grille légère (comme l'exemple) */
+  border: 1px solid var(--hse-border);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 /* Force le layout tableau même si un reset externe bidouille th/td */
@@ -260,6 +265,14 @@
   padding: 12px;
   color: var(--hse-table-body-color, var(--hse-text));
   white-space: nowrap;
+
+  /* séparateurs verticaux */
+  border-right: 1px solid var(--hse-border-soft);
+}
+
+.hse-table th:last-child,
+.hse-table td:last-child {
+  border-right: none;
 }
 
 .hse-table th {
@@ -274,8 +287,12 @@
 }
 
 .hse-table tr {
-  border-bottom: 1px solid var(--hse-border-soft);
+  border-bottom: 1px solid var(--hse-border);
   transition: background-color var(--hse-transition-fast);
+}
+
+.hse-table tr:last-child {
+  border-bottom: none;
 }
 
 .hse-table tr:hover { background-color: var(--hse-hover); }
@@ -328,9 +345,8 @@
 }
 
 /* Mapping de compat: tant que l'HTML Summary reste en integrations-table, on le mappe vers hse-table */
-#tablesDetail .integrations-table-container { composes: hse-table-wrapper; }
+/* (composes non supporté en CSS natif) */
 
-/* composes n'est pas supporté en CSS natif: duplication minimale et ciblée */
 #tablesDetail .integrations-table-container {
   overflow-x: auto;
   max-height: 500px;
@@ -345,6 +361,10 @@
   border-collapse: collapse;
   table-layout: auto;
   font-size: 0.9rem;
+
+  border: 1px solid var(--hse-border);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 #tablesDetail table.integrations-table th,
@@ -354,6 +374,12 @@
   padding: 12px;
   color: var(--hse-table-body-color, var(--hse-text));
   white-space: nowrap;
+  border-right: 1px solid var(--hse-border-soft);
+}
+
+#tablesDetail table.integrations-table th:last-child,
+#tablesDetail table.integrations-table td:last-child {
+  border-right: none;
 }
 
 #tablesDetail table.integrations-table th {
@@ -368,8 +394,12 @@
 }
 
 #tablesDetail table.integrations-table tr {
-  border-bottom: 1px solid var(--hse-border-soft);
+  border-bottom: 1px solid var(--hse-border);
   transition: background-color var(--hse-transition-fast);
+}
+
+#tablesDetail table.integrations-table tr:last-child {
+  border-bottom: none;
 }
 
 #tablesDetail table.integrations-table tr:hover { background-color: var(--hse-hover); }
@@ -417,17 +447,34 @@
   color: var(--hse-text);
 }
 
+/* Aligner le rendu sur le look "table" (contours + lignes) */
+.hse-top-consumers-column {
+  border: 1px solid var(--hse-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--hse-surface);
+}
+
 .hse-top-consumers-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--hse-border);
-  margin-bottom: 4px;
+  padding: 10px 12px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--hse-border);
+  margin-bottom: 0;
   font-size: 0.85rem;
   transition: background var(--hse-transition-fast);
   color: var(--hse-text);
+}
+
+.hse-top-consumers-row:last-child {
+  border-bottom: none;
+}
+
+.hse-top-consumers-row:hover {
+  background: var(--hse-hover);
 }
 
 .hse-top-consumers-row.level-medium { background: transparent; }
@@ -445,8 +492,9 @@
 }
 
 .hse-top-consumers-power {
-  font-weight: 600;
-  margin-left: 8px;
+  font-weight: 700;
+  margin-left: 12px;
+  font-family: var(--hse-number-font-family, var(--hse-mono-font-family));
 }
 
 .hse-top-consumers-column.hse-top-consumers-scrollable {
@@ -610,10 +658,8 @@
 .hse-costs-search-input:focus { border-color: var(--hse-primary); }
 
 /* Compat: l'existant continue d'utiliser hse-costs-table-* (on migrera ensuite) */
-.hse-costs-table-wrapper { composes: hse-table-wrapper; }
-.hse-costs-table { composes: hse-table; }
+/* (composes non supporté en CSS natif) */
 
-/* duplication minimale car composes non supporté en CSS natif */
 .hse-costs-table-wrapper {
   overflow-x: auto;
   max-height: 500px;
@@ -628,6 +674,10 @@
   border-collapse: collapse;
   table-layout: auto;
   font-size: 0.9rem;
+
+  border: 1px solid var(--hse-border);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .hse-costs-th, .hse-costs-td {
@@ -636,6 +686,12 @@
   padding: 12px;
   color: var(--hse-table-body-color, var(--hse-text));
   white-space: nowrap;
+  border-right: 1px solid var(--hse-border-soft);
+}
+
+.hse-costs-th:last-child,
+.hse-costs-td:last-child {
+  border-right: none;
 }
 
 .hse-costs-th {
@@ -657,8 +713,12 @@
 }
 
 .hse-costs-tr {
-  border-bottom: 1px solid var(--hse-border-soft);
+  border-bottom: 1px solid var(--hse-border);
   transition: background-color var(--hse-transition-fast);
+}
+
+.hse-costs-tr:last-child {
+  border-bottom: none;
 }
 
 .hse-costs-tr:hover { background-color: var(--hse-hover); }
