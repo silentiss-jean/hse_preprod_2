@@ -70,7 +70,12 @@ export function renderGenerationLayout() {
                             </div>
 
                             <div class="generation-field">
-                                <label class="generation-label" for="pf_home_power_entity">Home: puissance (obligatoire)</label>
+                                <label class="generation-label" for="pf_grid_power_entity">Grid: puissance (obligatoire)</label>
+                                <select id="pf_grid_power_entity" class="generation-input"></select>
+                            </div>
+
+                            <div class="generation-field">
+                                <label class="generation-label" for="pf_home_power_entity">Home: puissance (optionnel)</label>
                                 <select id="pf_home_power_entity" class="generation-input"></select>
                             </div>
 
@@ -92,7 +97,7 @@ export function renderGenerationLayout() {
                                 <button id="pf_add_individual" class="btn btn-secondary" type="button">➕ Ajouter</button>
                             </div>
                             <div id="pf_individuals" class="generation-individuals-list"></div>
-                            <div class="generation-config-hint">Pour chaque individual: puissance obligatoire + coût <code>_cout_daily_..._ttc</code> facultatif.</div>
+                            <div class="generation-config-hint">Chaque ligne: recherche + sélection puissance, recherche + sélection coût (facultatif).</div>
                         </div>
                     </div>
                 </div>

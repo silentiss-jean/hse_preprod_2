@@ -6,16 +6,7 @@
    - styles scopés au module (évite collisions)
 */
 
-/*
-  IMPORTANT:
-  - On scope les variables locales au wrapper .generation-layout (pas :root)
-    pour éviter tout effet de bord global.
-  - On évite les classes génériques type .container (souvent stylées globalement)
-    au profit d'un conteneur dédié.
-*/
-
 .generation-layout {
-  /* Variables locales (toutes mappées sur tokens HSE) */
   --hse-generation-surface: var(--hse-surface);
   --hse-generation-surface-muted: var(--hse-surface-muted);
   --hse-generation-border: var(--hse-border);
@@ -30,16 +21,13 @@
   --hse-generation-success: var(--hse-success);
   --hse-generation-error: var(--hse-error);
 
-  /* Texte sur fond accent/success (évite #fff en dur) */
   --hse-generation-on-accent: var(--hse-text-inverse);
   --hse-generation-on-success: var(--hse-text-inverse);
 
-  /* Premium: micro-interactions */
   --hse-generation-ease: cubic-bezier(0.2, 0.9, 0.2, 1);
   --hse-generation-hover-shadow: var(--hse-shadow-md);
 }
 
-/* Layout */
 .generation-layout {
   width: 100%;
 }
@@ -50,7 +38,6 @@
   padding: var(--hse-spacing-xl) var(--hse-spacing-lg);
 }
 
-/* Hero */
 .generation-layout .generation-hero {
   display: flex;
   align-items: flex-start;
@@ -80,7 +67,6 @@
   gap: var(--hse-spacing-md);
 }
 
-/* Top group (meta + actions) */
 .generation-layout .generation-top {
   background: var(--hse-generation-surface);
   border: 1px solid var(--hse-generation-border);
@@ -134,7 +120,6 @@
   flex-wrap: wrap;
 }
 
-/* Config panel */
 .generation-layout .generation-config {
   background: var(--hse-generation-surface);
   border: 1px solid var(--hse-generation-border);
@@ -242,7 +227,7 @@
 
 .generation-layout .generation-individual-row {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
   gap: var(--hse-spacing-md);
   align-items: end;
   padding: var(--hse-spacing-md);
@@ -266,8 +251,6 @@
   }
 }
 
-/* Panels grid (YAML + Preview)
-   NOTE: On garde l'aperçu sous le YAML (une colonne), même en desktop. */
 .generation-layout .generation-panels {
   display: grid;
   grid-template-columns: 1fr;
@@ -275,7 +258,6 @@
   align-items: start;
 }
 
-/* YAML */
 .generation-layout .yaml-section {
   background: var(--hse-generation-surface);
   border: 1px solid var(--hse-generation-border);
@@ -312,18 +294,13 @@
   border: 1px solid var(--hse-generation-border-soft);
   color: var(--hse-generation-text);
   overflow: auto;
-
-  /* Rend la zone "moins massive" visuellement */
   max-height: 420px;
   white-space: pre;
-
-  /* Premium: meilleure lisibilité */
   font-size: var(--hse-font-size-sm);
   line-height: 1.55;
   tab-size: 2;
 }
 
-/* Preview */
 .generation-layout #preview-container {
   background: var(--hse-generation-surface);
   border: 1px solid var(--hse-generation-border);
@@ -370,7 +347,6 @@
     border-color 160ms var(--hse-generation-ease);
 }
 
-/* Premium: hover/focus sans casser le thème */
 .generation-layout .preview-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--hse-generation-hover-shadow);
@@ -410,12 +386,10 @@
   padding: var(--hse-spacing-lg);
 }
 
-/* Helpers */
 .generation-layout .is-hidden {
   display: none !important;
 }
 
-/* Fallback clipboard (textarea invisible) */
 .hse-clipboard-fallback {
   position: fixed;
   top: 0;
@@ -429,7 +403,6 @@
   background: transparent;
 }
 
-/* Accessibilité: réduire animations si demandé */
 @media (prefers-reduced-motion: reduce) {
   .generation-layout .preview-card {
     transition: none;
