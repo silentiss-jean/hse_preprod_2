@@ -196,8 +196,11 @@ STORE_USER_CONFIG = "home_suivi_elec_user_config_v2"
 STORE_CAPTEURS_SELECTION = "home_suivi_elec_capteurs_selection_v2"
 STORE_IGNORED_ENTITIES = "home_suivi_elec_ignored_entities_v1"
 STORE_SENSOR_GROUPS = "home_suivi_elec_sensor_groups_v1"
+
+# ✅ Nouveau store canon : group_sets (rooms/types/...) + version dédiée
+GROUP_SETS_STORAGE_VERSION = 1
+STORE_GROUP_SETS = "home_suivi_elec_group_sets_v1"
+
 HSE_EVENT_STORAGE_MIGRATED = "hse_storage_migrated"
 CAPTEURS_POWER_STORAGE_VERSION = 1
 STORE_CAPTEURS_POWER = "home_suivi_elec_capteurs_power_v1"
-
-
