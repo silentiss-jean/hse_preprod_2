@@ -272,6 +272,55 @@ class StorageManager:
 
         return out
 
+    def _coerce_legacy_groups_to_dict(self, legacy: Any) -> Dict[str, Any]:
+        """\
+        Migration soft: accepte plusieurs formes legacy et renvoie toujours un dict {group_name: {..}}.
+
+        Formes supportées :
+        - dict déjà conforme -> retourné tel quel
+        - list[dict] où chaque item est du style {name, mode?, energy?, power?}
+        - list[str] (très vieux) -> convertit en {name:{name,mode:"manual",energy:[],power:[]}}
+        """
+        if isinstance(legacy, dict):
+            return legacy
+
+        if isinstance(legacy, list):
+            out: Dict[str, Any] = {}
+            for item in legacy:
+                # Cas liste de noms
+                if isinstance(item, str):
+                    name = item.strip() or ""
+                    if not name:
+                        continue
+                    out[name] = {
+                        "name": name,
+                        "mode": "manual",
+                        "energy": [],
+                        "power": [],
+                    }
+                    continue
+
+                # Cas liste d'objets
+                if isinstance(item, dict):
+                    name = str(item.get("name") or item.get("group") or "").strip()
+                    if not name:
+                        continue
+
+                    mode = str(item.get("mode") or "manual")
+                    energy = item.get("energy", [])
+                    power = item.get("power", [])
+
+                    out[name] = {
+                        "name": name,
+                        "mode": mode,
+                        "energy": list(energy) if isinstance(energy, list) else [],
+                        "power": list(power) if isinstance(power, list) else [],
+                    }
+
+            return out
+
+        return {}
+
     async def get_group_sets(self, forcereload: bool = False) -> Dict[str, Any]:
         cachekey = "group_sets"
         if not forcereload and cachekey in self.cache and isinstance(self.cache[cachekey], dict):
@@ -284,12 +333,17 @@ class StorageManager:
         # 2) Migration auto depuis legacy sensor_groups -> sets.rooms.groups
         rooms_groups = group_sets.get("sets", {}).get("rooms", {}).get("groups", {})
         if isinstance(rooms_groups, dict) and len(rooms_groups) == 0:
-            legacy = await self.store_groups.async_load()
-            if isinstance(legacy, dict) and len(legacy) > 0:
+            legacy_raw = await self.store_groups.async_load()
+            legacy = self._coerce_legacy_groups_to_dict(legacy_raw)
+
+            if len(legacy) > 0:
                 group_sets["sets"]["rooms"]["groups"] = legacy
                 try:
                     await self.store_group_sets.async_save(group_sets)
-                    _LOGGER.info("STORAGE group_sets: migration legacy sensor_groups -> sets.rooms.groups (%s groupes)", len(legacy))
+                    _LOGGER.info(
+                        "STORAGE group_sets: migration legacy sensor_groups -> sets.rooms.groups (%s groupes)",
+                        len(legacy),
+                    )
                 except Exception:
                     _LOGGER.exception("STORAGE group_sets: erreur sauvegarde post-migration")
 
