@@ -257,6 +257,72 @@ abbr[title] {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
+   MODAL (overlay + dialog)
+   - Utilisé par plusieurs panels (ex: groupsPanel)
+   - Doit rester générique et basé sur tokens --hse-*
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--hse-bg-secondary) 70%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 12px;
+}
+
+.modal-content {
+  background: var(--hse-surface);
+  border: 1px solid var(--hse-border);
+  border-radius: var(--hse-radius-lg);
+  box-shadow: var(--hse-shadow-md);
+  width: min(680px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  color: var(--hse-text);
+}
+
+.modal-content.modal-small {
+  width: min(520px, calc(100vw - 24px));
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  padding: 12px 14px;
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--hse-border-soft);
+}
+
+.modal-footer {
+  border-top: 1px solid var(--hse-border-soft);
+  justify-content: flex-end;
+}
+
+.modal-close-btn {
+  border: 1px solid var(--hse-border);
+  background: var(--hse-surface-muted);
+  color: var(--hse-text);
+  border-radius: var(--hse-radius-md);
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  line-height: 1;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
    RESPONSIVE
    ──────────────────────────────────────────────────────────────────────────── */
 
