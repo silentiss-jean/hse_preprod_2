@@ -13,6 +13,10 @@ Objectifs (clean + rétro-compat) :
 - Normalisation des valeurs sensibles :
   - type_contrat -> prix_unique | heures_creuses
 - Point d’entrée unique pour une config "effective" (Store + entry.data + entry.options)
+
+Extensions (group_sets v1) :
+- Nouveau store canon group_sets: sets.rooms + sets.types + ...
+- Rétro-compat: sensor_groups (get_sensor_groups/save_sensor_groups) devient un alias de group_sets.sets.rooms.groups
 """
 
 import logging
@@ -49,6 +53,8 @@ from .const import (
     CONF_HC_START,
     CONF_HC_END,
     CONF_MODE,
+    GROUP_SETS_STORAGE_VERSION,
+    STORE_GROUP_SETS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,7 +63,7 @@ _LOGGER = logging.getLogger(__name__)
 # Rétro-compat imports (anciens fichiers qui importaient ces noms)
 # ---------------------------------------------------------------------------
 
-# to delete STORAGEVERSION = 2  
+# to delete STORAGEVERSION = 2
 IGNORED_ENTITIES_STORAGE_VERSION = 2
 SENSOR_GROUPS_STORAGE_VERSION = 2
 COST_HA_STORAGE_VERSION = 1
@@ -73,16 +79,10 @@ LEGACY_CAPTEURS_SELECTION = LEGACY_DATA_DIR / "capteursselection.json"
 LEGACY_CAPTEURS_POWER = LEGACY_DATA_DIR / "capteurs_power.json"
 
 
-# backward compat (migration_storage.py importe LEGACYDATADIR) :
-# LEGACYDATADIR = LEGACY_DATA_DIR  # noqa: N816
-
-
 # ---------------------------------------------------------------------------
 # Normalisation clés/valeurs
 # ---------------------------------------------------------------------------
 
-# Fallback minimal au cas où const.KEY_ALIASES_TO_CANONICAL n'aurait pas encore été patché
-# (tu peux le supprimer une fois const.py clean).
 _FALLBACK_ALIASES = {
     # camelCase
     "typeContrat": CONF_TYPE_CONTRAT,
@@ -203,10 +203,19 @@ class StorageManager:
             IGNORED_ENTITIES_STORAGE_VERSION,
             STORE_IGNORED_ENTITIES,
         )
+
+        # Legacy: store des groupes "sensor_groups"
         self.store_groups = Store(
             hass,
             SENSOR_GROUPS_STORAGE_VERSION,
             STORE_SENSOR_GROUPS,
+        )
+
+        # ✅ Canon: store group_sets
+        self.store_group_sets = Store(
+            hass,
+            GROUP_SETS_STORAGE_VERSION,
+            STORE_GROUP_SETS,
         )
 
         # Nouveau store pour Coût HA
@@ -218,77 +227,167 @@ class StorageManager:
 
         _LOGGER.info("STORAGE-MANAGER Initialisé version=%s", STORAGE_VERSION)
 
+    # ---------------------------------------------------------------------
+    # Helpers group_sets
+    # ---------------------------------------------------------------------
+
+    def _default_group_sets(self) -> Dict[str, Any]:
+        return {
+            "version": GROUP_SETS_STORAGE_VERSION,
+            "sets": {
+                "rooms": {"mode": "exclusive", "groups": {}},
+                "types": {"mode": "multi", "groups": {}},
+            },
+        }
+
+    def _ensure_group_sets_shape(self, raw: Any) -> Dict[str, Any]:
+        """Retourne un dict canon {version, sets:{rooms:{mode,groups}, types:{...}}} avec fallback safe."""
+        if not isinstance(raw, dict):
+            return self._default_group_sets()
+
+        out: Dict[str, Any] = dict(raw)
+        out.setdefault("version", GROUP_SETS_STORAGE_VERSION)
+        sets = out.get("sets")
+        if not isinstance(sets, dict):
+            out["sets"] = {}
+            sets = out["sets"]
+
+        # rooms
+        rooms = sets.get("rooms")
+        if not isinstance(rooms, dict):
+            rooms = {}
+            sets["rooms"] = rooms
+        rooms.setdefault("mode", "exclusive")
+        if not isinstance(rooms.get("groups"), dict):
+            rooms["groups"] = {}
+
+        # types
+        types = sets.get("types")
+        if not isinstance(types, dict):
+            types = {}
+            sets["types"] = types
+        types.setdefault("mode", "multi")
+        if not isinstance(types.get("groups"), dict):
+            types["groups"] = {}
+
+        return out
+
+    async def get_group_sets(self, forcereload: bool = False) -> Dict[str, Any]:
+        cachekey = "group_sets"
+        if not forcereload and cachekey in self.cache and isinstance(self.cache[cachekey], dict):
+            return self.cache[cachekey]
+
+        # 1) Lire le store canon
+        raw = await self.store_group_sets.async_load()
+        group_sets = self._ensure_group_sets_shape(raw)
+
+        # 2) Migration auto depuis legacy sensor_groups -> sets.rooms.groups
+        rooms_groups = group_sets.get("sets", {}).get("rooms", {}).get("groups", {})
+        if isinstance(rooms_groups, dict) and len(rooms_groups) == 0:
+            legacy = await self.store_groups.async_load()
+            if isinstance(legacy, dict) and len(legacy) > 0:
+                group_sets["sets"]["rooms"]["groups"] = legacy
+                try:
+                    await self.store_group_sets.async_save(group_sets)
+                    _LOGGER.info("STORAGE group_sets: migration legacy sensor_groups -> sets.rooms.groups (%s groupes)", len(legacy))
+                except Exception:
+                    _LOGGER.exception("STORAGE group_sets: erreur sauvegarde post-migration")
+
+        self.cache[cachekey] = group_sets
+        return group_sets
+
+    async def save_group_sets(self, group_sets: Dict[str, Any]) -> bool:
+        try:
+            clean = self._ensure_group_sets_shape(group_sets)
+            await self.store_group_sets.async_save(clean)
+            self.cache["group_sets"] = clean
+
+            # Optionnel: synchro legacy store_groups pour compat immédiate
+            rooms_groups = clean.get("sets", {}).get("rooms", {}).get("groups", {})
+            if isinstance(rooms_groups, dict):
+                await self.store_groups.async_save(rooms_groups)
+                self.cache["sensor_groups"] = rooms_groups
+
+            return True
+        except Exception as e:
+            _LOGGER.exception("STORAGE Erreur save_group_sets: %s", e)
+            return False
+
+    # ---------------------------------------------------------------------
+    # Rétro-compat : groups (Pièces)
+    # ---------------------------------------------------------------------
+
+    async def get_sensor_groups(self, forcereload: bool = False) -> Dict[str, Any]:
+        """Legacy API: retourne le mapping groups des pièces (= group_sets.sets.rooms.groups)."""
+        gs = await self.get_group_sets(forcereload=forcereload)
+        groups = gs.get("sets", {}).get("rooms", {}).get("groups", {})
+        if not isinstance(groups, dict):
+            groups = {}
+        # Maintenir aussi l'ancien cachekey pour code existant
+        self.cache["sensor_groups"] = groups
+        return groups
+
+    async def save_sensor_groups(self, groups: Dict[str, Any]) -> bool:
+        """Legacy API: sauve groups des pièces dans group_sets + sync legacy store."""
+        if not isinstance(groups, dict):
+            _LOGGER.error("STORAGE sensor_groups invalide (pas un dict)")
+            return False
+
+        gs = await self.get_group_sets(forcereload=False)
+        gs = self._ensure_group_sets_shape(gs)
+        gs["sets"]["rooms"]["groups"] = groups
+        ok = await self.save_group_sets(gs)
+        if ok:
+            self.cache["sensor_groups"] = groups
+            _LOGGER.info("STORAGE sensor_groups sauvegardés (via group_sets) (%s groupes)", len(groups))
+        return ok
+
+    # ---------------------------------------------------------------------
+    # Le reste du StorageManager (inchangé)
+    # ---------------------------------------------------------------------
+
     def get_first_entry(self):
-        # AVANT : self.hass.configentries...
-        # APRÈS : self.hass.config_entries...
         entries = self.hass.config_entries.async_entries(DOMAIN)
         return entries[0] if entries else None
 
     def _is_wrapper(self, obj: Any) -> bool:
-        """Détecte un wrapper de type {'version': int, 'data': dict} (avec variantes root Store)."""
         if not isinstance(obj, dict):
             return False
         if "data" not in obj:
             return False
-
-        # Wrapper "Store" peut avoir key/minor_version en plus
         allowed = {"version", "minor_version", "key", "data"}
         if not set(obj.keys()).issubset(allowed):
             return False
-
         v = obj.get("version", None)
         d = obj.get("data", None)
         return isinstance(v, int) and isinstance(d, dict)
 
     def _extract_cost_ha_mapping(self, raw: Any) -> Dict[str, Any]:
-        """
-        Retourne toujours un mapping plat:
-        {
-        "sensor.xxx": {"enabled": bool, "cost_entity_id": "..."},
-        ...
-        }
-        """
         if not isinstance(raw, dict):
             return {}
-
-        # 1) Le Store HA renvoie généralement un root wrapper: {"version", "key", "data", ...}
         cur: Any = raw.get("data", raw)
-
-        # 2) Déplier les wrappers internes empilés (ton bug actuel)
-        #    Exemple observé: data -> {version,data:{version,data:{version,data:{...}}}}
-        for _ in range(10):  # borne de sécurité
+        for _ in range(10):
             if self._is_wrapper(cur):
                 cur = cur.get("data", {})
                 continue
             break
-
-        # 3) À ce stade, cur doit être le mapping final
         return cur if isinstance(cur, dict) else {}
 
-# Dans class StorageManager:
-
     def _unwrap_cost_ha_map(self, raw: Any) -> Dict[str, Any]:
-        """Retourne toujours un mapping plat {entity_id: {...}} même si le store est sur-wrappé."""
         if not isinstance(raw, dict):
             return {}
-
-        # Le Store HA met déjà un wrapper root avec "data"
         cur: Any = raw.get("data", raw)
-
-        # Déplier les wrappers empilés (ton cas data.data.data...)
-        for _ in range(10):  # borne de sécurité
+        for _ in range(10):
             if (
                 isinstance(cur, dict)
                 and "data" in cur
                 and isinstance(cur.get("data"), dict)
                 and isinstance(cur.get("version", 1), int)
-                # wrapper strict: uniquement version/data (ou root: + minor_version/key)
                 and set(cur.keys()).issubset({"version", "minor_version", "key", "data"})
             ):
                 cur = cur["data"]
                 continue
             break
-
         return cur if isinstance(cur, dict) else {}
 
     async def get_cost_ha_config(self) -> Dict[str, Any]:
@@ -299,8 +398,6 @@ class StorageManager:
         raw = await self.store_cost_ha.async_load()
         sensors_map = self._unwrap_cost_ha_map(raw)
 
-        # (optionnel mais utile) auto-migration si le fichier était sur-wrappé:
-        # on réécrit en format plat pour stabiliser.
         try:
             if isinstance(raw, dict):
                 root_data = raw.get("data")
@@ -315,11 +412,7 @@ class StorageManager:
     async def save_cost_ha_config(self, sensors_map: Dict[str, Any]) -> bool:
         try:
             clean_map = self._unwrap_cost_ha_map(sensors_map)
-
-            # IMPORTANT: on sauvegarde le mapping plat (pas un wrapper "version/data"),
-            # sinon tu recrées le problème data.data.data...
             await self.store_cost_ha.async_save(clean_map)
-
             self.cache["cost_ha_config"] = clean_map
             return True
         except Exception as e:
@@ -340,7 +433,6 @@ class StorageManager:
             cost_entity_id = await self._create_or_update_cost_sensor(entity_id, cost_entity_id)
             entry["cost_entity_id"] = cost_entity_id
         else:
-            # v1: on ne supprime pas le sensor coût, on désactive juste la config
             pass
 
         sensors_map[entity_id] = entry
@@ -356,21 +448,10 @@ class StorageManager:
         source_entity_id: str,
         existing_cost_entity_id: Optional[str],
     ) -> str:
-        """
-        Crée ou met à jour le capteur de coût HA associé à un capteur d'énergie.
-
-        V1 simplifiée:
-        - lit les prix dans user_config (si présents),
-        - construit un entity_id déterministe pour le sensor coût,
-        - loggue l'intention de création.
-        La vraie création physique reste gérée par la logique existante de generate_cost_sensors.
-        """
-        # 1) Lire la config utilisateur pour récupérer les prix
         user_cfg = await self.get_user_config()
         prix_ht = float(user_cfg.get(CONF_PRIX_HT, 0.0) or 0.0)
         prix_ttc = float(user_cfg.get(CONF_PRIX_TTC, 0.0) or 0.0)
 
-        # 2) Construire un entity_id déterministe pour le capteur coût
         slug = source_entity_id.replace(".", "_")
         cost_entity_id = existing_cost_entity_id or f"sensor.hse_cost_{slug}"
 
@@ -382,21 +463,13 @@ class StorageManager:
             prix_ttc,
         )
 
-        # ⚠️ V1: on ne crée pas encore physiquement l'entité ici.
-        # Elle sera créée par la génération globale existante (generate_cost_sensors).
         return cost_entity_id
 
     async def get_user_config(self, forcereload: bool = False) -> Dict[str, Any]:
-        """
-        Retourne la config effective (clé canon const.py):
-        - Store persistant
-        - entry.data + entry.options (options prioritaire)
-        """
         cachekey = "user_config"
         if not forcereload and cachekey in self.cache:
             return self.cache[cachekey]
 
-        # 1) Store HA
         data = await self.store_user_config.async_load()
         if data is None:
             data = {}
@@ -406,7 +479,6 @@ class StorageManager:
 
         eff: Dict[str, Any] = dict(normalized_store)
 
-        # 2) entry.data + entry.options
         try:
             entry = self.get_first_entry()
             if entry:
@@ -416,10 +488,8 @@ class StorageManager:
                 norm_data = normalize_user_config(raw_data)
                 norm_opts = normalize_user_config(raw_opts)
 
-                # Si options avait du camelCase/legacy, on la migre en place
                 if norm_opts != raw_opts:
                     self.hass.config_entries.async_update_entry(entry, options=norm_opts)
-                # Merge : store -> data -> options
                 eff.update(norm_data)
                 eff.update(norm_opts)
         except Exception as e:
@@ -430,11 +500,6 @@ class StorageManager:
         return eff
 
     async def save_user_config(self, cfg: Dict[str, Any], strict: bool = False) -> bool:
-        """
-        Sauvegarde en canons const.py.
-        - strict=True refuse les payloads camelCase
-        - strict=False accepte et migre (transition)
-        """
         if not isinstance(cfg, dict):
             return False
 
@@ -530,7 +595,6 @@ class StorageManager:
 
         data = await self.store_ignored.async_load()
 
-        # backward compat: accepter soit {"entities":[...]}, soit direct [...]
         if data is None:
             entities: List[str] = []
         elif isinstance(data, list):
@@ -574,31 +638,6 @@ class StorageManager:
             entities.remove(entity_id)
             return await self.save_ignored_entities(entities)
         return True
-
-    async def get_sensor_groups(self, forcereload: bool = False) -> Dict[str, Any]:
-        cachekey = "sensor_groups"
-        if not forcereload and cachekey in self.cache:
-            return self.cache[cachekey]
-
-        data = await self.store_groups.async_load()
-        if data is None or not isinstance(data, dict):
-            data = {}
-
-        self.cache[cachekey] = data
-        return data
-
-    async def save_sensor_groups(self, groups: Dict[str, Any]) -> bool:
-        try:
-            if not isinstance(groups, dict):
-                _LOGGER.error("STORAGE sensor_groups invalide (pas un dict)")
-                return False
-            await self.store_groups.async_save(groups)
-            self.cache["sensor_groups"] = groups
-            _LOGGER.info("STORAGE sensor_groups sauvegardés (%s groupes)", len(groups))
-            return True
-        except Exception as e:
-            _LOGGER.exception("STORAGE Erreur sauvegarde sensor_groups: %s", e)
-            return False
 
     async def migrate_from_legacy_files(self) -> bool:
         _LOGGER.info("MIGRATION Vérification fichiers legacy...")
@@ -674,6 +713,11 @@ class StorageManager:
             groups = await self.get_sensor_groups()
             with open(outputdir / "sensorgroups.json", "w", encoding="utf-8") as f:
                 json.dump(groups, f, indent=2, ensure_ascii=False)
+
+            # group_sets export
+            group_sets = await self.get_group_sets()
+            with open(outputdir / "groupsets.json", "w", encoding="utf-8") as f:
+                json.dump(group_sets, f, indent=2, ensure_ascii=False)
 
             _LOGGER.info("EXPORT Données exportées vers %s", outputdir)
             return True
