@@ -18,17 +18,29 @@ from .const import DOMAIN
 
 LOGGER = logging.getLogger(__name__)
 
+
 def _uid(ent) -> Optional[str]:
     # HA Entities exposent généralement unique_id (property) + stockage interne _attr_unique_id
     return getattr(ent, "unique_id", None) or getattr(ent, "_attr_unique_id", None)
+
 
 def _get_added_uids(hass: HomeAssistant) -> Set[str]:
     domain_data = hass.data.setdefault(DOMAIN, {})
     return domain_data.setdefault("_added_uids", set())
 
+
 # ======================================================================
 # ⚙️ DÉDUP HSE : CONFIG MODIFIÉE
+#
+# But: permettre la régénération (dev) tout en évitant les doublons qui
+# font spammer async_add_entities ou créent des erreurs "already exists".
+#
+# Choix "safe":
+# - energy/power/cost: dédup OFF (comportement historique), mais on log.
+# - room_totals/type_totals: dédup ON (ces capteurs sont 100% dérivés,
+#   et peuvent être regénérés souvent via refresh_group_totals).
 # ======================================================================
+
 
 def _seed_added_uids_from_registry(hass: HomeAssistant) -> None:
     """Seed du set runtime avec les entités déjà présentes."""
@@ -48,9 +60,17 @@ def _seed_added_uids_from_registry(hass: HomeAssistant) -> None:
 
 
 def _dedupe_by_uid(
-    hass: HomeAssistant, sensors: Iterable, kind: str
+    hass: HomeAssistant,
+    sensors: Iterable,
+    kind: str,
+    *,
+    enable_dedup: bool,
 ) -> Tuple[List, Set[str], int]:
-    """Filtre les entités déjà ajoutées (par unique_id)."""
+    """Filtre les entités déjà ajoutées (par unique_id).
+
+    - Si enable_dedup=False: on laisse passer (régénération), mais on log.
+    - Si enable_dedup=True: on skip les unique_id déjà vus dans _added_uids.
+    """
     added = _get_added_uids(hass)
 
     out: List = []
@@ -66,8 +86,12 @@ def _dedupe_by_uid(
             continue
 
         if uid in added:
+            if enable_dedup:
+                skipped += 1
+                continue
+
             LOGGER.debug(
-                "🔄 [DEDUP] %s: entité %s existe dans registry, réanimation autorisée",
+                "🔄 [DEDUP-OFF] %s: entité %s déjà vue, réanimation autorisée",
                 kind,
                 uid,
             )
@@ -209,6 +233,10 @@ async def async_setup_entry(
         ),
     }
 
+    def _dedup_enabled_for_kind(kind: str) -> bool:
+        # Safe: on dédup uniquement les capteurs 100% dérivés (totaux) pour éviter spam.
+        return kind in ("room_totals", "type_totals")
+
     def _process(kind: str, pending_key: str, stable_key: str) -> None:
         sensors = _take_pool(hass, pending_key, stable_key)
 
@@ -229,7 +257,12 @@ async def async_setup_entry(
             raw_names,
         )
 
-        sensors, new_uids, skipped = _dedupe_by_uid(hass, sensors, kind)
+        sensors, new_uids, skipped = _dedupe_by_uid(
+            hass,
+            sensors,
+            kind,
+            enable_dedup=_dedup_enabled_for_kind(kind),
+        )
 
         LOGGER.info(
             "🧩 [EVENT-DEDUP] %s: kept=%s skipped=%s new_uids=%s",
@@ -283,7 +316,12 @@ async def async_setup_entry(
         cost_sensors = await _reconcile_cost_sensors(hass)
 
         if cost_sensors:
-            cost_sensors, new_uids, skipped = _dedupe_by_uid(hass, cost_sensors, "cost_reconcile")
+            cost_sensors, new_uids, skipped = _dedupe_by_uid(
+                hass,
+                cost_sensors,
+                "cost_reconcile",
+                enable_dedup=False,
+            )
 
             if cost_sensors:
                 async_add_entities(cost_sensors, update_before_add=True)
