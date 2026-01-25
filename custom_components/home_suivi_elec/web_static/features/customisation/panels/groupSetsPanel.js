@@ -27,6 +27,61 @@ function parseEntities(text) {
   );
 }
 
+// -----------------------------------------------------------------------------
+// Compat: legacy group values vs new group object
+// legacy: groups[groupName] = ["sensor.xxx", ...]
+// new:    groups[groupName] = { name, mode, energy:[...], power:[...] }
+// -----------------------------------------------------------------------------
+
+function isNewGroupObject(v) {
+  return v && typeof v === "object" && !Array.isArray(v);
+}
+
+function getEntitiesForTextarea(setKey, groupValue) {
+  if (Array.isArray(groupValue)) return groupValue;
+
+  if (isNewGroupObject(groupValue)) {
+    const energy = Array.isArray(groupValue.energy) ? groupValue.energy : [];
+    const power = Array.isArray(groupValue.power) ? groupValue.power : [];
+
+    // UX choice: rooms -> energy, types -> power
+    return setKey === "types" ? power : energy;
+  }
+
+  return [];
+}
+
+function setEntitiesFromTextarea(setKey, groups, groupName, ids) {
+  const curVal = groups[groupName];
+
+  // legacy / unset
+  if (Array.isArray(curVal) || curVal == null) {
+    groups[groupName] = ids;
+    return;
+  }
+
+  // new
+  if (isNewGroupObject(curVal)) {
+    if (setKey === "types") curVal.power = ids;
+    else curVal.energy = ids;
+    groups[groupName] = curVal;
+    return;
+  }
+
+  // fallback
+  groups[groupName] = ids;
+}
+
+function makeNewGroupValue(setKey, name) {
+  // Same canonical shape for both sets; editor chooses which list to edit.
+  return {
+    name,
+    mode: "manual",
+    energy: [],
+    power: [],
+  };
+}
+
 function renderSet(container, setKey, title) {
   const state = getGroupSetsState();
   const gs = state.groupSets || { sets: {}, version: 1 };
@@ -59,7 +114,7 @@ function renderSet(container, setKey, title) {
         return;
       }
 
-      cur.sets[setKey].groups[trimmed] = [];
+      cur.sets[setKey].groups[trimmed] = makeNewGroupValue(setKey, trimmed);
       setGroupSetsState(cur);
       renderGroupSetsPanel(container.parentElement); // rerender global
     },
@@ -89,8 +144,9 @@ function renderSet(container, setKey, title) {
     const nameLabel = createElement("span", { className: "hse-group-name-label" });
     nameLabel.textContent = groupName;
 
+    const listForCount = getEntitiesForTextarea(setKey, groups[groupName]);
     const count = createElement("span", { className: "hse-groups-toolbar-info" });
-    count.textContent = `${(groups[groupName] || []).length} entité(s)`;
+    count.textContent = `${listForCount.length} entité(s)`;
 
     const renameBtn = createElement("button", { type: "button", className: "hse-group-toggle", title: "Renommer" });
     renameBtn.textContent = "✏️";
@@ -108,7 +164,13 @@ function renderSet(container, setKey, title) {
         return;
       }
 
-      cur.sets[setKey].groups[trimmed] = cur.sets[setKey].groups[groupName] || [];
+      const val = cur.sets[setKey].groups[groupName];
+      cur.sets[setKey].groups[trimmed] = val;
+
+      if (isNewGroupObject(cur.sets[setKey].groups[trimmed])) {
+        cur.sets[setKey].groups[trimmed].name = trimmed;
+      }
+
       delete cur.sets[setKey].groups[groupName];
       setGroupSetsState(cur);
       renderGroupSetsPanel(container.parentElement);
@@ -142,7 +204,7 @@ function renderSet(container, setKey, title) {
       placeholder: "1 entity_id par ligne (ex: sensor.xxx)",
       style: "width:100%;"
     });
-    ta.value = (groups[groupName] || []).join("\n");
+    ta.value = getEntitiesForTextarea(setKey, groups[groupName]).join("\n");
 
     const applyBtn = Button.create(
       "Appliquer",
@@ -156,13 +218,14 @@ function renderSet(container, setKey, title) {
         if (cur.sets[setKey].mode === "exclusive") {
           for (const g of Object.keys(cur.sets[setKey].groups)) {
             if (g === groupName) continue;
-            cur.sets[setKey].groups[g] = (cur.sets[setKey].groups[g] || []).filter(
-              (e) => !ids.includes(e)
-            );
+
+            const otherList = getEntitiesForTextarea(setKey, cur.sets[setKey].groups[g]);
+            const cleaned = otherList.filter((e) => !ids.includes(e));
+            setEntitiesFromTextarea(setKey, cur.sets[setKey].groups, g, cleaned);
           }
         }
 
-        cur.sets[setKey].groups[groupName] = ids;
+        setEntitiesFromTextarea(setKey, cur.sets[setKey].groups, groupName, ids);
         setGroupSetsState(cur);
         Toast.success("Modifications appliquées (non enregistrées).");
         renderGroupSetsPanel(container.parentElement);
