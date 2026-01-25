@@ -13,7 +13,6 @@ from typing import Any, Dict, Optional, Set
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
-from datetime import datetime, date
 
 from ..cache_manager import get_cache_manager
 from ..const import DOMAIN
@@ -791,7 +790,6 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
                     await refresh_group_totals(self.hass)
                 except Exception as e:
                     _LOGGER.exception("[CONFIG] refresh_group_totals failed: %s", e)
-
 
             return self._success({
                 "message": "Group sets sauvegardés avec succès",
