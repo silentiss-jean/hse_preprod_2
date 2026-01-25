@@ -6,14 +6,13 @@ import asyncio
 import json
 import logging
 import os
-from datetime import datetime, date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, Optional, Set
 
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
-from datetime import datetime, date
 
 from ..cache_manager import get_cache_manager
 from ..const import DOMAIN
@@ -36,7 +35,6 @@ except Exception:
 
 _LOGGER = logging.getLogger(__name__)
 
-# Fonction helper globale pour serializer JSON
 
 def _json_default(obj):
     """Serializer JSON custom pour datetime/date"""
@@ -76,7 +74,6 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
         "setcostha": "set_cost_ha",
     }
 
-    # ✅ AJOUT : Méthode pour activer un capteur
     async def _enable_sensor(self, data):
         """Active un capteur désactivé dans l'entity_registry."""
         try:
@@ -96,10 +93,9 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
             if not entry.disabled:
                 return self._error(400, f"Entity {entity_id} is already enabled")
 
-            # Activer l'entité
             entity_reg.async_update_entity(entity_id, disabled_by=None)
 
-            _LOGGER.info(f"✅ Entity {entity_id} enabled by user via HSE")
+            _LOGGER.info("✅ Entity %s enabled by user via HSE", entity_id)
 
             return self._success(
                 {
@@ -330,7 +326,7 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
             return self._error(500, f"Erreur save_groups: {e}")
 
     # -------------------------
-    # (reste du fichier inchangé)
+    # Sélection (legacy)
     # -------------------------
 
     async def _save_sensor_selection(self, data):
@@ -367,8 +363,6 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
             _LOGGER.exception("Erreur save_sensor_selection: %s", e)
             return self._error(500, f"Erreur sauvegarde: {e}")
 
-    # NOTE: les autres méthodes originales sont conservées telles quelles dans le repo.
-
     async def _update_integration_options(self, data):
         """Met à jour les options de l'intégration (runtime hass.data uniquement)."""
         try:
@@ -398,10 +392,7 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
                 self.hass.data[DOMAIN]["options"] = current_options
 
             return self._success(
-                {
-                    "message": "Options mises à jour avec succès",
-                    "updated_options": filtered_options,
-                }
+                {"message": "Options mises à jour avec succès", "updated_options": filtered_options}
             )
 
         except Exception as e:
@@ -515,4 +506,162 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
     def _get_selection_file_path(self) -> str:
         return os.path.normpath(
             os.path.join(os.path.dirname(__file__), "..", "data", "capteurs_selection.json")
+        )
+
+
+# ============================================================================
+# ✅ VUES manquantes (compat imports __init__.py)
+# ============================================================================
+
+
+class ValidationActionView(HomeAssistantView):
+    """Vue compat: placeholder pour éviter ImportError (implémentation à restaurer)."""
+
+    url = "/api/home_suivi_elec/validation/action"
+    name = "api:home_suivi_elec:validation_action"
+    requires_auth = False
+    cors_allowed = True
+
+    def __init__(self, hass: HomeAssistant):
+        self.hass = hass
+
+    async def post(self, request):
+        return web.Response(
+            text=json.dumps(
+                {
+                    "success": False,
+                    "error": "ValidationActionView temporairement indisponible (stub).",
+                },
+                default=_json_default,
+            ),
+            content_type="application/json",
+            status=501,
+        )
+
+
+class HomeElecMigrationHelpersView(HomeAssistantView):
+    """Vue compat: placeholder (implémentation à restaurer)."""
+
+    url = "/api/home_suivi_elec/migration/{action}"
+    name = "api:home_suivi_elec:migration_helpers"
+    requires_auth = False
+    cors_allowed = True
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        self.hass = hass
+
+    async def post(self, request, action=None):
+        return web.Response(
+            text=json.dumps(
+                {"success": False, "error": "Migration helpers temporairement indisponible (stub)."},
+                default=_json_default,
+            ),
+            content_type="application/json",
+            status=501,
+        )
+
+
+class CacheClearView(HomeAssistantView):
+    """Vue compat: placeholder."""
+
+    url = "/api/home_suivi_elec/cache/clear"
+    name = "api:home_suivi_elec:cache_clear"
+    requires_auth = False
+    cors_allowed = True
+
+    def __init__(self, hass: HomeAssistant):
+        self.hass = hass
+
+    async def post(self, request):
+        try:
+            cache = get_cache_manager()
+            count = cache.invalidate_all()
+            return json_response(
+                {
+                    "success": True,
+                    "message": f"Cache vidé ({count} entrées supprimées)",
+                    "cleared_entries": count,
+                }
+            )
+        except Exception as e:
+            _LOGGER.exception("[cache_clear] Erreur: %s", e)
+            return web.Response(
+                text=json.dumps({"success": False, "error": str(e)}, default=_json_default),
+                content_type="application/json",
+                status=500,
+            )
+
+
+class CacheInvalidateEntityView(HomeAssistantView):
+    """Vue compat: placeholder."""
+
+    url = "/api/home_suivi_elec/cache/invalidate"
+    name = "api:home_suivi_elec:cache_invalidate"
+    requires_auth = False
+    cors_allowed = True
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        self.hass = hass
+
+    async def post(self, request):
+        try:
+            data = await request.json()
+            entity_id = (data or {}).get("entity_id")
+
+            if not entity_id:
+                return web.Response(
+                    text=json.dumps({"success": False, "error": "entity_id manquant"}, default=_json_default),
+                    content_type="application/json",
+                    status=400,
+                )
+
+            cache = get_cache_manager()
+            cleared = cache.invalidate_entity(entity_id)
+
+            return web.Response(
+                text=json.dumps(
+                    {"success": True, "entity_id": entity_id, "cleared_entries": cleared},
+                    default=_json_default,
+                ),
+                content_type="application/json",
+            )
+
+        except Exception as e:
+            _LOGGER.exception("[cache_invalidate] Erreur: %s", e)
+            return web.Response(
+                text=json.dumps({"success": False, "error": str(e)}, default=_json_default),
+                content_type="application/json",
+                status=500,
+            )
+
+
+class HistoryAnalysisView(HomeAssistantView):
+    """Vue compat: placeholder (implémentation à restaurer)."""
+
+    url = "/api/home_suivi_elec/history/{action}"
+    name = "api:home_suivi_elec:history"
+    requires_auth = False
+    cors_allowed = True
+
+    def __init__(self, hass: HomeAssistant):
+        self.hass = hass
+
+    async def get(self, request, action=None):
+        return web.Response(
+            text=json.dumps(
+                {"success": False, "error": "HistoryAnalysisView temporairement indisponible (stub)."},
+                default=_json_default,
+            ),
+            content_type="application/json",
+            status=501,
+        )
+
+    async def post(self, request, action=None):
+        return web.Response(
+            text=json.dumps(
+                {"success": False, "error": "HistoryAnalysisView temporairement indisponible (stub)."},
+                default=_json_default,
+            ),
+            content_type="application/json",
+            status=501,
         )
