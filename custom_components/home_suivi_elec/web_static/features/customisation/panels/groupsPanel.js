@@ -155,12 +155,57 @@ function performSensorMove(groups, fromKey, toKey, entityId, kind) {
 }
 
 /**
+ * Applique la copie d'UN capteur (n'enlève pas du groupe source).
+ */
+function performSensorCopy(groups, fromKey, toKey, entityId, kind) {
+  const groupsCopy = JSON.parse(JSON.stringify(groups || {}));
+
+  const from = groupsCopy[fromKey];
+  if (!from) return groups;
+
+  const fromList = kind === "energy" ? from.energy : from.power;
+  if (!Array.isArray(fromList)) return groups;
+
+  // Sécurité: ne copier que si le capteur existe bien dans le groupe source
+  if (!fromList.includes(entityId)) return groups;
+
+  let target = groupsCopy[toKey];
+  if (!target) {
+    target = {
+      name: toKey,
+      mode: "manual",
+      energy: [],
+      power: [],
+    };
+    groupsCopy[toKey] = target;
+  }
+
+  const targetList = kind === "energy" ? target.energy : target.power;
+  if (!targetList.includes(entityId)) {
+    targetList.push(entityId);
+  }
+
+  return groupsCopy;
+}
+
+/**
  * Applique le déplacement de PLUSIEURS capteurs (bulk move).
  */
 function performBulkMove(groups, fromKey, toKey, entityIds, kind) {
   let result = groups;
   entityIds.forEach((eid) => {
     result = performSensorMove(result, fromKey, toKey, eid, kind);
+  });
+  return result;
+}
+
+/**
+ * Applique la copie de PLUSIEURS capteurs (bulk copy).
+ */
+function performBulkCopy(groups, fromKey, toKey, entityIds, kind) {
+  let result = groups;
+  entityIds.forEach((eid) => {
+    result = performSensorCopy(result, fromKey, toKey, eid, kind);
   });
   return result;
 }
@@ -195,6 +240,42 @@ function performKeywordBulkMove(groups, keyword, targetKey, scope) {
     );
     powerMatches.forEach((eid) => {
       result = performSensorMove(result, gKey, targetKey, eid, "power");
+    });
+  });
+
+  return result;
+}
+
+/**
+ * Copie TOUS les capteurs contenant un keyword vers un groupe cible.
+ * scope: "all" | groupKey (pour limiter à un seul groupe)
+ */
+function performKeywordBulkCopy(groups, keyword, targetKey, scope) {
+  if (!keyword || !targetKey) return groups;
+
+  const q = keyword.toLowerCase();
+  let result = JSON.parse(JSON.stringify(groups || {}));
+
+  const keys = scope === "all" ? Object.keys(result) : [scope];
+
+  keys.forEach((gKey) => {
+    const grp = result[gKey];
+    if (!grp) return;
+
+    // Energy
+    const energyMatches = (grp.energy || []).filter((eid) =>
+      eid.toLowerCase().includes(q)
+    );
+    energyMatches.forEach((eid) => {
+      result = performSensorCopy(result, gKey, targetKey, eid, "energy");
+    });
+
+    // Power
+    const powerMatches = (grp.power || []).filter((eid) =>
+      eid.toLowerCase().includes(q)
+    );
+    powerMatches.forEach((eid) => {
+      result = performSensorCopy(result, gKey, targetKey, eid, "power");
     });
   });
 
@@ -242,7 +323,7 @@ function updateBulkSelects() {
 
 // Modal déplacement (une famille ou un seul capteur) -------------------------
 
-function openMoveSensorModal(container, groupKey, entityIds, kind) {
+function openMoveSensorModal(container, groupKey, entityIds, kind, defaultAction = "move") {
   const state = getGroupsState();
   const groups = state.groups || {};
   const groupKeys = Object.keys(groups);
@@ -256,7 +337,7 @@ function openMoveSensorModal(container, groupKey, entityIds, kind) {
 
   const header = createElement("div", { className: "modal-header" });
   const h2 = document.createElement("h2");
-  h2.textContent = "Déplacer des capteurs";
+  h2.textContent = "Déplacer / Copier des capteurs";
 
   const closeBtn = createElement("button", {
     type: "button",
@@ -273,13 +354,46 @@ function openMoveSensorModal(container, groupKey, entityIds, kind) {
   const body = createElement("div", { className: "modal-body" });
 
   const info = document.createElement("p");
-  if (Array.isArray(entityIds) && entityIds.length > 1) {
-    info.textContent = `Déplacer ${entityIds.length} capteurs (${kind}) vers :`;
-  } else {
-    const eid = Array.isArray(entityIds) ? entityIds[0] : entityIds;
-    info.textContent = `Déplacer ${eid} (${kind}) vers :`;
+
+  const actionLabel = document.createElement("p");
+  actionLabel.className = "hse-modal-or";
+  actionLabel.textContent = "Action :";
+
+  const actionSelect = createElement("select", {
+    className: "hse-select hse-modal-select",
+  });
+
+  const moveOpt = document.createElement("option");
+  moveOpt.value = "move";
+  moveOpt.textContent = "Déplacer";
+
+  const copyOpt = document.createElement("option");
+  copyOpt.value = "copy";
+  copyOpt.textContent = "Copier";
+
+  actionSelect.appendChild(moveOpt);
+  actionSelect.appendChild(copyOpt);
+
+  // Default
+  actionSelect.value = defaultAction === "copy" ? "copy" : "move";
+
+  const idsArrayForText = Array.isArray(entityIds) ? entityIds : [entityIds];
+
+  function updateInfoText() {
+    const verb = actionSelect.value === "copy" ? "Copier" : "Déplacer";
+    if (idsArrayForText.length > 1) {
+      info.textContent = `${verb} ${idsArrayForText.length} capteurs (${kind}) vers :`;
+    } else {
+      const eid = idsArrayForText[0];
+      info.textContent = `${verb} ${eid} (${kind}) vers :`;
+    }
   }
+
+  updateInfoText();
+
   body.appendChild(info);
+  body.appendChild(actionLabel);
+  body.appendChild(actionSelect);
 
   const select = createElement("select", {
     className: "hse-select hse-modal-select",
@@ -321,7 +435,7 @@ function openMoveSensorModal(container, groupKey, entityIds, kind) {
   );
 
   const confirmBtn = Button.create(
-    "Déplacer",
+    actionSelect.value === "copy" ? "Copier" : "Déplacer",
     () => {
       let targetName = newInput.value.trim();
       if (!targetName) targetName = select.value;
@@ -332,32 +446,39 @@ function openMoveSensorModal(container, groupKey, entityIds, kind) {
 
       const currentState = getGroupsState();
       const idsArray = Array.isArray(entityIds) ? entityIds : [entityIds];
-      const updated = performBulkMove(
-        currentState.groups,
-        groupKey,
-        targetName,
-        idsArray,
-        kind
-      );
+
+      const action = actionSelect.value;
+      const updated =
+        action === "copy"
+          ? performBulkCopy(currentState.groups, groupKey, targetName, idsArray, kind)
+          : performBulkMove(currentState.groups, groupKey, targetName, idsArray, kind);
 
       setGroupsState(updated);
 
-      const wasCollapsedFrom = collapsedByGroup.get(groupKey);
+      // UI collapse states
       if (!collapsedByGroup.has(targetName)) {
         collapsedByGroup.set(targetName, false);
       }
-      collapsedByGroup.set(groupKey, wasCollapsedFrom === true);
+      if (action === "move") {
+        const wasCollapsedFrom = collapsedByGroup.get(groupKey);
+        collapsedByGroup.set(groupKey, wasCollapsedFrom === true);
+      }
 
       updateBulkSelects();
       renderGroupsList(container, getGroupsState().groups);
       document.body.removeChild(overlay);
 
       Toast.success(
-        `${idsArray.length} capteur(s) déplacé(s) vers "${targetName}".`
+        `${idsArray.length} capteur(s) ${action === "copy" ? "copié(s)" : "déplacé(s)"} vers "${targetName}".`
       );
     },
     "primary"
   );
+
+  actionSelect.addEventListener("change", () => {
+    updateInfoText();
+    confirmBtn.textContent = actionSelect.value === "copy" ? "Copier" : "Déplacer";
+  });
 
   footer.appendChild(cancelBtn);
   footer.appendChild(confirmBtn);
@@ -381,7 +502,7 @@ function renderFamilyRow(container, groupKey, kind, family) {
 
   const parentRow = createElement("div", {
     className: "hse-group-sensor-item is-clickable",
-    title: "Cliquer pour déplacer toute cette famille de capteurs",
+    title: "Cliquer pour déplacer/copier toute cette famille de capteurs",
     style: "font-weight:600; display:flex; align-items:center; gap:6px;",
   });
 
@@ -403,7 +524,7 @@ function renderFamilyRow(container, groupKey, kind, family) {
   parentRow.appendChild(caret);
   parentRow.appendChild(label);
 
-  // Clic sur parent → déplacer toute la famille
+  // Clic sur parent → déplacer/copier toute la famille
   parentRow.addEventListener("click", () => {
     openMoveSensorModal(container, groupKey, family.all, kind);
   });
@@ -420,7 +541,7 @@ function renderFamilyRow(container, groupKey, kind, family) {
     family.children.forEach((eid) => {
       const row = createElement("div", {
         className: "hse-group-sensor-item is-clickable",
-        title: "Cliquer pour déplacer ce capteur seul",
+        title: "Cliquer pour déplacer/copier ce capteur seul",
       });
       row.textContent = eid;
       row.addEventListener("click", () => {
@@ -787,9 +908,26 @@ export async function renderGroupsPanel(container) {
   const scopeSelect = createElement("select", {
     className: "hse-select hse-groups-select hse-groups-scope",
   });
+
   const targetSelect = createElement("select", {
     className: "hse-select hse-groups-select hse-groups-target",
   });
+
+  const actionSelect = createElement("select", {
+    className: "hse-select hse-groups-select",
+  });
+
+  const actionMoveOpt = document.createElement("option");
+  actionMoveOpt.value = "move";
+  actionMoveOpt.textContent = "Déplacer";
+
+  const actionCopyOpt = document.createElement("option");
+  actionCopyOpt.value = "copy";
+  actionCopyOpt.textContent = "Copier";
+
+  actionSelect.appendChild(actionMoveOpt);
+  actionSelect.appendChild(actionCopyOpt);
+  actionSelect.value = "move";
 
   // Stocke les références globales pour que updateBulkSelects puisse les manipuler
   bulkScopeSelect = scopeSelect;
@@ -813,22 +951,34 @@ export async function renderGroupsPanel(container) {
       }
 
       const scope = scopeSelect.value;
+      const action = actionSelect.value;
 
       const s = getGroupsState();
-      const updated = performKeywordBulkMove(s.groups, kw, targetKey, scope);
+      const updated =
+        action === "copy"
+          ? performKeywordBulkCopy(s.groups, kw, targetKey, scope)
+          : performKeywordBulkMove(s.groups, kw, targetKey, scope);
+
       setGroupsState(updated);
       updateBulkSelects();
       renderGroupsList(listContainer, getGroupsState().groups);
 
-      Toast.success(`Capteurs contenant "${kw}" déplacés vers "${targetKey}".`);
+      Toast.success(
+        `Capteurs contenant "${kw}" ${action === "copy" ? "copiés" : "déplacés"} vers "${targetKey}".`
+      );
     },
     "primary"
   );
+
+  actionSelect.addEventListener("change", () => {
+    bulkBtn.textContent = actionSelect.value === "copy" ? "Copier en masse" : "Déplacer en masse";
+  });
 
   bulkBar.appendChild(bulkLabel);
   bulkBar.appendChild(keywordInput);
   bulkBar.appendChild(scopeSelect);
   bulkBar.appendChild(targetSelect);
+  bulkBar.appendChild(actionSelect);
   bulkBar.appendChild(bulkBtn);
 
   container.appendChild(bulkBar);
