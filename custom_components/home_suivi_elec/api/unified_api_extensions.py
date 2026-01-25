@@ -65,6 +65,7 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
         "resetconfig": "reset_config",
         "autogroup": "auto_group",
         "savegroups": "save_groups",
+        "savegroupsets": "save_group_sets",
         "generatecostsensors": "generate_cost_sensors",
         "generate_cost_sensors": "generate_cost_sensors",
         "calculatesummary": "calculate_summary",
@@ -186,6 +187,9 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
 
             if action == "enable_sensor":
                 return await self._enable_sensor(data)
+
+            if action == "save_group_sets":
+                return await self._save_group_sets(data)
 
             return self._error(404, f"Action POST inconnue: {action}")
 
@@ -759,6 +763,31 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("[CONFIG] Erreur save_groups: %s", e)
             return self._error(500, f"Erreur save_groups: {e}")
+
+    async def _save_group_sets(self, data):
+        """Sauvegarde du document canon group_sets (rooms/types/...)."""
+        try:
+            mgr = await self._get_storage_manager()
+            group_sets = (data or {}).get("group_sets")
+
+            if not isinstance(group_sets, dict):
+                return self._error(400, "'group_sets' doit être un objet")
+
+            ok = await mgr.save_group_sets(group_sets)
+            if not ok:
+                return self._error(500, "Erreur sauvegarde group_sets")
+
+            sets = group_sets.get("sets")
+            count_sets = len(sets) if isinstance(sets, dict) else 0
+
+            return self._success({
+                "message": "Group sets sauvegardés avec succès",
+                "count_sets": count_sets,
+            })
+
+        except Exception as e:
+            _LOGGER.exception("[CONFIG] Erreur save_group_sets: %s", e)
+            return self._error(500, f"Erreur save_group_sets: {e}")
 
     # -------------------------
     # Summary / CalculationEngine

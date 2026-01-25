@@ -74,10 +74,12 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
                 return await self._handle_deep_diagnostics()
             elif resource == "costs_overview":
                 return await self._handle_costs_overview()
+            elif resource == "get_group_sets":
+                return await self._handle_group_sets()
             else:
                 return self._success({
                     "message": f"API Unifiée opérationnelle - resource: {resource}",
-                    "available_endpoints": ["sensors", "data", "diagnostics", "config", "ui", "get_sensors_health", "get_integrations_status", "get_logs","sensor_mapping","get_backend_health","get_groups","migration","cache_stats","summary_metrics", "deep_diagnostics", "costs_overview"],
+                    "available_endpoints": ["sensors", "data", "diagnostics", "config", "ui", "get_sensors_health", "get_integrations_status", "get_logs","sensor_mapping","get_backend_health","get_groups","migration","cache_stats","summary_metrics", "deep_diagnostics", "costs_overview", "get_group_sets"],
                     "version": "unified-v1.0.42-final",
                     "status": "connected_to_backend"
                 })
@@ -831,6 +833,28 @@ class HomeElecUnifiedAPIView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("Erreur _handle_groups: %s", e)
             return self._error(500, f"Erreur chargement groupes: {e}")
+
+    async def _handle_group_sets(self):
+        try:
+            from ..storage_manager import StorageManager
+            from ..const import DOMAIN
+
+            mgr = self.hass.data.get(DOMAIN, {}).get("storage_manager")
+            if not isinstance(mgr, StorageManager):
+                mgr = StorageManager(self.hass)
+
+            group_sets = await mgr.get_group_sets()
+            if not isinstance(group_sets, dict):
+                group_sets = {}
+
+            return self._success({
+                "group_sets": group_sets,
+                "type": "group_sets",
+            })
+
+        except Exception as e:
+            _LOGGER.exception("Erreur _handle_group_sets: %s", e)
+            return self._error(500, f"Erreur chargement group_sets: {e}")
 
     async def _handle_summary_metrics(self, request):
         """Endpoint /summary_metrics - métriques internal/external/delta avec cache."""
