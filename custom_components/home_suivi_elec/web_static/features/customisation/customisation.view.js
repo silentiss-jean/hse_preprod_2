@@ -20,6 +20,10 @@ export function renderCustomisationLayout() {
         <h2>Regroupement des capteurs</h2>
         <div id="hse-groups-panel"></div>
       </section>
+      <section class="hse-custom-section">
+        <h2>Group set config</h2>
+        <div id="hse-group-sets-panel"></div>
+      </section>
     </div>
   `;
 }

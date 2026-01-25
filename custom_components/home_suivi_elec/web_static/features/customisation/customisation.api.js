@@ -59,3 +59,24 @@ export async function saveGroups(groups) {
 
     return res.data;
 }
+
+/**
+ * GET /api/home_suivi_elec/get_group_sets
+ */
+export async function getGroupSets() {
+  const res = await httpClient.get(`${BASE_URL}/get_group_sets`);
+  if (res.error) throw new Error(res.message || "Erreur get_group_sets");
+  return res.data?.group_sets || { sets: {}, version: 1 };
+}
+
+/**
+ * POST /api/home_suivi_elec/config/savegroupsets
+ * payload attendu: { group_sets: { sets: {...}, version: 1 } }
+ */
+export async function saveGroupSets(groupSets) {
+  const res = await httpClient.post(`${BASE_URL}/config/savegroupsets`, {
+    group_sets: groupSets,
+  });
+  if (res.error) throw new Error(res.message || "Erreur savegroupsets");
+  return res.data;
+}

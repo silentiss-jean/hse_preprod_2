@@ -26,6 +26,75 @@ export function setGroupModeInState(name, mode) {
   groups[name] = { ...groups[name], mode };
 }
 
+// --- GROUP SETS STATE ---
+
+let groupSets = null;          // { sets: {...}, version: 1 }
+let groupSetsLoaded = false;
+
+export function getGroupSetsState() {
+  return { groupSets, groupSetsLoaded };
+}
+
+export function setGroupSetsState(newGroupSets) {
+  groupSets = newGroupSets || { sets: {}, version: 1 };
+  groupSetsLoaded = true;
+}
+
+function ensureSet(setKey) {
+  groupSets ??= { sets: {}, version: 1 };
+  groupSets.sets ??= {};
+  groupSets.sets[setKey] ??= { mode: "multi", groups: {} };
+  groupSets.sets[setKey].groups ??= {};
+}
+
+export function addGroupInSet(setKey, groupName) {
+  ensureSet(setKey);
+  groupSets.sets[setKey].groups[groupName] ??= [];
+}
+
+export function renameGroupInSet(setKey, oldName, newName) {
+  ensureSet(setKey);
+  const groups = groupSets.sets[setKey].groups;
+  if (!(oldName in groups) || oldName === newName) return;
+  if (newName in groups) throw new Error("Group already exists");
+  groups[newName] = groups[oldName];
+  delete groups[oldName];
+}
+
+export function deleteGroupInSet(setKey, groupName) {
+  ensureSet(setKey);
+  delete groupSets.sets[setKey].groups[groupName];
+}
+
+export function setSetModeInState(setKey, mode) {
+  ensureSet(setKey);
+  groupSets.sets[setKey].mode = mode;
+}
+
+export function setGroupEntitiesInSet(setKey, groupName, entityIds) {
+  ensureSet(setKey);
+  const uniq = Array.from(new Set((entityIds || []).filter(Boolean)));
+  groupSets.sets[setKey].groups[groupName] = uniq;
+}
+
+// Important: pour rooms exclusive uniquement
+export function assignEntityInSet(setKey, groupName, entityId) {
+  ensureSet(setKey);
+
+  const set = groupSets.sets[setKey];
+  const groupsObj = set.groups;
+
+  if (set.mode === "exclusive") {
+    for (const g of Object.keys(groupsObj)) {
+      groupsObj[g] = (groupsObj[g] || []).filter((e) => e !== entityId);
+    }
+  }
+
+  groupsObj[groupName] ??= [];
+  if (!groupsObj[groupName].includes(entityId)) groupsObj[groupName].push(entityId);
+}
+
+
 // --- THEME STATE (single source of truth = themesRegistry) ---
 
 

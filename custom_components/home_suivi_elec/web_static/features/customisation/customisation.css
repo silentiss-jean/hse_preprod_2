@@ -353,3 +353,12 @@
   border-color: var(--hse-accent) !important;
   box-shadow: 0 0 0 3px var(--hse-accent-soft);
 }
+
+.hse-textarea {
+  font-family: monospace;
+  border: 1px solid var(--hse-border);
+  background: var(--hse-card-bg, transparent);
+  color: var(--hse-text, inherit);
+  padding: 8px;
+  border-radius: 6px;
+}
