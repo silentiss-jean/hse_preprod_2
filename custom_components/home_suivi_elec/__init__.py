@@ -980,15 +980,929 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
                 return self.json({"success": False, "error": "internal"}, status_code=500)
 
-    # (reste du fichier identique à la version précédente)
+    class DiagnosticsView(HomeAssistantView):
 
-    # ✅ AJOUT: refresh initial des totals rooms/types après setup
+        """API REST pour diagnostics natifs HSE."""
+
+        url = "/api/home_suivi_elec/get_diagnostics"
+
+        name = "api:home_suivi_elec:get_diagnostics"
+
+        requires_auth = False
+
+        cors_allowed = True
+
+        def __init__(self, hass: HomeAssistant) -> None:
+
+            self.hass = hass
+
+        async def get(self, request):
+
+            """
+
+            Diagnostic natif HSE (remplace UtilityMeter) :
+
+            Liste tous les capteurs HSE activés, affiche leur état, statut, et remonte alertes/anomalies.
+
+            """
+
+            try:
+
+                from .manage_selection_views import _load_json, CAPTEURS_POWER_PATH, _enrich_device_info
+
+                import os
+
+                import asyncio
+
+                loop = asyncio.get_running_loop()
+
+                sensors = []
+
+                if os.path.exists(CAPTEURS_POWER_PATH):
+
+                    sensors = await loop.run_in_executor(None, lambda: _load_json(CAPTEURS_POWER_PATH))
+
+                sensors = _enrich_device_info(self.hass, sensors or [])
+
+                sources = []
+
+                alerts = []
+
+                dump_sensors = []
+
+                for sensor in sensors:
+
+                    eid = sensor.get("entity_id")
+
+                    friendly = sensor.get("friendly_name", eid)
+
+                    state_obj = self.hass.states.get(eid)
+
+                    state = state_obj.state if state_obj else "unavailable"
+
+                    unit = sensor.get("unit", "?")
+
+                    last_changed = state_obj.last_changed.isoformat() if state_obj else None
+
+                    status = "✅ OK"
+
+                    data_type = "numérique"
+
+                    action = "-"
+
+                    anomaly = None
+
+                    if state in ("unknown", "unavailable"):
+
+                        status = "❌ Indisponible" if state == "unavailable" else "⚠️ Unknown"
+
+                        anomaly = status
+
+                        alerts.append({
+
+                            "type": "warning",
+
+                            "entity_id": eid,
+
+                            "message": f"Capteur {eid} est {state}"
+
+                        })
+
+                    else:
+
+                        try:
+
+                            float(state)
+
+                        except Exception:
+
+                            status = "⚠️ Non numérique"
+
+                            data_type = "chaîne"
+
+                            action = "Normaliser via template"
+
+                            anomaly = status
+
+                            alerts.append({
+
+                                "type": "error",
+
+                                "entity_id": eid,
+
+                                "message": f"Capteur {eid} publie une chaîne: '{state}'"
+
+                            })
+
+                    sources.append({
+
+                        "entity_id": eid,
+
+                        "friendly_name": friendly,
+
+                        "state": state,
+
+                        "unit": unit,
+
+                        "status": status,
+
+                        "data_type": data_type,
+
+                        "last_changed": last_changed,
+
+                        "action": action
+
+                    })
+
+                    dump_sensors.append({
+
+                        "entity_id": eid,
+
+                        "nom": friendly,
+
+                        "zone": sensor.get("zone"),
+
+                        "type": sensor.get("type"),
+
+                        "integration": sensor.get("integration"),
+
+                        "enabled": sensor.get("enabled", True),
+
+                        "anomaly": anomaly
+
+                    })
+
+                errors = len([a for a in alerts if a["type"] == "error"])
+
+                warnings = len([a for a in alerts if a["type"] == "warning"])
+
+                global_status = "error" if errors > 0 else "warning" if warnings > 0 else "ok"
+
+                dump_global = {
+
+                    "total_detected": len(sensors),
+
+                    "total_enabled": len([s for s in dump_sensors if s["enabled"]]),
+
+                    "total_non_enabled": len([s for s in dump_sensors if not s["enabled"]]),
+
+                    "sensors": dump_sensors
+
+                }
+
+                return self.json({
+
+                    "sources": sources,
+
+                    "alerts": alerts,
+
+                    "global_status": global_status,
+
+                    "dump": dump_global
+
+                })
+
+            except Exception as e:
+
+                _LOGGER.exception("Erreur get_diagnostics: %s", e)
+
+                return self.json({"error": str(e)}, status_code=500)
+
+    class EntityNameRegistryView(HomeAssistantView):
+
+        """GET /api/home_suivi_elec/entity_name_registry - Registry nom court → nom complet"""
+
+        url = "/api/home_suivi_elec/entity_name_registry"
+
+        name = "api:home_suivi_elec:entity_name_registry"
+
+        requires_auth = False
+
+        cors_allowed = True
+
+        def __init__(self, hass: HomeAssistant) -> None:
+
+            self.hass = hass
+
+        async def get(self, request):
+
+            try:
+
+                return self.json({
+
+                    "success": True,
+
+                    "mappings": {},
+
+                    "stats": {"total": 0, "version": "1.0", "created": datetime.now().isoformat()},
+
+                })
+
+            except Exception as e:
+
+                _LOGGER.exception("[ENTITY-NAME-REGISTRY] GET failed: %s", e)
+
+                return self.json({"success": False, "error": str(e)}, status_code=500)
+
+    # Import des vues de manage_selection_views
+
+    from .manage_selection_views import (
+
+        AutoSelectBestSensorsView,
+
+        GetSensorQualityScoresView
+
+    )
+
+    # Enregistrement des vues API REST
+
+    hass.http.register_view(SetIgnoredEntityView(hass))
+
+    hass.http.register_view(ChooseBestForDeviceView(hass))
+
+    hass.http.register_view(DiagnosticsView(hass))
+
+    hass.http.register_view(SuiviElecProxyView())
+
+    hass.http.register_view(AutoSelectBestSensorsView(hass))
+
+    hass.http.register_view(GetSensorQualityScoresView(hass))
+
+    hass.http.register_view(HSESensorsPublicView(hass))
+
+    hass.http.register_view(ValidationActionView(hass))
+
+    hass.http.register_view(PingView())
+
+    hass.http.register_view(EntityNameRegistryView(hass))
+
+    hass.http.register_view(HomeElecMigrationHelpersView(hass))
+
+    hass.http.register_view(SensorMappingView(hass))
+
+    hass.http.register_view(CacheClearView(hass))
+
+    hass.http.register_view(CacheInvalidateEntityView(hass))
+
+    hass.http.register_view(HiddenSensorsView(hass))
+
+    hass.http.register_view(GetHistoryCostsView(hass))
+
+    hass.http.register_view(HistoryAnalysisView(hass))
+
+
+    _LOGGER.info("✅ [API] Toutes les vues REST enregistrées")
+
     try:
-        from .group_totals import refresh_group_totals
 
-        hass.async_create_task(refresh_group_totals(hass))
-        _LOGGER.info("[GROUP-TOTALS] Initial refresh scheduled")
-    except Exception as e:
-        _LOGGER.exception("[GROUP-TOTALS] Failed to schedule initial refresh: %s", e)
+        await scan_sets(hass)
+
+    except TypeError:
+
+        scan_sets(hass)
+
+    if hass.data[DOMAIN]["options"].get(CONF_AUTO_GENERATE, True):
+
+        await run_all(hass, hass.data[DOMAIN]["options"])
+
+    # ========================================
+
+    # 🎯 NOUVEAU: Setup HSE AVANT sensor.py
+
+    # ========================================
+
+    async def setup_hse_before_sensor_platform():
+
+        """Prépare les pools HSE AVANT que sensor.py ne les consomme."""
+
+        _LOGGER.info("[INIT] ⏳ Attente démarrage HA...")
+
+        # Attendre que HA soit démarré
+
+        event = asyncio.Event()
+
+        @callback
+
+        def on_started(event_data):
+
+            event.set()
+
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, on_started)
+
+        await event.wait()
+
+        # Court délai pour que tous les états soient disponibles
+
+        await asyncio.sleep(3)
+
+        _LOGGER.info("[INIT] ✅ HA démarré, préparation pools HSE...")
+
+        # ✅ VÉRIFIER que StorageManager est bien disponible
+
+        storage_manager = hass.data.get(DOMAIN, {}).get("storage_manager")
+
+        if not storage_manager:
+
+            _LOGGER.error("[INIT] ❌ StorageManager non disponible dans hass.data[%s]", DOMAIN)
+
+            return
+
+        try:
+
+            # 1. Détection locale + stockage du catalogue
+            _LOGGER.info("[INIT] 🔍 Lancement détection locale...")
+
+            capteurs_power = await run_detect_local(hass=hass, entry=entry)
+
+            _LOGGER.info("[INIT] ✅ Détection locale terminée (%s capteurs)", len(capteurs_power or []))
+
+            storage_manager = hass.data.get(DOMAIN, {}).get("storage_manager")
+
+            if storage_manager and capteurs_power:
+
+                await storage_manager.save_capteurs_power(capteurs_power)
+
+                _LOGGER.info("[INIT] 💾 Catalogue capteurs_power sauvegardé en Storage (%s entrées)", len(capteurs_power))
+
+            # 2. Capteur de référence externe
+
+            _LOGGER.info("[INIT] 📌 Préparation capteur de référence...")
+
+            await _ensure_reference_sensors(hass, entry)
+
+            # 3. Energy tracking (crée les energy sensors)
+
+            _LOGGER.info("[INIT] ⚡ Setup energy tracking...")
+
+            await async_setup_energy_tracking(hass, entry)
+
+            # 4. Power monitoring (crée les power sensors)
+
+            _LOGGER.info("[INIT] 🔌 Setup power monitoring...")
+
+            try:
+
+                from .power_monitoring import async_setup_power_monitoring
+
+                await async_setup_power_monitoring(hass, entry)
+
+            except Exception as e:
+
+                _LOGGER.exception("[INIT] Erreur power monitoring: %s", e)
+
+            # 5. Sensor Sync Manager
+
+            _LOGGER.info("[INIT] 🔄 Setup sensor sync manager...")
+
+            try:
+
+                from .sensor_sync_manager import SensorSyncManager
+
+                sync_manager = SensorSyncManager(hass)
+
+                hass.data[DOMAIN]["sync_manager"] = sync_manager
+
+                await sync_manager.start()
+
+                await manage_selection.async_setup_selection_api(hass, sync_manager)
+
+            except Exception as e:
+
+                _LOGGER.exception("[INIT] Erreur sensor sync manager: %s", e)
+
+            # 5.5. Cost Sensors (crée les cost sensors)
+            _LOGGER.info("[INIT] 💰 Setup cost sensors...")
+            try:
+                from .cost_tracking import create_cost_sensors
+                from datetime import datetime
+                
+                cost_sensors = await create_cost_sensors(hass)
+                
+                if cost_sensors:
+                    hass.data[DOMAIN]["cost_sensors_pending"] = cost_sensors
+                    
+                    # Déclencher l'event pour sensor.py
+                    hass.bus.async_fire(
+                        "hse_cost_sensors_ready",
+                        {
+                            "type": "cost",
+                            "count": len(cost_sensors),
+                            "timestamp": datetime.now().isoformat(),
+                        },
+                    )
+                    
+                    _LOGGER.info("[INIT] ✅ %d capteurs coût créés et enregistrés", len(cost_sensors))
+                else:
+                    _LOGGER.info("[INIT] ⚠️ Aucun capteur coût à créer (pas de sensors energy)")
+                    
+            except Exception as e:
+                _LOGGER.exception("[INIT] Erreur cost tracking: %s", e)
+
+
+            # 6. Vérifier que les pools sont bien remplis
+
+            domain = hass.data.get(DOMAIN, {})
+
+            energy_count = len(domain.get("energy_sensors", []))
+
+            power_count = len(domain.get("live_power_sensors", []))
+
+            cost_count = len(domain.get("cost_sensors_pending", [])) or len(domain.get("cost_sensors", []))
+
+            _LOGGER.info(
+
+                "[INIT] 📊 Pools HSE prêts : %d energy, %d power, %d cost",
+
+                energy_count,
+
+                power_count,
+
+                cost_count,
+
+            )
+
+            if energy_count == 0 and power_count == 0:
+
+                _LOGGER.warning(
+
+                    "[INIT] ⚠️ POOLS VIDES - Vérifiez la configuration !"
+
+                )
+
+            # 6.5 Activer détection continue (NOUVEAU)
+
+            _LOGGER.info("[INIT] 🔍 Activation détection continue...")
+            
+            await setup_continuous_detection(hass)
+
+            if energy_count == 0 and power_count == 0:
+            
+                _LOGGER.warning(
+            
+                    "[INIT] ⚠️ POOLS VIDES - Vérifiez la configuration !"
+            
+                )
+
+        except Exception as e:
+
+            _LOGGER.exception("[INIT] ❌ Erreur critique préparation pools HSE: %s", e)
+
+        # 7. MAINTENANT charger la plateforme sensor.py
+
+        _LOGGER.info("[INIT] 🚀 Chargement plateforme sensor...")
+
+        await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
+
+        _LOGGER.info("[INIT] ✅ Plateforme sensor chargée - Capteurs HSE disponibles")
+
+    # ✅ LANCER LA TÂCHE
+
+    asyncio.create_task(setup_hse_before_sensor_platform())
+
+    # ✅ GARDER _delayed_start
+
+    asyncio.create_task(_delayed_start(hass, entry))
+
+    # Copie UI
+
+    loop = asyncio.get_running_loop()
+
+    src = hass.config.path("custom_components", "home_suivi_elec", "web_static")
+
+    dst = hass.config.path("www", "community", "home_suivi_elec_ui")
+
+    await loop.run_in_executor(None, lambda: _copy_ui_fresh_complete(src, dst))
+
+    _LOGGER.info("[SETUP-ENTRY] ✅ Home Suivi Élec setup terminé - sensors seront chargés après détection")
 
     return True
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+
+    """Nettoie les pools HSE et décharge les plateformes."""
+
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+    if unload_ok:
+
+        domain = hass.data.get(DOMAIN, {})
+
+        for key in [
+
+            "cost_sensors_pending",
+
+            "cost_sensors",
+
+            "_added_cost_uids",
+
+            "energy_sensors_pending",
+
+            "energy_sensors",
+
+            "live_power_sensors_pending",
+
+            "live_power_sensors",
+
+            "power_energy_sensors_pending",
+
+            "power_energy_sensors",
+
+        ]:
+
+            domain.pop(key, None)
+
+    return unload_ok
+
+async def _delayed_start(hass: HomeAssistant, entry: ConfigEntry, timeout: int = 60):
+
+    """Fallback si détection initiale échoue."""
+
+    await asyncio.sleep(timeout)
+
+    _LOGGER.info(f"[INIT] Timeout atteint ({timeout}s), lancement fallback detection/selection")
+
+    try:
+
+        await run_detect_local(hass=hass, entry=entry)
+
+    except Exception as e:
+
+        _LOGGER.exception("Erreur fallback detection/selection: %s", e)
+
+def _copy_ui_fresh_complete(src, dst):
+
+    """Copie UI en mode 'fresh complete'."""
+
+    if not os.path.exists(src):
+
+        _LOGGER.warning(f"[COPY_UI] Source introuvable: {src}")
+
+        return
+
+    if os.path.exists(dst):
+
+        try:
+
+            shutil.rmtree(dst)
+
+            _LOGGER.info(f"[COPY_UI] Dossier cible supprimé complètement: {dst}")
+
+        except Exception as e:
+
+            _LOGGER.error(f"[COPY_UI] Erreur suppression {dst}: {e}")
+
+            return
+
+    try:
+
+        shutil.copytree(src, dst)
+
+        _LOGGER.info(f"[COPY_UI] ✅ Copie fraîche complète: {src} → {dst}")
+
+    except Exception as e:
+
+        _LOGGER.exception(f"[COPY_UI] Erreur copytree: {e}")
+
+async def copy_ui_files(hass: HomeAssistant):
+
+    """Service de copie UI manuelle."""
+
+    loop = asyncio.get_running_loop()
+
+    src = hass.config.path("custom_components", "home_suivi_elec", "web_static")
+
+    dst = hass.config.path("www", "community", "home_suivi_elec_ui")
+
+    await loop.run_in_executor(None, lambda: _copy_ui_fresh_complete(src, dst))
+
+@callback
+
+def async_get_options_flow(config_entry: ConfigEntry):
+
+    return HomeSuiviElecOptionsFlow(config_entry)
+
+# ============================================================================
+
+# ENERGY TRACKING - Phase 2
+
+# ============================================================================
+
+async def load_capteurs_selection(hass: HomeAssistant) -> list[dict]:
+    """
+    Charge les capteurs sélectionnés.
+    PHASE 2.7: Utilise StorageManager + fusion avec capteurs power (catalog) stocké en Storage.
+    """
+    from .const import DOMAIN
+
+    domain_data = hass.data.get(DOMAIN, {})
+    
+    storage_manager = domain_data.get("storage_manager")
+
+    if not storage_manager:
+    
+        _LOGGER.error("[LOAD-SELECTION] StorageManager non disponible (hass.data[%s])", DOMAIN)
+    
+        return []
+
+    # 1) Sélection (zones -> liste de dict)
+
+    selection_data = await storage_manager.get_capteurs_selection()
+
+    # 2) Catalogue power/energy détecté (liste de dict)
+
+    power_data = await storage_manager.get_capteurs_power()
+
+    _LOGGER.info("[LOAD-SELECTION] selection zones=%s", len(selection_data or {}))
+    _LOGGER.info("[LOAD-SELECTION] catalogue power=%s", len(power_data or []))
+
+
+    def _get_entity_id(d: dict) -> str | None:
+
+        # Supporte plusieurs variantes (selon les générations de JSON / détection)
+
+        return d.get("entity_id") or d.get("entityid") or d.get("entityId")
+
+    power_index: dict[str, dict] = {}
+
+    for item in power_data or []:
+
+        if not isinstance(item, dict):
+
+            continue
+
+        entity_id = _get_entity_id(item)
+
+        if entity_id:
+
+            power_index[entity_id] = item
+
+    result: list[dict] = []
+
+    for _, items in (selection_data or {}).items():
+        if not isinstance(items, list):
+            continue
+
+        for sensor in items:
+            if not isinstance(sensor, dict) or not sensor.get("enabled", False):
+                continue
+
+            entity_id = _get_entity_id(sensor)
+            if not entity_id:
+                continue
+
+            src = power_index.get(entity_id)
+            if src:
+                merged = dict(src)
+                merged.update(sensor)          # la sélection peut surcharger certains champs
+                merged["enabled"] = True       # forcer cohérence
+                result.append(merged)
+            else:
+                _LOGGER.debug("[SKIP] %s absent du catalogue power (Storage)", entity_id)
+
+    _LOGGER.info("%s capteurs chargés", len(result))
+    return result
+
+async def async_setup_energy_tracking(hass: HomeAssistant, entry: ConfigEntry):
+
+    """Configure le tracking d'énergie (Phase 2)."""
+
+    from .energy_tracking import create_energy_sensors
+
+    _LOGGER.info("🔋 [PHASE 2] Configuration Energy Tracking...")
+
+    capteurs_selection = await load_capteurs_selection(hass)
+
+    _LOGGER.info(f"🔍 [DEBUG] capteurs_selection: {len(capteurs_selection)} capteurs")
+
+    if capteurs_selection:
+
+        _LOGGER.debug(f"🔍 [DEBUG] Premier capteur: {capteurs_selection[0]}")
+
+    if not capteurs_selection:
+
+        # Cas event-driven: si une référence externe a déjà injecté des sensors,
+
+        # on émet quand même l'event pour que sensor.py les ajoute.
+
+        existing = hass.data.get(DOMAIN, {}).get("energy_sensors", [])
+
+        if existing:
+
+            from datetime import datetime
+
+            hass.bus.async_fire("hse_energy_sensors_ready", {
+
+                "entity_ids": [s.entity_id for s in existing if getattr(s, "entity_id", None)],
+
+                "count": len(existing),
+
+                "type": "energy",
+
+                "timestamp": datetime.now().isoformat()
+
+            })
+
+            _LOGGER.info("📡 [EVENT] hse_energy_sensors_ready émis (référence seule)")
+
+        else:
+
+            _LOGGER.info("ℹ️ Aucun capteur sélectionné, skip energy tracking")
+
+        return
+
+    _LOGGER.info(f"📊 {len(capteurs_selection)} capteurs à tracker")
+
+    try:
+
+        _LOGGER.info("🔋 [DEBUG] Appel create_energy_sensors...")
+
+        energy_sensors = await create_energy_sensors(hass, capteurs_selection)
+
+        _LOGGER.info(f"🔋 [DEBUG] Retour create_energy_sensors: {len(energy_sensors or [])}")
+
+    except Exception as e:
+
+        _LOGGER.exception(f"❌ [ENERGY-TRACKING] Erreur création sensors: {e}")
+
+        energy_sensors = []
+
+    if energy_sensors is None:
+
+        _LOGGER.error("❌ create_energy_sensors a retourné None")
+
+        energy_sensors = []
+
+    if not energy_sensors:
+
+        _LOGGER.warning("⚠️ Aucun sensor d'énergie créé")
+
+        return
+
+    _LOGGER.info(f"✅ {len(energy_sensors)} sensors d'énergie créés")
+
+    if DOMAIN not in hass.data:
+
+        hass.data[DOMAIN] = {}
+
+    existing = hass.data.get(DOMAIN, {}).get("energy_sensors", [])
+
+    merged = _merge_entities_unique(existing, energy_sensors)
+
+    hass.data[DOMAIN]["energy_sensors"] = merged
+
+    _LOGGER.info(f"💾 [DEBUG] Stocké {len(merged)} sensors dans hass.data (merged)")
+
+    from datetime import datetime
+
+    hass.bus.async_fire("hse_energy_sensors_ready", {
+
+        "entity_ids": [s.entity_id for s in merged if getattr(s, "entity_id", None)],
+
+        "count": len(merged),
+
+        "type": "energy",
+
+        "timestamp": datetime.now().isoformat()
+
+    })
+
+    _LOGGER.info(f"📡 [EVENT] hse_energy_sensors_ready émis")
+
+    try:
+
+        energy_count = sum(
+
+            1 for s in merged
+
+            if hasattr(s, 'extra_state_attributes') and s.extra_state_attributes.get('source_type') == 'energy'
+
+        )
+
+        power_count = sum(
+
+            1 for s in merged
+
+            if hasattr(s, 'extra_state_attributes') and s.extra_state_attributes.get('source_type') == 'power'
+
+        )
+
+        virtual_count = sum(
+
+            1 for s in merged
+
+            if hasattr(s, 'extra_state_attributes') and s.extra_state_attributes.get('is_virtual', False)
+
+        )
+
+        _LOGGER.info(
+
+            f"📈 Répartition: "
+
+            f"{energy_count} energy (delta), "
+
+            f"{power_count} power (intégration), "
+
+            f"{virtual_count} virtuels"
+
+        )
+
+    except Exception as e:
+
+        _LOGGER.exception(f"❌ Erreur calcul stats: {e}")
+
+    _LOGGER.info("🔋 [PHASE 2] Energy Tracking configuré avec succès")
+
+async def setup_continuous_detection(hass: HomeAssistant):
+    """
+    Détection continue des nouvelles entités sensor.
+    Surveille les nouveaux capteurs ajoutés en temps réel (nouvelles intégrations).
+    """
+    _LOGGER.info("[DETECTION] 🔍 Activation détection continue...")
+    
+    # Set pour tracker les entity_id déjà vus
+    seen_entities = set(hass.states.async_entity_ids("sensor"))
+    
+    @callback
+    def on_state_changed(event):
+        """Callback déclenché à chaque changement d'état."""
+        try:
+            entity_id = event.data.get("entity_id")
+            
+            # Ignorer si pas un sensor
+            if not entity_id or not entity_id.startswith("sensor."):
+                return
+            
+            # Ignorer si déjà vu
+            if entity_id in seen_entities:
+                return
+            
+            seen_entities.add(entity_id)
+            
+            # Ignorer si capteur HSE (créé par l'intégration)
+            if entity_id.startswith("sensor.hse_"):
+                return
+            
+            new_state = event.data.get("new_state")
+            if not new_state:
+                return
+            
+            # Vérifier si c'est un capteur power/energy intéressant
+            attributes = new_state.attributes
+            device_class = attributes.get("device_class")
+            unit = attributes.get("unit_of_measurement")
+            
+            # Filtres basiques (éviter spam logs)
+            is_interesting = (
+                device_class in ["power", "energy", "current", "voltage"] or
+                unit in ["W", "kW", "kWh", "Wh", "A", "V"]
+            )
+            
+            if not is_interesting:
+                return
+            
+            integration = attributes.get("source", "").split(".")[-1] or "unknown"
+            friendly_name = attributes.get("friendly_name", entity_id)
+            
+            _LOGGER.info(
+                "[DETECTION] 🆕 Nouveau capteur détecté: %s (%s) - intégration: %s",
+                friendly_name,
+                entity_id,
+                integration
+            )
+            
+            # Déclencher une redétection asynchrone (après 5s pour grouper)
+            async def trigger_redetection():
+                await asyncio.sleep(5)  # Attendre autres capteurs du même device
+                _LOGGER.info("[DETECTION] 🔄 Redétection automatique lancée...")
+                try:
+                    storage_manager = hass.data.get(DOMAIN, {}).get("storage_manager")
+                    if not storage_manager:
+                        _LOGGER.error("[DETECTION] StorageManager non disponible")
+                        return
+                    
+                    # Relancer détection (met à jour le catalogue)
+                    capteurs_power = await run_detect_local(hass=hass, entry=None)
+                    if capteurs_power:
+                        await storage_manager.save_capteurs_power(capteurs_power)
+                        _LOGGER.info(
+                            "[DETECTION] ✅ Catalogue mis à jour: %s capteurs",
+                            len(capteurs_power)
+                        )
+                        
+                        # Émettre event pour notifier le frontend
+                        hass.bus.async_fire("hse_sensors_catalog_updated", {
+                            "count": len(capteurs_power),
+                            "timestamp": datetime.now().isoformat()
+                        })
+                except Exception as e:
+                    _LOGGER.exception("[DETECTION] Erreur redétection: %s", e)
+            
+            # Lancer la tâche async (ne bloque pas le callback)
+            asyncio.create_task(trigger_redetection())
+            
+        except Exception as e:
+            _LOGGER.exception("[DETECTION] Erreur callback state_changed: %s", e)
+    
+    # Enregistrer le listener
+    hass.bus.async_listen("state_changed", on_state_changed)
+    _LOGGER.info("[DETECTION] ✅ Listener state_changed enregistré")
