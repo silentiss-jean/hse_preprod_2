@@ -23,6 +23,11 @@ from ..storage_manager import StorageManager
 from ..utils.json_response import json_response
 
 try:
+    from ..group_totals import refresh_group_totals  # type: ignore
+except Exception:
+    refresh_group_totals = None  # type: ignore
+
+try:
     # Nom "propre" (présent dans ton projet)
     from ..cost_tracking import create_cost_sensors  # type: ignore
 except Exception:
@@ -779,6 +784,14 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
 
             sets = group_sets.get("sets")
             count_sets = len(sets) if isinstance(sets, dict) else 0
+
+            # Refresh totals (rooms/types) après mise à jour de group_sets
+            if refresh_group_totals is not None:
+                try:
+                    await refresh_group_totals(self.hass)
+                except Exception as e:
+                    _LOGGER.exception("[CONFIG] refresh_group_totals failed: %s", e)
+
 
             return self._success({
                 "message": "Group sets sauvegardés avec succès",
