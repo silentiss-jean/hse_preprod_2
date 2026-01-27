@@ -334,6 +334,12 @@
   border-color: var(--hse-border-strong);
 }
 
+.hse-group-sensor-item.is-selected {
+  background: var(--hse-accent-soft);
+  border-color: var(--hse-border-strong);
+  box-shadow: 0 0 0 3px var(--hse-accent-soft);
+}
+
 .hse-group-empty {
   color: var(--hse-custom-muted);
   padding: 8px;
