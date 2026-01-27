@@ -4,6 +4,7 @@ import { renderCustomisationLayout } from "./customisation.view.js";
 import { getCurrentTheme, setCurrentTheme } from "./customisation.state.js";
 import { THEMES, getThemeById, getDefaultTheme, initThemes } from "./logic/themesRegistry.js";
 import { renderGroupsPanel } from "./panels/groupsPanel.js";
+import { renderTypesPanel } from "./panels/typesPanel.js";
 import { renderGroupSetsPanel } from "./panels/groupSetsPanel.js";
 
 
@@ -70,6 +71,12 @@ export async function loadCustomisation() {
   if (groupsContainer) {
     await renderGroupsPanel(groupsContainer);
   }
+
+  const typesContainer = container.querySelector("#hse-types-panel");
+  if (typesContainer) {
+    await renderTypesPanel(typesContainer);
+  }
+
   const groupSetsContainer = container.querySelector("#hse-group-sets-panel");
   if (groupSetsContainer) {
     await renderGroupSetsPanel(groupSetsContainer);
