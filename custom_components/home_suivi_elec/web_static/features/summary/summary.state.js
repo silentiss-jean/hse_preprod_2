@@ -35,6 +35,34 @@ export function extractSelectedIds(selectionData) {
 }
 
 /**
+ * Extrait la liste des IDs "power" (W) des capteurs sélectionnés.
+ * Priorité: usage_power, sinon entity_id si la source est typée power.
+ *
+ * @param {Object} selectionData - Données de sélection brutes
+ * @returns {Array<string>} Liste des entity_id (power) sélectionnés
+ */
+export function extractSelectedPowerIds(selectionData) {
+    const powerIds = [];
+
+    Object.values(selectionData || {}).forEach((lst) => {
+        (lst || []).forEach((row) => {
+            if (!row?.enabled) return;
+
+            const sourceType = String(row?.source_type || "").toLowerCase();
+            const eid =
+                row?.usage_power ||
+                ((row?.is_power === true || sourceType === "power") ? row?.entity_id : null);
+
+            if (eid && !powerIds.includes(eid)) {
+                powerIds.push(eid);
+            }
+        });
+    });
+
+    return powerIds;
+}
+
+/**
  * Calcule la somme des kWh pour une période donnée
  * @param {string} periodKey - Clé de période (hourly, daily, etc.)
  * @param {Array<string>} entityIds - Liste des entity_id

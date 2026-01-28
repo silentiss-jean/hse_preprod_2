@@ -8,6 +8,7 @@ import { httpClient } from "../../shared/api/httpClient.js";
 import { loadAllSummaryData, getCostsOverview } from "./summary.api.js";
 import {
   extractSelectedIds,
+  extractSelectedPowerIds,
   calculateInternalPower,
   calculateExternalConsumption,
   selectTopLiveConsumers,
@@ -121,7 +122,11 @@ export async function loadSummary() {
     }
 
     const selectedIds = extractSelectedIds(data.selection);
-    console.log(`[summary] ${selectedIds.length} capteurs sélectionnés`);
+    const selectedPowerIds = extractSelectedPowerIds(data.selection);
+
+    console.log(
+      `[summary] ${selectedIds.length} capteurs sélectionnés (config) | ${selectedPowerIds.length} sources power`
+    );
 
     loader.updateProgress(40, "Calcul des statistiques instantanées...");
 
@@ -133,8 +138,16 @@ export async function loadSummary() {
 
     updateSensorStats(data.sensors, selectedIds);
 
-    const internalPower = calculateInternalPower(selectedIds, data.instant, externalId);
-    const externalData = calculateExternalConsumption(data.options, data.instant, data.sensors);
+    const internalPower = calculateInternalPower(
+      selectedPowerIds,
+      data.instant,
+      externalId
+    );
+    const externalData = calculateExternalConsumption(
+      data.options,
+      data.instant,
+      data.sensors
+    );
     updateInstantPower(internalPower, externalData, data.options);
     updateContractInfo(data.options);
 
@@ -173,10 +186,19 @@ export async function loadSummary() {
 
     const periods = ["hourly", "daily", "weekly", "monthly", "yearly"];
 
-    loader.updateProgress(60, "Appel au moteur de calcul...", "Utilisation du cache si disponible");
+    loader.updateProgress(
+      60,
+      "Appel au moteur de calcul...",
+      "Utilisation du cache si disponible"
+    );
 
     console.log("[summary] 💰 Appel backend calculate_summary...");
-    const metricsResult = await calculateMetrics(selectedIds, periods, pricingConfig, externalId);
+    const metricsResult = await calculateMetrics(
+      selectedIds,
+      periods,
+      pricingConfig,
+      externalId
+    );
 
     loader.updateProgress(80, "Rendu des tableaux...");
 
