@@ -190,40 +190,6 @@ export class LovelaceGenerator {
     return found.attributes?.friendly_name || entity_id;
   }
 
-  _guess_icon_from_text(text, fallback_icon) {
-    const t = this._normalize_text(text);
-    if (!t) return fallback_icon;
-
-    const rules = [
-      { keys: ["chambre", "bedroom"], icon: "mdi:bed" },
-      { keys: ["salon", "sejour", "living"], icon: "mdi:sofa" },
-      { keys: ["cuisine", "kitchen"], icon: "mdi:silverware-fork-knife" },
-      { keys: ["salle de bain", "sdb", "bath"], icon: "mdi:shower" },
-      { keys: ["bureau", "office"], icon: "mdi:desk" },
-      { keys: ["garage"], icon: "mdi:garage" },
-      { keys: ["chauffage", "radiateur"], icon: "mdi:radiator" },
-      { keys: ["clim", "climatisation", "air"], icon: "mdi:air-conditioner" },
-
-      { keys: ["tv", "tele", "television"], icon: "mdi:television" },
-      { keys: ["pc", "ordinateur", "laptop", "mac"], icon: "mdi:laptop" },
-      { keys: ["light", "lumiere", "lampe", "ampoule"], icon: "mdi:lightbulb" },
-      { keys: ["prise", "plug"], icon: "mdi:power-plug" },
-      { keys: ["box", "routeur", "router"], icon: "mdi:router-wireless" },
-      { keys: ["frigo", "refrigerateur"], icon: "mdi:fridge" },
-      { keys: ["four", "oven"], icon: "mdi:stove" },
-      { keys: ["lave linge", "machine a laver"], icon: "mdi:washing-machine" },
-      { keys: ["seche linge"], icon: "mdi:tumble-dryer" },
-    ];
-
-    for (const r of rules) {
-      if (r.keys.some((k) => t.includes(k))) {
-        return r.icon;
-      }
-    }
-
-    return fallback_icon;
-  }
-
   _is_power_sensor(sensor) {
     const attrs = sensor?.attributes || {};
     const unit = String(attrs.unit_of_measurement || "").toLowerCase();
@@ -266,7 +232,7 @@ export class LovelaceGenerator {
       }))
       .sort((a, b) => a.label.localeCompare(b.label, "fr"));
 
-    // Grid (required)
+    // Grid (required): empty option first
     grid_power_el.innerHTML = "";
     const empty_grid = document.createElement("option");
     empty_grid.value = "";
@@ -279,7 +245,7 @@ export class LovelaceGenerator {
       grid_power_el.appendChild(option);
     }
 
-    // Home (optional)
+    // Home (optional): empty option first
     home_power_el.innerHTML = "";
     const empty_home = document.createElement("option");
     empty_home.value = "";
@@ -292,7 +258,10 @@ export class LovelaceGenerator {
       home_power_el.appendChild(option);
     }
 
+    // Home cost
     this._render_home_cost_total_options();
+
+    // Individuals
     this._refresh_individual_rows_options();
   }
 
@@ -538,17 +507,10 @@ export class LovelaceGenerator {
       const home_power_entity = home_power_el ? String(home_power_el.value || "").trim() : "";
       const home_cost_entity = home_cost_el ? String(home_cost_el.value || "").trim() : "";
 
-      if (!title) {
-        alert("Power Flow: title obligatoire");
-        return;
-      }
-
       if (!grid_power_entity) {
         alert("Power Flow: Grid puissance obligatoire");
         return;
       }
-
-      const home_icon = this._guess_icon_from_text(title, "mdi:home");
 
       const individuals = [];
       if (individuals_container) {
@@ -561,13 +523,10 @@ export class LovelaceGenerator {
           const cost_entity = cost_el ? String(cost_el.value || "").trim() : "";
 
           if (power_entity) {
-            const name = this._entity_label(power_entity);
-            const icon = this._guess_icon_from_text(`${name} ${power_entity}`, "mdi:flash");
             individuals.push({
               power_entity,
               cost_entity,
-              name,
-              icon,
+              name: this._entity_label(power_entity),
             });
           }
         });
@@ -584,7 +543,6 @@ export class LovelaceGenerator {
           home: {
             power_entity: home_power_entity,
             cost_entity: home_cost_entity,
-            icon: home_icon,
           },
           individuals,
         },

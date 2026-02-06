@@ -29,10 +29,10 @@ function push_yaml_block(lines, indent, key, value) {
  * Génère une carte unique power-flow-card-plus alignée sur le modèle fourni.
  *
  * options attendu:
- * - title: string (obligatoire)
+ * - title: string
  * - grid: { power_entity: string }
- * - home: { power_entity?: string, cost_entity?: string, icon?: string }
- * - individuals: Array<{ power_entity: string, cost_entity?: string, name?: string, icon?: string }>
+ * - home: { power_entity?: string, cost_entity?: string }
+ * - individuals: Array<{ power_entity: string, cost_entity?: string, name?: string }>
  */
 export function build_power_flow_card_plus_yaml(options = {}) {
   const title = (options.title || "").trim();
@@ -43,21 +43,18 @@ export function build_power_flow_card_plus_yaml(options = {}) {
   const grid_power_entity = String(grid.power_entity || "").trim();
   const home_power_entity = String(home.power_entity || "").trim();
   const home_cost_entity = String(home.cost_entity || "").trim();
-  const home_icon = String(home.icon || "mdi:home").trim();
 
   const individuals = Array.isArray(options.individuals) ? options.individuals : [];
 
   const lines = [];
 
   lines.push("type: custom:power-flow-card-plus");
-  lines.push(`title: ${yaml_quote(title)}`);
   lines.push("entities:");
 
   // Battery (placeholder)
   lines.push("  battery:");
   lines.push("    entity: \"\"");
-  lines.push("    state_of_charge: \"\""
-  );
+  lines.push("    state_of_charge: \"\"");
 
   // Grid (required)
   lines.push("  grid:");
@@ -74,8 +71,10 @@ export function build_power_flow_card_plus_yaml(options = {}) {
   // Home (optional)
   lines.push("  home:");
   push_cost_secondary_info(lines, "    ", home_cost_entity);
-  push_yaml_block(lines, "    ", "name", title);
-  lines.push(`    icon: ${home_icon}`);
+  if (title) {
+    lines.push(`    name: ${yaml_quote(title)}`);
+  }
+  lines.push("    icon: mdi:home");
   lines.push(`    entity: ${home_power_entity ? home_power_entity : "\"\""}`);
   lines.push("    subtract_individual: false");
   lines.push("    override_state: true");
@@ -88,7 +87,6 @@ export function build_power_flow_card_plus_yaml(options = {}) {
       power_entity: String(row?.power_entity || "").trim(),
       cost_entity: String(row?.cost_entity || "").trim(),
       name: String(row?.name || "").trim(),
-      icon: String(row?.icon || "").trim(),
     }))
     .filter((row) => row.power_entity);
 
@@ -101,9 +99,6 @@ export function build_power_flow_card_plus_yaml(options = {}) {
     lines.push(`    - entity: ${row.power_entity}`);
     push_cost_secondary_info(lines, "      ", row.cost_entity);
     push_yaml_block(lines, "      ", "name", row.name);
-    if (row.icon) {
-      lines.push(`      icon: ${row.icon}`);
-    }
     lines.push("      display_zero: true");
     lines.push("      unit_white_space: true");
     lines.push("      calculate_flow_rate: true");

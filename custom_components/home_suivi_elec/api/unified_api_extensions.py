@@ -1436,6 +1436,7 @@ class HistoryAnalysisView(HomeAssistantView):
                     # 🆕 Détecter si c'est le capteur de référence
                     is_reference = bool(external_capteur and self._is_derived_from(source_entity_id, external_capteur))
 
+
                     # ✅ DÉTECTION DU TYPE DE CAPTEUR (TTC ou HT)
                     is_ttc = "_ttc" in entity_id.lower()
                     is_ht = "_ht" in entity_id.lower() and "_ttc" not in entity_id.lower()
@@ -1681,7 +1682,6 @@ class HistoryAnalysisView(HomeAssistantView):
             except Exception as e:
                 _LOGGER.warning(f"[COST-ANALYSIS] Impossible de lire external_capteur: {e}")
 
-
             # ═══════════════════════════════════════════════════════════
             # 2. Récupérer tous les capteurs de COÛT HSE avec leur source
             # (conservé tel quel, même si redondant avec sensors_map)
@@ -1802,7 +1802,10 @@ class HistoryAnalysisView(HomeAssistantView):
                         continue
 
                     # 🆕 Détecter si c'est le capteur de référence
-                    is_reference = bool(external_capteur and self._is_derived_from(source_entity_id, external_capteur))
+                    # ✅ FIX: utiliser la variable existante dans ce scope (source_entity)
+                    is_reference = bool(
+                        external_capteur and self._is_derived_from(source_entity, external_capteur)
+                    )
 
                     # Détecter si HT ou TTC
                     is_ttc = "_ttc" in entity_id.lower()
@@ -1826,6 +1829,10 @@ class HistoryAnalysisView(HomeAssistantView):
                             "prix_ttc": None,
                             "is_reference": is_reference,  # 🆕 Flag référence
                         }
+                    else:
+                        # ✅ Cohérence: si déjà créé, on force le flag à True si l'un des variants est référence
+                        if is_reference:
+                            sensors_map[source_entity]["is_reference"] = True
 
                     if is_ttc:
                         sensors_map[source_entity]["prix_ttc"] = price_per_kwh
@@ -2018,9 +2025,7 @@ class HistoryAnalysisView(HomeAssistantView):
             # ═══════════════════════════════════════════════════════════
             total_baseline_kwh = sum(c["baseline_energy_kwh"] for c in internal_comparisons)
             total_baseline_cost_ht = sum(c["baseline_cost_ht"] for c in internal_comparisons)
-            total_baseline_cost_ttc = sum(
-                c["baseline_cost_ttc"] for c in internal_comparisons
-            )
+            total_baseline_cost_ttc = sum(c["baseline_cost_ttc"] for c in internal_comparisons)
 
             total_event_kwh = sum(c["event_energy_kwh"] for c in internal_comparisons)
             total_event_cost_ht = sum(c["event_cost_ht"] for c in internal_comparisons)

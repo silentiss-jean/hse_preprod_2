@@ -512,69 +512,86 @@ html[data-theme="neon"] {
    ──────────────────────────────────────────────────────────────────────────── */
 
 html[data-theme="aurora"] {
-  color-scheme: dark;
+  color-scheme: light;
 
-  --hse-bg: #060a16;
-  --hse-bg-secondary: rgba(6, 10, 22, 0.72);
-  --hse-surface: rgba(255,255,255,0.08);
-  --hse-surface-muted: rgba(255,255,255,0.06);
+  /* Plus de glow en fond (style aurora clair) */
+  --hse-bg-dynamic-opacity: 0.92;
 
-  --hse-border: rgba(255,255,255,0.16);
-  --hse-border-soft: rgba(255,255,255,0.10);
-  --hse-border-strong: rgba(255,255,255,0.24);
+  --hse-bg: #f7fbff;
+  --hse-bg-secondary: rgba(255, 255, 255, 0.72);
+  --hse-surface: rgba(255,255,255,0.78);
+  --hse-surface-muted: rgba(255,255,255,0.62);
 
-  --hse-text: rgba(255,255,255,0.92);
+  --hse-border: rgba(11,18,32,0.10);
+  --hse-border-soft: rgba(11,18,32,0.06);
+  --hse-border-strong: rgba(11,18,32,0.16);
+
+  --hse-text: #0b1220;
   --hse-text-main: var(--hse-text);
-  --hse-text-muted: rgba(255,255,255,0.72);
-  --hse-text-soft: rgba(255,255,255,0.58);
-  --hse-text-inverse: #060a16;
+  --hse-text-muted: rgba(11,18,32,0.70);
+  --hse-text-soft: rgba(11,18,32,0.52);
+  --hse-text-inverse: #ffffff;
 
-  --hse-primary: #22d3ee;
-  --hse-primary-dark: #06b6d4;
+  --hse-primary: #0ea5e9;
+  --hse-primary-dark: #0284c7;
 
-  --hse-accent: #a78bfa;
-  --hse-accent-hover: #8b5cf6;
-  --hse-accent-soft: rgba(167,139,250,0.14);
+  --hse-accent: #7c3aed;
+  --hse-accent-hover: #6d28d9;
+  --hse-accent-soft: rgba(124,58,237,0.12);
 
-  --hse-info: #22d3ee;
-  --hse-info-dark: #06b6d4;
-  --hse-success: #34d399;
-  --hse-success-dark: #10b981;
-  --hse-warning: #fbbf24;
-  --hse-warning-dark: #f59e0b;
-  --hse-error: #fb7185;
-  --hse-error-dark: #f43f5e;
+  --hse-info: #0ea5e9;
+  --hse-info-dark: #0284c7;
+  --hse-success: #16a34a;
+  --hse-success-dark: #15803d;
+  --hse-warning: #f59e0b;
+  --hse-warning-dark: #b45309;
+  --hse-error: #ef4444;
+  --hse-error-dark: #dc2626;
 
-  --hse-success-soft: rgba(52,211,153,0.12);
-  --hse-warning-soft: rgba(251,191,36,0.12);
-  --hse-error-soft: rgba(251,113,133,0.12);
-  --hse-info-soft: rgba(34,211,238,0.12);
+  --hse-success-soft: rgba(22,163,74,0.10);
+  --hse-warning-soft: rgba(245,158,11,0.14);
+  --hse-error-soft: rgba(239,68,68,0.10);
+  --hse-info-soft: rgba(14,165,233,0.10);
 
-  --hse-hover: rgba(167,139,250,0.12);
+  --hse-hover: rgba(124,58,237,0.08);
 
-  --hse-backdrop-filter: blur(16px) saturate(150%);
+  /* Glass */
+  --hse-backdrop-filter: blur(18px) saturate(160%);
 
-  --hse-shadow-glow: 0 0 34px rgba(34,211,238,.14);
+  /* Shadows plus soft (light) */
+  --hse-shadow-sm: 0 2px 8px rgba(11,18,32,0.06);
+  --hse-shadow-md: 0 16px 38px rgba(11,18,32,0.10);
+  --hse-shadow-lg: 0 30px 70px rgba(11,18,32,0.14);
+  --hse-shadow-glow: 0 0 28px rgba(34,211,238,0.18);
 
-  --hse-gradient-primary: linear-gradient(135deg, rgba(34,211,238,1), rgba(167,139,250,1));
-  --hse-gradient-header: linear-gradient(135deg, rgba(52,211,153,0.90), rgba(34,211,238,0.78));
-  --hse-gradient-info: linear-gradient(135deg, rgba(34,211,238,0.14), rgba(34,211,238,0.05));
-  --hse-gradient-warning: linear-gradient(135deg, rgba(251,191,36,0.16), rgba(251,191,36,0.06));
-  --hse-gradient-success: linear-gradient(135deg, rgba(52,211,153,0.16), rgba(52,211,153,0.06));
-  --hse-gradient-danger: linear-gradient(135deg, rgba(251,113,133,0.16), rgba(251,113,133,0.06));
+  /* Gradients */
+  --hse-gradient-primary: linear-gradient(135deg, rgba(14,165,233,1), rgba(124,58,237,1));
+  --hse-gradient-header: linear-gradient(135deg,
+    rgba(52,211,153,0.70),
+    rgba(34,211,238,0.60),
+    rgba(167,139,250,0.70)
+  );
+  --hse-gradient-info: linear-gradient(135deg, rgba(14,165,233,0.18), rgba(14,165,233,0.06));
+  --hse-gradient-warning: linear-gradient(135deg, rgba(245,158,11,0.20), rgba(245,158,11,0.08));
+  --hse-gradient-success: linear-gradient(135deg, rgba(22,163,74,0.18), rgba(22,163,74,0.08));
+  --hse-gradient-danger: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(239,68,68,0.08));
 
-  --hse-on-accent: #061018;
-  --hse-on-header: #061018;
+  /* Header très clair => texte sombre */
+  --hse-on-accent: #ffffff;
+  --hse-on-header: #0b1220;
 
-  --hse-badge-bg: rgba(255,255,255,0.06);
-  --hse-badge-border: rgba(255,255,255,0.14);
+  --hse-badge-bg: rgba(11,18,32,0.04);
+  --hse-badge-border: rgba(11,18,32,0.10);
   --hse-badge-fg: var(--hse-text);
 
+  /* Fond dynamique façon aurora clair */
   --hse-bg-dynamic:
-    radial-gradient(1100px 800px at 10% 10%, rgba(52,211,153,0.22), transparent 62%),
-    radial-gradient(1100px 800px at 90% 20%, rgba(34,211,238,0.18), transparent 62%),
-    radial-gradient(1100px 800px at 50% 95%, rgba(167,139,250,0.18), transparent 62%);
+    radial-gradient(1200px 900px at 12% 18%, rgba(56,189,248,0.35), transparent 62%),
+    radial-gradient(1200px 900px at 88% 22%, rgba(167,139,250,0.28), transparent 62%),
+    radial-gradient(1200px 900px at 50% 95%, rgba(52,211,153,0.24), transparent 62%),
+    radial-gradient(1000px 700px at 92% 88%, rgba(244,114,182,0.22), transparent 60%);
 }
+
 
 /* ────────────────────────────────────────────────────────────────────────────
    NEURO (clair doux)
