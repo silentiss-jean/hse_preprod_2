@@ -67,17 +67,29 @@ def _parse_energy_entity_id(entity_id: str) -> Tuple[Optional[str], Optional[str
     return None, None
 
 
-def _cost_entity_id_from_energy(energy_entity_id: str, cycle: str) -> Optional[str]:
-    """Build expected cost entity_id (TTC) from an energy sensor id."""
+def _cost_entity_id_candidates_from_energy(energy_entity_id: str, cycle: str) -> List[str]:
+    """Build expected cost entity_id candidates (TTC) from an energy sensor id.
+
+    Prefer the unified TTC sensor if present (fixe or aggregated hp/hc), but also support
+    legacy hp/hc split sensors by returning both candidates.
+    """
     base_raw, _ = _parse_energy_entity_id(energy_entity_id)
     if not base_raw:
-        return None
+        return []
     base = _slug_alnum(base_raw)
     if not base:
-        return None
+        return []
     if cycle not in ("daily", "monthly"):
-        return None
-    return f"sensor.hse_{base}_cout_{cycle}_ttc"
+        return []
+
+    # Unified TTC
+    out = [f"sensor.hse_{base}_cout_{cycle}_ttc"]
+
+    # Fallback hp/hc split TTC
+    out.append(f"sensor.hse_{base}_cout_{cycle}_ttc_hp")
+    out.append(f"sensor.hse_{base}_cout_{cycle}_ttc_hc")
+
+    return out
 
 
 @dataclass
@@ -219,19 +231,14 @@ async def create_group_total_sensors(
     sensors: List[SensorEntity] = []
 
     for g in groups:
-        # Stable key = dict key
         group_key = g.key
 
-        daily_sources = []
-        monthly_sources = []
+        daily_sources: List[str] = []
+        monthly_sources: List[str] = []
 
         for energy_entity_id in g.energy:
-            ce_d = _cost_entity_id_from_energy(energy_entity_id, "daily")
-            ce_m = _cost_entity_id_from_energy(energy_entity_id, "monthly")
-            if ce_d:
-                daily_sources.append(ce_d)
-            if ce_m:
-                monthly_sources.append(ce_m)
+            daily_sources.extend(_cost_entity_id_candidates_from_energy(energy_entity_id, "daily"))
+            monthly_sources.extend(_cost_entity_id_candidates_from_energy(energy_entity_id, "monthly"))
 
         # Dedup while preserving order
         def _dedup(seq: Iterable[str]) -> List[str]:
@@ -293,4 +300,3 @@ async def refresh_group_totals(hass: HomeAssistant) -> None:
     type_sensors = await create_group_total_sensors(hass, group_sets, "types")
     hass.data.setdefault(DOMAIN, {})["type_totals_sensors_pending"] = type_sensors
     hass.bus.async_fire("hse_type_totals_ready")
-
