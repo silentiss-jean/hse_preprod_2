@@ -121,7 +121,7 @@ def _extract_groups(group_sets: Dict[str, Any], namespace: str) -> List[GroupDef
                 key=key,
                 mode=str(g.get("mode") or "manual"),
                 energy=list(g.get("energy") or []) if isinstance(g.get("energy"), list) else [],
-                power=list(g.get("power"),) if isinstance(g.get("power"), list) else [],
+                power=list(g.get("power") or []) if isinstance(g.get("power"), list) else [],
             )
         )
     return out
