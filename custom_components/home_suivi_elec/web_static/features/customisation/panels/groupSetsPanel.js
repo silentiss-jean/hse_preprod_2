@@ -4,7 +4,11 @@ import { createElement } from "../../../shared/utils/dom.js";
 import { Button } from "../../../shared/components/Button.js";
 import { Toast } from "../../../shared/components/Toast.js";
 
-import { getGroupSets, saveGroupSets } from "../customisation.api.js";
+import {
+  getGroupSets,
+  saveGroupSets,
+  refreshGroupTotals,
+} from "../customisation.api.js";
 import {
   getGroupSetsState,
   setGroupSetsState,
@@ -91,12 +95,17 @@ function renderSet(container, setKey, title) {
 
   const section = createElement("div", { className: "hse-group-sets-section" });
 
-  const header = createElement("div", { style: "display:flex; gap:10px; align-items:center; margin-bottom:8px;" });
+  const header = createElement("div", {
+    className: "hse-groups-headerbar",
+  });
+
   const h3 = document.createElement("h3");
   h3.textContent = title;
 
   const modeBadge = createElement("span", { className: "hse-groups-toolbar-info" });
   modeBadge.textContent = `mode: ${gs.sets[setKey].mode}`;
+
+  const spacer = createElement("div", { className: "hse-groups-spacer" });
 
   const addBtn = Button.create(
     "+ Ajouter un groupe",
@@ -122,6 +131,7 @@ function renderSet(container, setKey, title) {
   );
 
   header.appendChild(h3);
+  header.appendChild(spacer);
   header.appendChild(modeBadge);
   header.appendChild(addBtn);
   section.appendChild(header);
@@ -202,7 +212,6 @@ function renderSet(container, setKey, title) {
       className: "hse-textarea",
       rows: "6",
       placeholder: "1 entity_id par ligne (ex: sensor.xxx)",
-      style: "width:100%;"
     });
     ta.value = getEntitiesForTextarea(setKey, groups[groupName]).join("\n");
 
@@ -233,9 +242,11 @@ function renderSet(container, setKey, title) {
       "secondary"
     );
 
+    const actionsRow = createElement("div", { style: "margin-top:8px;" });
+    actionsRow.appendChild(applyBtn);
+
     body.appendChild(ta);
-    body.appendChild(createElement("div", { style: "margin-top:8px;" }));
-    body.appendChild(applyBtn);
+    body.appendChild(actionsRow);
 
     card.appendChild(body);
     section.appendChild(card);
@@ -295,10 +306,46 @@ export async function renderGroupSetsPanel(container) {
     "success"
   );
 
+  const recomputeRoomsBtn = Button.create(
+    "Recalculer rooms",
+    async () => {
+      try {
+        recomputeRoomsBtn.disabled = true;
+        await refreshGroupTotals("rooms");
+        Toast.success("Totaux rooms recalculés.");
+      } catch (e) {
+        console.error("[customisation][groupSetsPanel] recompute rooms error:", e);
+        Toast.error("Erreur lors du recalcul des totaux rooms.");
+      } finally {
+        recomputeRoomsBtn.disabled = false;
+      }
+    },
+    "secondary"
+  );
+
+  const recomputeTypesBtn = Button.create(
+    "Recalculer types",
+    async () => {
+      try {
+        recomputeTypesBtn.disabled = true;
+        await refreshGroupTotals("types");
+        Toast.success("Totaux types recalculés.");
+      } catch (e) {
+        console.error("[customisation][groupSetsPanel] recompute types error:", e);
+        Toast.error("Erreur lors du recalcul des totaux types.");
+      } finally {
+        recomputeTypesBtn.disabled = false;
+      }
+    },
+    "secondary"
+  );
+
   header.appendChild(title);
   header.appendChild(spacer);
   header.appendChild(refreshBtn);
   header.appendChild(saveBtn);
+  header.appendChild(recomputeRoomsBtn);
+  header.appendChild(recomputeTypesBtn);
   container.appendChild(header);
 
   // Load initial if needed

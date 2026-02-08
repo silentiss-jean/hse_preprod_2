@@ -80,3 +80,15 @@ export async function saveGroupSets(groupSets) {
   if (res.error) throw new Error(res.message || "Erreur savegroupsets");
   return res.data;
 }
+
+/**
+ * POST /api/home_suivi_elec/config/refresh_group_totals
+ * payload attendu: { scope: "rooms"|"types" }
+ */
+export async function refreshGroupTotals(scope) {
+  const res = await httpClient.post(`${BASE_URL}/config/refresh_group_totals`, {
+    scope,
+  });
+  if (res.error) throw new Error(res.message || "Erreur refresh_group_totals");
+  return res.data;
+}
