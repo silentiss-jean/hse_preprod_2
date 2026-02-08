@@ -223,6 +223,104 @@ def _parse_energy_entity_id(entity_id: str) -> Tuple[Optional[str], Optional[str
     return None, None
 
 
+class HSECostAggregateSensor(RestoreEntity, SensorEntity):
+    """Capteur coût agrégé (ex: TTC total = TTC_HP + TTC_HC).
+
+    Utilisé en mode HP/HC pour exposer un capteur compatible avec le mode fixe:
+    - sensor.hse_<basename>_cout_<cycle>_ttc
+    - sensor.hse_<basename>_cout_<cycle>_ht
+
+    Les sources attendues sont des entités HSECostSensor.
+    """
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        basename: str,
+        cycle: str,
+        variant: str,  # 'ht' | 'ttc'
+        source_entities: List[str],
+    ):
+        self.hass = hass
+
+        self._basename = basename
+        self._cycle = cycle
+        self._variant = variant
+        self._sources = [s for s in (source_entities or []) if isinstance(s, str) and s]
+
+        object_id = f"hse_{self._basename}_cout_{self._cycle}_{self._variant}"
+        self._attr_unique_id = object_id
+        self._attr_suggested_object_id = object_id
+        self._attr_name = f"HSE {self._basename} Cout {self._cycle.title()} {self._variant.upper()}"
+
+        self._attr_device_class = SensorDeviceClass.MONETARY
+        self._attr_state_class = SensorStateClass.TOTAL
+        self._attr_should_poll = False
+
+        self._state = 0.0
+        self._last_updated = dt_util.now().isoformat()
+
+    @property
+    def native_value(self):
+        return self._state
+
+    @property
+    def native_unit_of_measurement(self) -> str:
+        return getattr(self.hass.config, "currency", "EUR")
+
+    @property
+    def extra_state_attributes(self):
+        return {
+            "basename": self._basename,
+            "cycle": self._cycle,
+            "variant": self._variant,
+            "currency": self.native_unit_of_measurement,
+            "sources": list(self._sources),
+            "last_updated": self._last_updated,
+        }
+
+    async def async_added_to_hass(self):
+        await super().async_added_to_hass()
+
+        if (last_state := await self.async_get_last_state()) is not None:
+            try:
+                self._state = float(last_state.state or 0)
+            except Exception:
+                self._state = 0.0
+            if last_state.attributes:
+                self._last_updated = last_state.attributes.get("last_updated", self._last_updated)
+
+        self._recompute_from_hass_states()
+
+        if self._sources:
+            self.async_on_remove(
+                async_track_state_change_event(
+                    self.hass,
+                    list(self._sources),
+                    self._on_sources_changed,
+                )
+            )
+
+    def _recompute_from_hass_states(self) -> None:
+        total = 0.0
+        for ent_id in self._sources:
+            st = self.hass.states.get(ent_id)
+            if not st or st.state in ("unknown", "unavailable"):
+                continue
+            try:
+                total += float(st.state)
+            except (TypeError, ValueError):
+                continue
+
+        self._state = max(0.0, total)
+        self._last_updated = dt_util.now().isoformat()
+
+    @callback
+    def _on_sources_changed(self, event):
+        self._recompute_from_hass_states()
+        self.async_write_ha_state()
+
+
 async def create_cost_sensors(
     hass: HomeAssistant,
     prix_ht: Optional[float] = None,
@@ -340,6 +438,9 @@ async def create_cost_sensors(
     
     cost_sensors: List[SensorEntity] = []
     skipped = 0
+
+    # Track per (basename, cycle) the cost entity ids we generate in hp/hc
+    hp_hc_cost_id_map: Dict[Tuple[str, str, str], Dict[str, str]] = {}
     
     for (basename_raw, cycle), energy_entity_id in energy_map.items():
         if cycle not in COST_CYCLES:
@@ -369,21 +470,64 @@ async def create_cost_sensors(
         
         # MODE 2 : Contrat HP/HC
         elif type_contrat == "hp_hc":
+            key = (basename, cycle, energy_entity_id)
+            hp_hc_cost_id_map.setdefault(key, {})
+
             for tarif in ("hp", "hc"):
                 for variant in ("ht", "ttc"):
                     price = pricing.get(f"prix_{variant}_{tarif}", 0.0)
-                    cost_sensors.append(
-                        HSECostSensor(
-                            hass=hass,
-                            basename=basename,
-                            cycle=cycle,
-                            variant=variant,
-                            price_per_kwh=price,
-                            source_energy_entity=energy_entity_id,
-                            tarif_type=tarif,
-                        )
+                    ent = HSECostSensor(
+                        hass=hass,
+                        basename=basename,
+                        cycle=cycle,
+                        variant=variant,
+                        price_per_kwh=price,
+                        source_energy_entity=energy_entity_id,
+                        tarif_type=tarif,
                     )
-    
+                    cost_sensors.append(ent)
+
+                    # Store the would-be entity_id for aggregate wiring
+                    ent_id = f"sensor.hse_{basename}_cout_{cycle}_{variant}_{tarif}"
+                    hp_hc_cost_id_map[key][f"{variant}_{tarif}"] = ent_id
+
+    # Add aggregate total sensors for HP/HC: ht = ht_hp + ht_hc, ttc = ttc_hp + ttc_hc
+    if type_contrat == "hp_hc":
+        for (basename, cycle, _energy_entity_id), ids in hp_hc_cost_id_map.items():
+            # TTC total
+            src_ttc = []
+            if ids.get("ttc_hp"):
+                src_ttc.append(ids["ttc_hp"])
+            if ids.get("ttc_hc"):
+                src_ttc.append(ids["ttc_hc"])
+            if src_ttc:
+                cost_sensors.append(
+                    HSECostAggregateSensor(
+                        hass=hass,
+                        basename=basename,
+                        cycle=cycle,
+                        variant="ttc",
+                        source_entities=src_ttc,
+                    )
+                )
+
+            # HT total
+            src_ht = []
+            if ids.get("ht_hp"):
+                src_ht.append(ids["ht_hp"])
+            if ids.get("ht_hc"):
+                src_ht.append(ids["ht_hc"])
+            if src_ht:
+                cost_sensors.append(
+                    HSECostAggregateSensor(
+                        hass=hass,
+                        basename=basename,
+                        cycle=cycle,
+                        variant="ht",
+                        source_entities=src_ht,
+                    )
+                )
+
     _LOGGER.info("[COST-TRACKING] 🎉 %d sensors créés, %d cycles skipped", len(cost_sensors), skipped)
     _LOGGER.info("[COST-TRACKING] ═══════════════════════════════════════")
     return cost_sensors
