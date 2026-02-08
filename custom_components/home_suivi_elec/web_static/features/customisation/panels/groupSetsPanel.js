@@ -242,7 +242,7 @@ function renderSet(container, setKey, title) {
       "secondary"
     );
 
-    const actionsRow = createElement("div", { style: "margin-top:8px;" });
+    const actionsRow = createElement("div", { className: "hse-group-sets-actions" });
     actionsRow.appendChild(applyBtn);
 
     body.appendChild(ta);
