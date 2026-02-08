@@ -282,6 +282,39 @@ async def create_group_total_sensors(
     return sensors
 
 
+async def refresh_group_totals_scope(hass: HomeAssistant, scope: str) -> None:
+    """Regenerate totals for a single scope and fire corresponding event.
+
+    scope:
+    - 'rooms' -> populates room_totals_sensors_pending and fires hse_room_totals_ready
+    - 'types' -> populates type_totals_sensors_pending and fires hse_type_totals_ready
+
+    For compatibility, any invalid scope falls back to full refresh.
+    """
+    scope = str(scope or "").strip().lower()
+
+    mgr = hass.data.get(DOMAIN, {}).get("storage_manager")
+    if not mgr:
+        _LOGGER.warning("[GROUP-TOTALS] StorageManager not available")
+        return
+
+    if scope not in ("rooms", "types"):
+        await refresh_group_totals(hass)
+        return
+
+    group_sets = await mgr.get_group_sets()
+
+    if scope == "rooms":
+        room_sensors = await create_group_total_sensors(hass, group_sets, "rooms")
+        hass.data.setdefault(DOMAIN, {})["room_totals_sensors_pending"] = room_sensors
+        hass.bus.async_fire("hse_room_totals_ready")
+        return
+
+    type_sensors = await create_group_total_sensors(hass, group_sets, "types")
+    hass.data.setdefault(DOMAIN, {})["type_totals_sensors_pending"] = type_sensors
+    hass.bus.async_fire("hse_type_totals_ready")
+
+
 async def refresh_group_totals(hass: HomeAssistant) -> None:
     """Regenerate totals for rooms and types and fire corresponding events."""
     mgr = hass.data.get(DOMAIN, {}).get("storage_manager")
