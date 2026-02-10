@@ -368,3 +368,8 @@
   padding: 8px;
   border-radius: 6px;
 }
+
+/* Group sets panel */
+.hse-group-sets-actions {
+  margin-top: 8px;
+}

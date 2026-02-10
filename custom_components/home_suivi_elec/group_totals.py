@@ -300,3 +300,30 @@ async def refresh_group_totals(hass: HomeAssistant) -> None:
     type_sensors = await create_group_total_sensors(hass, group_sets, "types")
     hass.data.setdefault(DOMAIN, {})["type_totals_sensors_pending"] = type_sensors
     hass.bus.async_fire("hse_type_totals_ready")
+
+async def refresh_group_totals_scope(hass: HomeAssistant, scope: str) -> None:
+    """Regen totals uniquement pour rooms ou types, puis fire l'event associé."""
+    scope = str(scope or "").strip().lower()
+
+    mgr = hass.data.get(DOMAIN, {}).get("storage_manager")
+    if not mgr:
+        _LOGGER.warning("[GROUP-TOTALS] StorageManager not available")
+        return
+
+    # si scope invalide => comportement actuel (rooms + types)
+    if scope not in ("rooms", "types"):
+        await refresh_group_totals(hass)
+        return
+
+    group_sets = await mgr.get_group_sets()
+
+    if scope == "rooms":
+        room_sensors = await create_group_total_sensors(hass, group_sets, "rooms")
+        hass.data.setdefault(DOMAIN, {})["room_totals_sensors_pending"] = room_sensors
+        hass.bus.async_fire("hse_room_totals_ready")
+        return
+
+    # scope == "types"
+    type_sensors = await create_group_total_sensors(hass, group_sets, "types")
+    hass.data.setdefault(DOMAIN, {})["type_totals_sensors_pending"] = type_sensors
+    hass.bus.async_fire("hse_type_totals_ready")

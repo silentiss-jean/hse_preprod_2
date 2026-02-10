@@ -22,9 +22,10 @@ from ..storage_manager import StorageManager
 from ..utils.json_response import json_response
 
 try:
-    from ..group_totals import refresh_group_totals  # type: ignore
+    from ..group_totals import refresh_group_totals, refresh_group_totals_scope  # type: ignore
 except Exception:
     refresh_group_totals = None  # type: ignore
+    refresh_group_totals_scope = None  # type: ignore
 
 try:
     # Nom "propre" (présent dans ton projet)
@@ -76,6 +77,8 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
         "calculate_summary": "calculate_summary",
         "set_cost_ha": "set_cost_ha",
         "setcostha": "set_cost_ha",
+        "refreshgrouptotals": "refresh_group_totals",
+        "refresh_group_totals": "refresh_group_totals",
     }
 
     # ✅ AJOUT : Méthode pour activer un capteur
@@ -194,6 +197,9 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
 
             if action == "save_group_sets":
                 return await self._save_group_sets(data)
+
+            if action == "refresh_group_totals":
+                return await self._refresh_group_totals(data)
 
             return self._error(404, f"Action POST inconnue: {action}")
 
@@ -785,11 +791,11 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
             count_sets = len(sets) if isinstance(sets, dict) else 0
 
             # Refresh totals (rooms/types) après mise à jour de group_sets
-            if refresh_group_totals is not None:
-                try:
-                    await refresh_group_totals(self.hass)
-                except Exception as e:
-                    _LOGGER.exception("[CONFIG] refresh_group_totals failed: %s", e)
+#            if refresh_group_totals is not None:
+#                try:
+#                    await refresh_group_totals(self.hass)
+#                except Exception as e:
+#                    _LOGGER.exception("[CONFIG] refresh_group_totals failed: %s", e)
 
             return self._success({
                 "message": "Group sets sauvegardés avec succès",
@@ -799,6 +805,31 @@ class HomeElecUnifiedConfigAPIView(HomeAssistantView):
         except Exception as e:
             _LOGGER.exception("[CONFIG] Erreur save_group_sets: %s", e)
             return self._error(500, f"Erreur save_group_sets: {e}")
+
+    async def _refresh_group_totals(self, data):
+        """Recalcule les totaux groupés (rooms/types) sur demande explicite."""
+        try:
+            scope = (data or {}).get("scope")
+            scope = str(scope or "").strip().lower()
+
+            if refresh_group_totals is None:
+                return self._error(500, "refresh_group_totals indisponible")
+
+            if scope in ("rooms", "types") and refresh_group_totals_scope is not None:
+                await refresh_group_totals_scope(self.hass, scope)
+            else:
+                # fallback: full recompute
+                await refresh_group_totals(self.hass)
+
+            return self._success({
+                "message": "Recalcul lancé",
+                "scope": scope or "all",
+                "timestamp": self._get_timestamp(),
+            })
+
+        except Exception as e:
+            _LOGGER.exception("[CONFIG] refresh_group_totals failed: %s", e)
+            return self._error(500, f"Erreur refresh_group_totals: {e}")
 
     # -------------------------
     # Summary / CalculationEngine
